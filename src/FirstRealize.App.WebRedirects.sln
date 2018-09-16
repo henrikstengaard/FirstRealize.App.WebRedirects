@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirstRealize.App.WebRedirects.Core", "FirstRealize.App.WebRedirects.Core\FirstRealize.App.WebRedirects.Core.csproj", "{7CDBB0E2-CD8E-49A5-AF73-59E14A3028D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirstRealize.App.WebRedirects.Test", "FirstRealize.App.WebRedirects.Test\FirstRealize.App.WebRedirects.Test.csproj", "{B5497BA4-756B-47B4-AD49-45975CD31239}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirstRealize.App.WebRedirects.Console", "FirstRealize.App.WebRedirects.Console\FirstRealize.App.WebRedirects.Console.csproj", "{F9E885DF-2170-41A3-AEF9-925D943B4EC1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7CDBB0E2-CD8E-49A5-AF73-59E14A3028D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CDBB0E2-CD8E-49A5-AF73-59E14A3028D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CDBB0E2-CD8E-49A5-AF73-59E14A3028D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CDBB0E2-CD8E-49A5-AF73-59E14A3028D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5497BA4-756B-47B4-AD49-45975CD31239}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5497BA4-756B-47B4-AD49-45975CD31239}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5497BA4-756B-47B4-AD49-45975CD31239}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5497BA4-756B-47B4-AD49-45975CD31239}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9E885DF-2170-41A3-AEF9-925D943B4EC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9E885DF-2170-41A3-AEF9-925D943B4EC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9E885DF-2170-41A3-AEF9-925D943B4EC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9E885DF-2170-41A3-AEF9-925D943B4EC1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1D25F8DA-B762-45C8-8E96-2FC6765E1501}
+	EndGlobalSection
+EndGlobal
