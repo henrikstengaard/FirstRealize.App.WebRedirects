@@ -46,6 +46,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Iis.cs" />
     <Compile Include="IisExpress.cs" />
     <Compile Include="Models\Configuration.cs" />
     <Compile Include="Models\IResult.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="Processors\IProcessorPreload.cs" />
     <Compile Include="Processors\RedirectProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Readers\RedirectReader.cs" />
     <Compile Include="Validators\UrlValidator.cs" />
   </ItemGroup>
   <ItemGroup>
