@@ -31,7 +31,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             }
             else
             {
-                _oldUrlIndex[oldUrl] = processedRedirect;
+                _oldUrlIndex.Add(oldUrl, processedRedirect);
             }
         }
     }

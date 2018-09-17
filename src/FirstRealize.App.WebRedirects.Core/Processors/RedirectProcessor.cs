@@ -1,7 +1,5 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace FirstRealize.App.WebRedirects.Core.Processors
 {
@@ -16,6 +14,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             _configuration = configuration;
             _processors = new List<IProcessor>
             {
+                new ExcludeProcessor(_configuration),
                 new DuplicateProcessor()
             };
         }
@@ -40,20 +39,6 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             }
 
             return processedRedirect;
-        }
-
-        public bool ExcludeUrls(ProcessedRedirect processedRedirect)
-        {
-            return IsUrlExcluded(processedRedirect.Redirect.OldUrl.Parsed.AbsoluteUri,
-                _configuration.OldUrlExcludePatterns);
-        }
-
-        private bool IsUrlExcluded(
-            string url,
-            IEnumerable<string> urlExcludePatterns)
-        {
-            return urlExcludePatterns.Any(x => Regex.IsMatch(
-                url, x, RegexOptions.IgnoreCase | RegexOptions.Compiled));
         }
     }
 }

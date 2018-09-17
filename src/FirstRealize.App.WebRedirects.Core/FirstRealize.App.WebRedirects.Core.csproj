@@ -56,6 +56,7 @@
     <Compile Include="Parsers\UrlParser.cs" />
     <Compile Include="Models\IProcessedRedirect.cs" />
     <Compile Include="Processors\DuplicateProcessor.cs" />
+    <Compile Include="Processors\ExcludeProcessor.cs" />
     <Compile Include="Processors\IProcessor.cs" />
     <Compile Include="Models\ResultTypes.cs" />
     <Compile Include="Processors\RedirectProcessor.cs" />
