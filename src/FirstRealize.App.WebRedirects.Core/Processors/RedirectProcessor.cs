@@ -1,18 +1,26 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Models;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace FirstRealize.App.WebRedirects.Core.Processors
 {
     public class RedirectProcessor
     {
-        private readonly IDictionary<string, ProcessedRedirect> _oldUrlIndex;
+        private readonly Configuration _configuration;
+        private readonly IList<IProcessor> _processors;
 
-        public RedirectProcessor()
+        public RedirectProcessor(
+            Configuration configuration)
         {
-            _oldUrlIndex = new Dictionary<string, ProcessedRedirect>();
+            _configuration = configuration;
+            _processors = new List<IProcessor>
+            {
+                new DuplicateProcessor()
+            };
         }
 
-        public ProcessedRedirect Process(
+        public IProcessedRedirect Process(
             Redirect redirect)
         {
             var processedRedirect = new ProcessedRedirect
@@ -26,21 +34,26 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 return processedRedirect;
             }
 
-            var oldUrl = redirect.OldUrl.Parsed.AbsoluteUri;
-            if (_oldUrlIndex.ContainsKey(oldUrl))
+            foreach(var processor in _processors)
             {
-                _oldUrlIndex[oldUrl].IsDuplicate = true;
-                _oldUrlIndex[oldUrl].Status =
-                    string.Format(
-                        "Duplicate redirect from old url '{0}'! Existing redirect to new url '{1}' replaced by redirect to new url '{2}'",
-                        redirect.OldUrl.Parsed.AbsoluteUri,
-                        _oldUrlIndex[oldUrl].Redirect.NewUrl.Parsed.AbsoluteUri,
-                        redirect.NewUrl.Parsed.AbsoluteUri);
+                processor.Process(processedRedirect);
             }
 
-            _oldUrlIndex[oldUrl] = processedRedirect;
-
             return processedRedirect;
+        }
+
+        public bool ExcludeUrls(ProcessedRedirect processedRedirect)
+        {
+            return IsUrlExcluded(processedRedirect.Redirect.OldUrl.Parsed.AbsoluteUri,
+                _configuration.OldUrlExcludePatterns);
+        }
+
+        private bool IsUrlExcluded(
+            string url,
+            IEnumerable<string> urlExcludePatterns)
+        {
+            return urlExcludePatterns.Any(x => Regex.IsMatch(
+                url, x, RegexOptions.IgnoreCase | RegexOptions.Compiled));
         }
     }
 }

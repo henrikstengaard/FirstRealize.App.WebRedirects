@@ -17,7 +17,8 @@ namespace FirstRealize.App.WebRedirects.Test
         public UrlParserTests()
         {
             _urlParser = new UrlParser();
-            _redirectProcessor = new RedirectProcessor();
+            _redirectProcessor = new RedirectProcessor(
+                new Configuration());
         }
 
         [Test]
@@ -79,7 +80,7 @@ namespace FirstRealize.App.WebRedirects.Test
             // 6. write redirects
 
             var processedRedirects =
-                new List<ProcessedRedirect>();
+                new List<IProcessedRedirect>();
 
             foreach (var redirect in TestData.GetRedirects())
             {
@@ -103,10 +104,10 @@ namespace FirstRealize.App.WebRedirects.Test
             }
 
             var duplicate = processedRedirects
-                .FirstOrDefault(x => x.IsDuplicate);
+                .FirstOrDefault(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.Duplicate)));
             Assert.IsNotNull(duplicate);
             Assert.AreEqual(
-                "http://www.test.local/another/path",
+                "http://www.test.local/redirect/somwhere/else",
                 duplicate.Redirect.NewUrl.Parsed.AbsoluteUri);
         }
     }
