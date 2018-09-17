@@ -8,7 +8,7 @@ using System.Reflection;
 namespace FirstRealize.App.WebRedirects.Test.ReaderTests
 {
     [TestFixture]
-    public class RedirectReaderTests
+    public class RedirectCsvReaderTests
     {
         public static string AssemblyDirectory
         {
@@ -24,7 +24,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
         [Test]
         public void CanReadRedirects()
         {
-            var redirectReader = new RedirectReader(
+            var redirectReader = new RedirectCsvReader(
                 Path.Combine(AssemblyDirectory, "redirects.csv"));
             var redirects = redirectReader
                 .ReadAllRedirects()
