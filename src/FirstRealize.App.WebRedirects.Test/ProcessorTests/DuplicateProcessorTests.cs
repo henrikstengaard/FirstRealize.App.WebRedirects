@@ -9,17 +9,17 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
     public class DuplicateProcessorTests
     {
         [Test]
-        public void ProcessDuplicateRedirects()
+        public void CanProcessDuplicatedRedirects()
         {
             var processedRedirects = TestData.GetProcessedRedirects(
                 new[] { new DuplicateProcessor() });
 
-            var duplicate = processedRedirects
-                .FirstOrDefault(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.Duplicate)));
-            Assert.IsNotNull(duplicate);
+            var duplicatedRedirect = processedRedirects
+                .FirstOrDefault(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.Duplicated)));
+            Assert.IsNotNull(duplicatedRedirect);
             Assert.AreEqual(
                 "http://www.test.local/redirect/somwhere/else",
-                duplicate.Redirect.NewUrl.Parsed.AbsoluteUri);
+                duplicatedRedirect.Redirect.NewUrl.Parsed.AbsoluteUri);
         }
     }
 }

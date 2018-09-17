@@ -61,7 +61,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             processedRedirect.Results.Add(
                 new Result
                 {
-                    Type = ResultTypes.Exclude,
+                    Type = ResultTypes.Excluded,
                     Message = message.ToString()
                 });
         }

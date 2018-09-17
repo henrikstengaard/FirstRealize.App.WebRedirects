@@ -8,5 +8,6 @@ namespace FirstRealize.App.WebRedirects.Core.Models
         public string DefaultNewUrl { get; set; }
         public IEnumerable<string> OldUrlExcludePatterns { get; set; }
         public IEnumerable<string> NewUrlExcludePatterns { get; set; }
+        public bool ForceHttp { get; set; }
     }
 }

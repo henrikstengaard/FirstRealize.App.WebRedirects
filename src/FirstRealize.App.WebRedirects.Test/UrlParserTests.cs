@@ -3,8 +3,6 @@ using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Processors;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace FirstRealize.App.WebRedirects.Test
 {
@@ -68,47 +66,5 @@ namespace FirstRealize.App.WebRedirects.Test
 
             Assert.IsNull(uri);
         }
-
-        [Test]
-        public void ParseUrlPoc()
-        {
-            // 1. raw urls
-            // 2. parse urls
-            // 3. process redirects
-            // 4. check redirects
-            // 5. format redirects
-            // 6. write redirects
-
-            var processedRedirects =
-                new List<IProcessedRedirect>();
-
-            foreach (var redirect in TestData.GetRedirects())
-            {
-                // parse urls
-                redirect.OldUrl.Parsed = _urlParser.ParseUrl(
-                    redirect.OldUrl.Raw,
-                    TestData.DefaultHost);
-                redirect.NewUrl.Parsed = _urlParser.ParseUrl(
-                    redirect.NewUrl.Raw,
-                    TestData.DefaultHost);
-
-                // process redirect
-                var processedRedirect = 
-                    _redirectProcessor.Process(redirect);
-
-                //Assert.IsTrue(redirect.OldUrl.IsValid);
-                Assert.IsTrue(redirect.NewUrl.IsValid);
-
-                processedRedirects.Add(
-                    processedRedirect);
-            }
-
-            var duplicate = processedRedirects
-                .FirstOrDefault(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.Duplicate)));
-            Assert.IsNotNull(duplicate);
-            Assert.AreEqual(
-                "http://www.test.local/redirect/somwhere/else",
-                duplicate.Redirect.NewUrl.Parsed.AbsoluteUri);
-        }
-    }
+   }
 }

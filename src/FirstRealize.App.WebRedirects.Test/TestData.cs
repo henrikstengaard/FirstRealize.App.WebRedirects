@@ -50,16 +50,16 @@ namespace FirstRealize.App.WebRedirects.Test
                         Raw = "/redirect/somwhere/else"
                     }
                 },
-                // causes cyclic redirect
+                // causes cyclic redirect for redirect from old url '/example/path' to '/new-url'
                 new Redirect
                 {
                     OldUrl = new Url
                     {
-                        Raw = "/redirect/cyclic"
+                        Raw = "/another/path"
                     },
                     NewUrl = new Url
                     {
-                        Raw = "/new-url"
+                        Raw = "/example/path"
                     }
                 }
             };

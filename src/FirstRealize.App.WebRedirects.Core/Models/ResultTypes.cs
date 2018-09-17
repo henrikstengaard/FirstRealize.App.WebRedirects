@@ -2,8 +2,8 @@
 {
     public static class ResultTypes
     {
-        public static string Exclude = "Exclude";
-        public static string Duplicate = "Duplicate";
+        public static string Excluded = "Excluded";
+        public static string Duplicated = "Duplicated";
         public static string Cyclic = "Cyclic";
     }
 }

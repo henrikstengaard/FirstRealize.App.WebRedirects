@@ -1,5 +1,6 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FirstRealize.App.WebRedirects.Core.Processors
 {
@@ -15,8 +16,19 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             _processors = new List<IProcessor>
             {
                 new ExcludeProcessor(_configuration),
-                new DuplicateProcessor()
+                new DuplicateProcessor(),
+                new CyclicProcessor(_configuration)
             };
+        }
+
+        public void Preload(IEnumerable<Redirect> redirects)
+        {
+            foreach(var processor in _processors
+                .OfType<IProcessorPreload>()
+                .ToList())
+            {
+                processor.Preload(redirects);
+            }
         }
 
         public IProcessedRedirect Process(

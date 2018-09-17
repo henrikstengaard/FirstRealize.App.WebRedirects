@@ -20,7 +20,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 processedRedirect.Results.Add(
                     new Result
                     {
-                        Type = ResultTypes.Duplicate,
+                        Type = ResultTypes.Duplicated,
                         Message =
                     string.Format(
                         "Duplicate redirect from old url '{0}'! Redirect to new url '{1}' skipped by first found redirect to new url '{2}'",
