@@ -66,5 +66,32 @@ namespace FirstRealize.App.WebRedirects.Test
 
             Assert.IsNull(uri);
         }
-   }
+
+        [Test]
+        public void CanRemoveTailingSlash()
+        {
+            var url = "/another/path/";
+            var uri = _urlParser.ParseUrl(
+                url,
+                TestData.DefaultHost);
+
+            Assert.AreEqual(
+                "http://www.test.local/another/path", 
+                uri.AbsoluteUri);
+        }
+
+        [Test]
+        public void CanRemoveFragment()
+        {
+            var url = "/another/path/#anchor";
+            var uri = _urlParser.ParseUrl(
+                url,
+                TestData.DefaultHost,
+                true);
+
+            Assert.AreEqual(
+                "http://www.test.local/another/path",
+                uri.AbsoluteUri);
+        }
+    }
 }
