@@ -1,20 +1,35 @@
-﻿using FirstRealize.App.WebRedirects.Core.Configuration;
+﻿using FirstRealize.App.WebRedirects.Core.Clients;
+using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Models;
+using FirstRealize.App.WebRedirects.Core.Parsers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 
 namespace FirstRealize.App.WebRedirects.Core.Processors
 {
+    // rename to redirect processor
     public class CyclicProcessor : IProcessor, IProcessorPreload
     {
-        private readonly IConfiguration _configuration;
         private readonly IDictionary<string, Redirect> _oldUrlIndex;
+        private readonly IConfiguration _configuration;
+        private readonly IHttpClient _httpClient;
+        private readonly IUrlParser _urlParser;
 
-        public CyclicProcessor(IConfiguration configuration)
+        public IDictionary<string, Url> OldUrlsWithOkStatusCode { get; }
+
+        public CyclicProcessor(
+            IConfiguration configuration,
+            IHttpClient httpClient,
+            IUrlParser urlParser)
         {
-            _configuration = configuration;
             _oldUrlIndex = new Dictionary<string, Redirect>();
+            _configuration = configuration;
+            _httpClient = httpClient;
+            _urlParser = urlParser;
+            OldUrlsWithOkStatusCode = new Dictionary<string, Url>();
         }
 
         private string FormatUrl(string url)
@@ -44,21 +59,24 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
         public void Process(IProcessedRedirect processedRedirect)
         {
-            var hasRedirect = false;
+            var checkRedirect = false;
             var isCyclicRedirect = false;
             var redirectCount = 0;
-            var urlsVisited = new List<string>
-            {
-                FormatUrl(processedRedirect.Redirect.OldUrl.Parsed.AbsoluteUri)
-            };
+            var urlsVisited = new List<string>();
             var urlsIndex = new HashSet<string>();
 
-            var url = FormatUrl(
-                processedRedirect.Redirect.NewUrl.Parsed.AbsoluteUri);
+            urlsVisited.Add(FormatUrl(
+                processedRedirect.Redirect.OldUrl.Parsed.AbsoluteUri));
+
+            Redirect redirect = processedRedirect.Redirect;
 
             do
             {
+                var url = redirect.NewUrl.Parsed.AbsoluteUri;
                 redirectCount++;
+                checkRedirect = false;
+
+                urlsVisited.Add(url);
 
                 if (urlsIndex.Contains(url))
                 {
@@ -66,18 +84,81 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     break;
                 }
 
-                urlsVisited.Add(url);
                 urlsIndex.Add(url);
 
-                // in memory / web request switch
-                hasRedirect = _oldUrlIndex.ContainsKey(url);
+                // get url
+                var response = _httpClient.Get(url);
 
-                if (hasRedirect)
+                // set has redirect and url to response location, 
+                // if url returns 301 and has location
+                if (response != null)
                 {
-                    url = FormatUrl(
-                        _oldUrlIndex[url].NewUrl.Parsed.AbsoluteUri);
+                    switch(response.StatusCode)
+                    {
+                        case HttpStatusCode.OK:
+                            OldUrlsWithOkStatusCode[
+                                redirect.NewUrl.Parsed.AbsoluteUri] = redirect.NewUrl;
+                            redirect = null;
+                            break;
+                        case HttpStatusCode.Moved:
+                            var newUrl = !Regex.IsMatch(
+                                response.Location ?? string.Empty, "https?://", RegexOptions.IgnoreCase | RegexOptions.Compiled)
+                                ? new Uri(new Uri(url), response.Location).AbsoluteUri
+                                : response.Location ?? string.Empty;
+                            redirect = new Redirect
+                            {
+                                OldUrl = redirect.NewUrl,
+                                NewUrl = new Url
+                                {
+                                    Raw = newUrl,
+                                    Parsed = _urlParser.ParseUrl(newUrl)
+                                }
+                            };
+                            break;
+                        case HttpStatusCode.NotFound:
+                            checkRedirect = true;
+                            break;
+                        default:
+                            redirect = null;
+                            break;
+                    }
                 }
-            } while (hasRedirect && redirectCount < 20);
+
+                // if url didn't redirect, check if url exists in old url
+                if (checkRedirect)
+                {
+                    if (_oldUrlIndex.ContainsKey(url))
+                    {
+                        var newUrl = FormatUrl(
+                            _oldUrlIndex[url].NewUrl.Parsed.AbsoluteUri);
+                        redirect = new Redirect
+                        {
+                            OldUrl = redirect.NewUrl,
+                            NewUrl = _oldUrlIndex[url].NewUrl
+                        };
+                    }
+                    else
+                    {
+                        redirect = null;
+                    }
+                }
+            } while (redirect != null && 
+                redirect.NewUrl.Parsed != null &&
+                redirectCount < 20);
+
+            if (redirectCount > 1)
+
+            {
+                //processedRedirect.Results.Add(
+                //    new Result
+                //    {
+                //        Type = "Optimized",
+                //        Message =
+                //    string.Format(
+                //        "Last redirect to url '{0}'",
+                //        url)
+                //    });
+            }
 
             if (isCyclicRedirect)
             {
@@ -87,8 +168,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                         Type = ResultTypes.Cyclic,
                         Message =
                     string.Format(
-                        "Cyclic redirect for url '{0}' when visiting urls '{1}'",
-                        url,
+                        "Cyclic redirect for urls '{0}'",
                         string.Join(",", urlsVisited))
                     });
             }

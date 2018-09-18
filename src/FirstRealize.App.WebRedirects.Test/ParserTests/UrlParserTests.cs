@@ -1,6 +1,4 @@
-﻿using FirstRealize.App.WebRedirects.Core.Configuration;
-using FirstRealize.App.WebRedirects.Core.Parsers;
-using FirstRealize.App.WebRedirects.Core.Processors;
+﻿using FirstRealize.App.WebRedirects.Core.Parsers;
 using NUnit.Framework;
 using System;
 
@@ -10,13 +8,10 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
     public class UrlParserTests
     {
         private readonly IUrlParser _urlParser;
-        private readonly RedirectProcessor _redirectProcessor;
 
         public UrlParserTests()
         {
             _urlParser = new UrlParser();
-            _redirectProcessor = new RedirectProcessor(
-                new Configuration());
         }
 
         [Test]

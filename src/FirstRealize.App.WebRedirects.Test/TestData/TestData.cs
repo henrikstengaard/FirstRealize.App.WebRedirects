@@ -96,12 +96,22 @@ namespace FirstRealize.App.WebRedirects.Test.TestData
         public static IEnumerable<IProcessedRedirect> GetProcessedRedirects(
             IEnumerable<IProcessor> processors)
         {
+            return GetProcessedRedirects(
+                GetParsedRedirects(),
+                processors);
+        }
+
+        public static IEnumerable<IProcessedRedirect> GetProcessedRedirects(
+            IEnumerable<Redirect> redirects,
+            IEnumerable<IProcessor> processors)
+        {
+            var redirectsList = redirects.ToList();
             var processorsList = processors.ToList();
 
             var processedRedirects =
                 new List<IProcessedRedirect>();
 
-            foreach (var redirect in GetParsedRedirects())
+            foreach (var redirect in redirectsList)
             {
                 var processedRedirect = new ProcessedRedirect
                 {
