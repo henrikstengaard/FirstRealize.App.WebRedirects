@@ -25,7 +25,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
         public void CanReadRedirects()
         {
             var redirectReader = new RedirectCsvReader(
-                Path.Combine(AssemblyDirectory, "redirects.csv"));
+                Path.Combine(AssemblyDirectory, @"TestData\redirects.csv"));
             var redirects = redirectReader
                 .ReadAllRedirects()
                 .ToList();

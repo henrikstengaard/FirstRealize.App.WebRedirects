@@ -4,7 +4,7 @@ using FirstRealize.App.WebRedirects.Core.Processors;
 using NUnit.Framework;
 using System;
 
-namespace FirstRealize.App.WebRedirects.Test
+namespace FirstRealize.App.WebRedirects.Test.ParserTests
 {
     [TestFixture]
     public class UrlParserTests
@@ -73,7 +73,7 @@ namespace FirstRealize.App.WebRedirects.Test
             var url = "/another/path/";
             var uri = _urlParser.ParseUrl(
                 url,
-                TestData.DefaultHost);
+                TestData.TestData.DefaultHost);
 
             Assert.AreEqual(
                 "http://www.test.local/another/path", 
@@ -86,7 +86,7 @@ namespace FirstRealize.App.WebRedirects.Test
             var url = "/another/path/#anchor";
             var uri = _urlParser.ParseUrl(
                 url,
-                TestData.DefaultHost,
+                TestData.TestData.DefaultHost,
                 true);
 
             Assert.AreEqual(

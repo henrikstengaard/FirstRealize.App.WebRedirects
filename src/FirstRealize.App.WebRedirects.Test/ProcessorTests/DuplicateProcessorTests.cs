@@ -11,7 +11,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         [Test]
         public void CanProcessDuplicatedRedirects()
         {
-            var processedRedirects = TestData.GetProcessedRedirects(
+            var processedRedirects = TestData.TestData.GetProcessedRedirects(
                 new[] { new DuplicateProcessor() });
 
             var duplicatedRedirect = processedRedirects

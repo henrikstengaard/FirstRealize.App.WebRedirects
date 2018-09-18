@@ -12,7 +12,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         [Test]
         public void CanProcessExcludedRedirects()
         {
-            var processedRedirects = TestData.GetProcessedRedirects(
+            var processedRedirects = TestData.TestData.GetProcessedRedirects(
                 new[]
                 {
                     new ExcludeProcessor(new Configuration

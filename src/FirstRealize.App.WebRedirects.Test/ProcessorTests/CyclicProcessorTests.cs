@@ -12,13 +12,10 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         [Test]
         public void CyclicProcessorWithoutPreloadReturnsNone()
         {
-            var processedRedirects = TestData.GetProcessedRedirects(
+            var processedRedirects = TestData.TestData.GetProcessedRedirects(
                 new[]
                 { new CyclicProcessor(
-                    new Configuration
-                    {
-                        ForceHttp = true
-                    })
+                    TestData.TestData.DefaultConfiguration)
                 });
 
             var cyclicRedirects = processedRedirects
@@ -35,9 +32,10 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 {
                     ForceHttp = true
                 });
-            cyclicProcessor.PreloadRedirects(TestData.GetParsedRedirects());
+            cyclicProcessor.PreloadRedirects(
+                TestData.TestData.GetParsedRedirects());
 
-            var processedRedirects = TestData.GetProcessedRedirects(
+            var processedRedirects = TestData.TestData.GetProcessedRedirects(
                 new[] { cyclicProcessor });
 
             var cyclicRedirect = processedRedirects

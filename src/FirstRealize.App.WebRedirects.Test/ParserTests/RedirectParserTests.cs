@@ -1,7 +1,6 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using NUnit.Framework;
-using System;
 
 namespace FirstRealize.App.WebRedirects.Test.ParserTests
 {
@@ -12,11 +11,7 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
         public void CanParseRedirect()
         {
             var redirectParser = new RedirectParser(
-                new Configuration
-                {
-                    DefaultOldUrl = TestData.DefaultHost,
-                    DefaultNewUrl = TestData.DefaultHost
-                },
+                TestData.TestData.DefaultConfiguration,
                 new UrlParser());
 
             var redirect = redirectParser.ParseRedirect(
