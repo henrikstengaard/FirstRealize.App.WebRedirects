@@ -1,4 +1,5 @@
-﻿using FirstRealize.App.WebRedirects.Core.Models;
+﻿using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -7,10 +8,10 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 {
     public class CyclicProcessor : IProcessor, IProcessorPreload
     {
-        private readonly Configuration _configuration;
+        private readonly IConfiguration _configuration;
         private readonly IDictionary<string, Redirect> _oldUrlIndex;
 
-        public CyclicProcessor(Configuration configuration)
+        public CyclicProcessor(IConfiguration configuration)
         {
             _configuration = configuration;
             _oldUrlIndex = new Dictionary<string, Redirect>();
@@ -23,7 +24,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 : url;
         }
 
-        public void Preload(IEnumerable<Redirect> redirects)
+        public void PreloadRedirects(IEnumerable<Redirect> redirects)
         {
             foreach(var redirect in redirects
                 .Where(r => r.IsValid && !r.IsIdentical)

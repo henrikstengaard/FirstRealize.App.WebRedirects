@@ -5,6 +5,6 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 {
     public interface IProcessorPreload
     {
-        void Preload(IEnumerable<Redirect> redirects);
+        void PreloadRedirects(IEnumerable<Redirect> redirects);
     }
 }

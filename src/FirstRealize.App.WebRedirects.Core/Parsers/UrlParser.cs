@@ -3,9 +3,12 @@ using System.Text.RegularExpressions;
 
 namespace FirstRealize.App.WebRedirects.Core.Parsers
 {
-    public class UrlParser
+    public class UrlParser : IUrlParser
     {
-        public Uri ParseUrl(string url, Uri host = null, bool stripFragment = false)
+        public Uri ParseUrl(
+            string url,
+            Uri host = null,
+            bool stripFragment = false)
         {
             if (string.IsNullOrWhiteSpace(url))
             {

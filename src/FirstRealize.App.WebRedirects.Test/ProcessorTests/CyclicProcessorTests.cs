@@ -1,4 +1,5 @@
-﻿using FirstRealize.App.WebRedirects.Core.Models;
+﻿using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Models;
 using FirstRealize.App.WebRedirects.Core.Processors;
 using NUnit.Framework;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 {
                     ForceHttp = true
                 });
-            cyclicProcessor.Preload(TestData.GetParsedRedirects());
+            cyclicProcessor.PreloadRedirects(TestData.GetParsedRedirects());
 
             var processedRedirects = TestData.GetProcessedRedirects(
                 new[] { cyclicProcessor });

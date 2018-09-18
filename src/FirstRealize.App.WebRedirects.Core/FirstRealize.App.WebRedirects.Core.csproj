@@ -46,15 +46,19 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Configuration\Configuration.cs" />
+    <Compile Include="Configuration\IConfiguration.cs" />
     <Compile Include="Engines\RedirectEngine.cs" />
     <Compile Include="Iis.cs" />
     <Compile Include="IisExpress.cs" />
-    <Compile Include="Models\Configuration.cs" />
     <Compile Include="Models\IResult.cs" />
     <Compile Include="Models\ProcessedRedirect.cs" />
     <Compile Include="Models\Redirect.cs" />
     <Compile Include="Models\Result.cs" />
     <Compile Include="Models\Url.cs" />
+    <Compile Include="Parsers\IRedirectParser.cs" />
+    <Compile Include="Parsers\IUrlParser.cs" />
+    <Compile Include="Parsers\RedirectParser.cs" />
     <Compile Include="Parsers\UrlParser.cs" />
     <Compile Include="Models\IProcessedRedirect.cs" />
     <Compile Include="Processors\CyclicProcessor.cs" />

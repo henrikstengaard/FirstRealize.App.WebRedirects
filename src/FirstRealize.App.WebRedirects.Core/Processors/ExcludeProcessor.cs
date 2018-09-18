@@ -2,16 +2,17 @@
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Models;
 
 namespace FirstRealize.App.WebRedirects.Core.Processors
 {
     public class ExcludeProcessor : IProcessor
     {
-        private readonly Configuration _configuration;
+        private readonly IConfiguration _configuration;
 
         public ExcludeProcessor(
-            Configuration configuration)
+            IConfiguration configuration)
         {
             _configuration = configuration;
         }

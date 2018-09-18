@@ -1,4 +1,5 @@
-﻿using FirstRealize.App.WebRedirects.Core.Models;
+﻿using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Models;
 using FirstRealize.App.WebRedirects.Core.Processors;
 using NUnit.Framework;
 using System.Linq;

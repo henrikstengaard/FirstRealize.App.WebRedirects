@@ -1,4 +1,5 @@
-﻿using FirstRealize.App.WebRedirects.Core.Models;
+﻿using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Models;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Readers;
 using System.Collections.Generic;
@@ -8,13 +9,15 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
 {
     public class RedirectEngine
     {
-        private readonly Configuration _configuration;
-        private readonly UrlParser _urlParser;
+        private readonly IConfiguration _configuration;
+        private readonly IUrlParser _urlParser;
 
-        public RedirectEngine(Configuration configuration)
+        public RedirectEngine(
+            IConfiguration configuration,
+            IUrlParser urlParser)
         {
             _configuration = configuration;
-            _urlParser = new UrlParser();
+            _urlParser = urlParser;
         }
 
         public void Run()
