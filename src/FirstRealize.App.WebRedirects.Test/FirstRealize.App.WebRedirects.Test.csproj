@@ -51,6 +51,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ParserTests\RedirectParserTests.cs" />
     <Compile Include="ProcessorTests\CyclicProcessorTests.cs" />
     <Compile Include="ProcessorTests\DuplicateProcessorTests.cs" />
     <Compile Include="ProcessorTests\ExcludeProcessorTests.cs" />
