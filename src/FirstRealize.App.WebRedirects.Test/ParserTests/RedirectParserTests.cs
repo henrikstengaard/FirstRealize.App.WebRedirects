@@ -1,4 +1,4 @@
-﻿using FirstRealize.App.WebRedirects.Core.Configuration;
+﻿using FirstRealize.App.WebRedirects.Core.Models;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using NUnit.Framework;
 
@@ -14,9 +14,20 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
                 TestData.TestData.DefaultConfiguration,
                 new UrlParser());
 
-            var redirect = redirectParser.ParseRedirect(
-                "/old-url/#anchor",
-                "/new-url/#anchor");
+            var redirect = new Redirect
+            {
+                OldUrl = new Url
+                {
+                    Raw = "/old-url/#anchor"
+                },
+                NewUrl = new Url
+                {
+                    Raw = "/new-url/#anchor"
+                }
+            };
+
+            redirectParser.ParseRedirect(
+                redirect);
 
             Assert.IsNotNull(redirect);
             Assert.AreEqual(

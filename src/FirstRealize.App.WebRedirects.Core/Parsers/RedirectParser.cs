@@ -16,29 +16,18 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
             _urlParser = urlParser;
         }
 
-        public Redirect ParseRedirect(
-            string oldUrl,
-            string newUrl)
+        public void ParseRedirect(
+            Redirect redirect)
         {
-            return new Redirect
-            {
-                OldUrl = new Url
-                {
-                    Raw = oldUrl,
-                    Parsed = _urlParser.ParseUrl(
-                        oldUrl,
-                        _configuration.DefaultOldUrl,
-                        true)
-                },
-                NewUrl = new Url
-                {
-                    Raw = newUrl,
-                    Parsed = _urlParser.ParseUrl(
-                        newUrl,
-                        _configuration.DefaultNewUrl,
-                        false)
-                }
-            };
+            redirect.OldUrl.Parsed = _urlParser.ParseUrl(
+                redirect.OldUrl.Raw,
+                _configuration.DefaultOldUrl,
+                true);
+
+            redirect.NewUrl.Parsed = _urlParser.ParseUrl(
+                redirect.NewUrl.Raw,
+                _configuration.DefaultNewUrl,
+                false);
         }
     }
 }

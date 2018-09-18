@@ -2,7 +2,6 @@
 using FirstRealize.App.WebRedirects.Core.Models;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Processors;
-using FirstRealize.App.WebRedirects.Test.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,31 +21,55 @@ namespace FirstRealize.App.WebRedirects.Test.TestData
                 ForceHttp = true
             };
 
-        public static IEnumerable<RawRedirect> GetRawRedirects()
+        public static IEnumerable<Redirect> GetRedirects()
         {
-            return new List<RawRedirect>
+            return new List<Redirect>
             {
-                new RawRedirect
+                new Redirect
                 {
-                    OldUrl = "/example/path",
-                    NewUrl = "/new-url"
+                    OldUrl = new Url
+                    {
+                        Raw = "/example/path"
+                    },
+                    NewUrl = new Url
+                    {
+                        Raw = "/new-url"
+                    }
                 },
-                new RawRedirect
+                new Redirect
                 {
-                    OldUrl = "/new-url",
-                    NewUrl = "/another/path"
+                    OldUrl = new Url
+                    {
+                        Raw = "/new-url"
+                    },
+                    NewUrl = new Url
+                    {
+                        Raw = "/another/path"
+                    }
                 },
                 // causes duplicate redirect
-                new RawRedirect
+                new Redirect
                 {
-                    OldUrl = "/new-url",
-                    NewUrl = "/redirect/somwhere/else"
+                    OldUrl = new Url
+                    {
+                        Raw = "/new-url"
+                    },
+                    NewUrl = new Url
+                    {
+                        Raw = "/redirect/somwhere/else"
+                    }
                 },
                 // causes cyclic redirect for redirect from old url '/example/path' to '/new-url'
-                new RawRedirect
+                new Redirect
                 {
-                    OldUrl = "/another/path",
-                    NewUrl = "/example/path"
+                    OldUrl = new Url
+                    {
+                        Raw = "/another/path"
+                    },
+                    NewUrl = new Url
+                    {
+                        Raw = "/example/path"
+                    }
                 }
             };
         }
@@ -59,12 +82,12 @@ namespace FirstRealize.App.WebRedirects.Test.TestData
 
             var parsedRedirects = new List<Redirect>();
 
-            foreach (var rawRedirect in GetRawRedirects())
+            foreach (var redirect in GetRedirects())
             {
-                parsedRedirects.Add(
-                    redirectParser.ParseRedirect(
-                        rawRedirect.OldUrl,
-                        rawRedirect.NewUrl));
+                redirectParser.ParseRedirect(
+                    redirect);
+
+                parsedRedirects.Add(redirect);
             }
 
             return parsedRedirects;
