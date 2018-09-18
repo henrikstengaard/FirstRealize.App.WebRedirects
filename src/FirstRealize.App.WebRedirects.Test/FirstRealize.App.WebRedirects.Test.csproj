@@ -51,7 +51,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Models\RawRedirect.cs" />
+    <Compile Include="ModelTests\RedirectTests.cs" />
     <Compile Include="ParserTests\RedirectParserTests.cs" />
     <Compile Include="ProcessorTests\CyclicProcessorTests.cs" />
     <Compile Include="ProcessorTests\DuplicateProcessorTests.cs" />

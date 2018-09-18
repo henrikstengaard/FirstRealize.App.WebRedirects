@@ -1,6 +1,8 @@
-﻿namespace FirstRealize.App.WebRedirects.Core.Models
+﻿using System;
+
+namespace FirstRealize.App.WebRedirects.Core.Models
 {
-    public class Redirect
+    public class Redirect : IComparable<Redirect>
     {
         public Url OldUrl { get; set; }
         public Url NewUrl { get; set; }
@@ -23,6 +25,15 @@
             }
         }
 
+        public int CompareTo(Redirect other)
+        {
+            var oldUrlCompared = other.OldUrl.Parsed.AbsoluteUri.CompareTo(
+                OldUrl.Parsed.AbsoluteUri);
 
+            return oldUrlCompared != 0
+                ? oldUrlCompared
+                : other.NewUrl.Parsed.AbsoluteUri.CompareTo(
+                    NewUrl.Parsed.AbsoluteUri);
+        }
     }
 }
