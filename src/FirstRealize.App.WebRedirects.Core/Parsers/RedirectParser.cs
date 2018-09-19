@@ -3,7 +3,7 @@ using FirstRealize.App.WebRedirects.Core.Models;
 
 namespace FirstRealize.App.WebRedirects.Core.Parsers
 {
-    public class RedirectParser
+    public class RedirectParser : IRedirectParser
     {
         private readonly IConfiguration _configuration;
         private readonly IUrlParser _urlParser;
