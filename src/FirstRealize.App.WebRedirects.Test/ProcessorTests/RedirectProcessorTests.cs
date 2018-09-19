@@ -16,7 +16,9 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         [Test]
         public void NoCyclicRedirectsWithoutPreload()
         {
-            var processedRedirects = TestData.TestData.GetProcessedRedirects(
+            // process redirects
+            var processedRedirects = 
+                TestData.TestData.GetProcessedRedirects(
                 new[]
                 { new RedirectProcessor(
                     TestData.TestData.DefaultConfiguration,
@@ -24,6 +26,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                     new UrlParser())
                 });
 
+            // verify no cyclic redirects are detected
             var cyclicRedirects = processedRedirects
                 .Where(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.Cyclic)))
                 .ToList();
@@ -31,21 +34,30 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         }
 
         [Test]
-        public void CanProcessCyclicRedirects()
+        public void DetectCyclicRedirect()
         {
-            var cyclicProcessor = new RedirectProcessor(
+            // create redirect processor
+            var redirectProcessor = new RedirectProcessor(
                 new Configuration
                 {
                     ForceHttp = true
                 },
                 new ControlledHttpClient(),
                 new UrlParser());
-            cyclicProcessor.PreloadRedirects(
-                TestData.TestData.GetParsedRedirects());
 
+            // parsed redirects
+            var redirects = TestData.TestData.GetParsedRedirects();
+
+            // preload redirects
+            redirectProcessor.PreloadRedirects(
+                redirects);
+
+            // process redirects using redirect processor
             var processedRedirects = TestData.TestData.GetProcessedRedirects(
-                new[] { cyclicProcessor });
+                redirects,
+                new[] { redirectProcessor });
 
+            // verify cyclic redirect is detected
             var cyclicRedirect = processedRedirects
                 .FirstOrDefault(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.Cyclic)));
             Assert.IsNotNull(cyclicRedirect);
@@ -58,11 +70,16 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         }
 
         [Test]
-        public void DetectOldUrlsWithOkStatusCode()
+        public void DetectOldUrlWithResponse()
         {
+            // create controlled http client
             var controlledHttpClient = new ControlledHttpClient();
 
-            var parsedRedirects = TestData.TestData.GetParsedRedirects();
+            // parsed redirects
+            var parsedRedirects = 
+                TestData.TestData.GetParsedRedirects();
+
+            // add moved response for parsed redirects
             foreach (var redirect in parsedRedirects)
             {
                 controlledHttpClient.Responses[
@@ -73,12 +90,14 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                     };
             }
 
+            // override redirect old url with ok response
             controlledHttpClient.Responses[
                 "http://www.test.local/new-url"] = new HttpResponse
                 {
                     StatusCode = HttpStatusCode.OK
                 };
 
+            // create redirect processor
             var redirectProcessor = new RedirectProcessor(
                 new Configuration
                 {
@@ -87,13 +106,16 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 controlledHttpClient,
                 new UrlParser());
 
+            // preload redirects
             redirectProcessor.PreloadRedirects(
                 parsedRedirects);
 
+            // process redirects
             var processedRedirects = TestData.TestData.GetProcessedRedirects(
                 parsedRedirects,
                 new[] { redirectProcessor });
 
+            // verify redirect processor detects overridden url with response
             Assert.IsTrue(
                 redirectProcessor.UrlsWithResponse.ContainsKey(
                 "http://www.test.local/new-url")); 
