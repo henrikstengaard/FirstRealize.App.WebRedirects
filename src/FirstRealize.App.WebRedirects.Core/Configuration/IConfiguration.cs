@@ -5,11 +5,12 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
 {
     public interface IConfiguration
     {
-        IEnumerable<string> RedirectCsvFiles { get; set; }
-        Uri DefaultOldUrl { get; set; }
-        Uri DefaultNewUrl { get; set; }
-        IEnumerable<string> OldUrlExcludePatterns { get; set; }
-        IEnumerable<string> NewUrlExcludePatterns { get; set; }
-        bool ForceHttp { get; set; }
+        IEnumerable<string> RedirectCsvFiles { get; }
+        Uri DefaultOldUrl { get; }
+        Uri DefaultNewUrl { get; }
+        IEnumerable<string> OldUrlExcludePatterns { get; }
+        IEnumerable<string> NewUrlExcludePatterns { get; }
+        bool ForceHttp { get; }
+        int MaxRedirectCount { get; }
     }
 }

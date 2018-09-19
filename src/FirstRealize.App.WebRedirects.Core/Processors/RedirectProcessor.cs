@@ -172,8 +172,8 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 redirect.NewUrl.Parsed != null &&
                 redirectCount < 20);
 
-            // add optimized redirect result, if redirect count is higher than 1
-            if (redirectCount > 1)
+            // add optimized redirect result, if redirect count is higher than 1 and less than max redirect count
+            if (redirectCount > 1 && redirectCount < _configuration.MaxRedirectCount)
             {
                 var optimizedRedirectResult = new Result
                 {
@@ -187,6 +187,22 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     optimizedRedirectResult);
                 _results.Add(
                     optimizedRedirectResult);
+            }
+            else if (redirectCount >= _configuration.MaxRedirectCount)
+            {
+                var tooManyRedirectsResult = new Result
+                {
+                    Type = ResultTypes.TooManyRedirects,
+                    Message = string.Format(
+                        "Too many redirect from url '{0}' exceeding max redirect count of {1}",
+                        url,
+                        _configuration.MaxRedirectCount),
+                    Url = url
+                };
+                processedRedirect.Results.Add(
+                    tooManyRedirectsResult);
+                _results.Add(
+                    tooManyRedirectsResult);
             }
 
             if (isCyclicRedirect)

@@ -14,12 +14,14 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
         public IEnumerable<string> OldUrlExcludePatterns { get; set; }
         public IEnumerable<string> NewUrlExcludePatterns { get; set; }
         public bool ForceHttp { get; set; }
+        public int MaxRedirectCount { get; set; }
 
         public Configuration()
         {
             RedirectCsvFiles = new List<string>();
             OldUrlExcludePatterns = new List<string>();
             NewUrlExcludePatterns = new List<string>();
+            MaxRedirectCount = 20;
         }
     }
 }

@@ -129,7 +129,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         [Test]
         public void DetectOptimizedRedirect()
         {
-            var configuration = 
+            var configuration =
                 TestData.TestData.DefaultConfiguration;
             var urlParser = new UrlParser();
             var redirectParser = new RedirectParser(
@@ -181,8 +181,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 redirects,
                 new[] { redirectProcessor });
 
-            // verify redirect is optimized
-            var optimizedRedirects = 
+            // verify processed redirects has optimized redirect result
+            var optimizedRedirects =
                 processedRedirects
                 .Where(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.OptimizedRedirect)))
                 .ToList();
@@ -194,6 +194,67 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 .FirstOrDefault(r => r.Type.Equals(ResultTypes.OptimizedRedirect) &&
                 r.Url.Parsed.AbsoluteUri.Equals("http://www.test.local/optimize-url3"));
             Assert.IsNotNull(optimizedRedirectResult);
+        }
+
+        [Test]
+        public void DetectTooManyRedirects()
+        {
+            var configuration =
+                TestData.TestData.DefaultConfiguration;
+            var urlParser = new UrlParser();
+            var redirectParser = new RedirectParser(
+                configuration,
+                urlParser);
+
+            // create redirect processor
+            var redirectProcessor = new RedirectProcessor(
+                configuration,
+                new ControlledHttpClient(),
+                urlParser);
+
+            // add redirects
+            var redirects = new List<Redirect>();
+            for (var i = 1; i <= configuration.MaxRedirectCount; i++)
+            {
+                var redirect = new Redirect
+                {
+                    OldUrl = new Url
+                    {
+                        Raw = string.Format("/url{0}", i)
+                    },
+                    NewUrl = new Url
+                    {
+                        Raw = string.Format("/url{0}", i + 1)
+                    }
+                };
+                redirectParser.ParseRedirect(redirect);
+                redirects.Add(redirect);
+            }
+
+            // preload redirects
+            redirectProcessor.PreloadRedirects(
+                redirects);
+
+            // process redirects using redirect processor
+            var processedRedirects = TestData.TestData.GetProcessedRedirects(
+                redirects,
+                new[] { redirectProcessor });
+
+            // verify processed redirects has optimized redirect result
+            var redirectWithTooManyRedirects =
+                processedRedirects
+                .Where(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.TooManyRedirects)))
+                .ToList();
+            Assert.AreEqual(1, redirectWithTooManyRedirects.Count);
+            var redirectWithTooManyRedirect = redirectWithTooManyRedirects
+                .FirstOrDefault();
+            Assert.IsNotNull(redirectWithTooManyRedirect);
+            Assert.AreEqual(
+                "http://www.test.local/url1",
+                redirectWithTooManyRedirect.Redirect.OldUrl.Parsed.AbsoluteUri);
+            Assert.AreEqual(
+                "http://www.test.local/url2",
+                redirectWithTooManyRedirect.Redirect.NewUrl.Parsed.AbsoluteUri);
         }
     }
 }

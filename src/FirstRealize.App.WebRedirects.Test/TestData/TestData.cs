@@ -31,7 +31,8 @@ namespace FirstRealize.App.WebRedirects.Test.TestData
             {
                 DefaultOldUrl = DefaultHost,
                 DefaultNewUrl = DefaultHost,
-                ForceHttp = true
+                ForceHttp = true,
+                MaxRedirectCount = 10
             };
 
         public static IEnumerable<Redirect> GetRedirects()
