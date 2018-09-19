@@ -11,7 +11,9 @@ namespace FirstRealize.App.WebRedirects.Core.Models
         {
             get
             {
-                return OldUrl.IsValid &&
+                return OldUrl != null &&
+                    OldUrl.IsValid &&
+                    NewUrl != null &&
                     NewUrl.IsValid;
             }
         }
