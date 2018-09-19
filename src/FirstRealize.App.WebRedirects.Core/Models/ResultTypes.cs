@@ -3,7 +3,8 @@
     public static class ResultTypes
     {
         public static string Excluded = "Excluded";
-        public static string Duplicated = "Duplicated";
+        public static string DuplicateOfFirst = "DuplicateOfFirst";
+        public static string DuplicateOfLast = "DuplicateOfLast";
         public static string Cyclic = "Cyclic";
     }
 }
