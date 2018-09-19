@@ -54,7 +54,7 @@
     <Compile Include="Clients\ControlledHttpClient.cs" />
     <Compile Include="ModelTests\RedirectTests.cs" />
     <Compile Include="ParserTests\RedirectParserTests.cs" />
-    <Compile Include="ProcessorTests\CyclicProcessorTests.cs" />
+    <Compile Include="ProcessorTests\RedirectProcessorTests.cs" />
     <Compile Include="ProcessorTests\DuplicateProcessorTests.cs" />
     <Compile Include="ProcessorTests\ExcludeProcessorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

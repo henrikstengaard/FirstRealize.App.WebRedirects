@@ -33,7 +33,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             {
                 new ExcludeProcessor(_configuration),
                 new DuplicateProcessor(),
-                new CyclicProcessor(
+                new RedirectProcessor(
                     _configuration,
                     httpClient,
                     _urlParser)

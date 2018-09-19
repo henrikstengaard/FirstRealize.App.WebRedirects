@@ -10,16 +10,15 @@ using System.Net;
 
 namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
 {
-    // rename to redirect processor tests
     [TestFixture]
-    public class CyclicProcessorTests
+    public class RedirectProcessorTests
     {
         [Test]
-        public void CyclicProcessorWithoutPreloadReturnsNone()
+        public void NoCyclicRedirectsWithoutPreload()
         {
             var processedRedirects = TestData.TestData.GetProcessedRedirects(
                 new[]
-                { new CyclicProcessor(
+                { new RedirectProcessor(
                     TestData.TestData.DefaultConfiguration,
                     new ControlledHttpClient(),
                     new UrlParser())
@@ -34,7 +33,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         [Test]
         public void CanProcessCyclicRedirects()
         {
-            var cyclicProcessor = new CyclicProcessor(
+            var cyclicProcessor = new RedirectProcessor(
                 new Configuration
                 {
                     ForceHttp = true
@@ -80,22 +79,23 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                     StatusCode = HttpStatusCode.OK
                 };
 
-            var cyclicProcessor = new CyclicProcessor(
+            var redirectProcessor = new RedirectProcessor(
                 new Configuration
                 {
                     ForceHttp = true
                 },
                 controlledHttpClient,
                 new UrlParser());
-            cyclicProcessor.PreloadRedirects(
+
+            redirectProcessor.PreloadRedirects(
                 parsedRedirects);
 
             var processedRedirects = TestData.TestData.GetProcessedRedirects(
                 parsedRedirects,
-                new[] { cyclicProcessor });
+                new[] { redirectProcessor });
 
             Assert.IsTrue(
-                cyclicProcessor.OldUrlsWithOkStatusCode.ContainsKey(
+                redirectProcessor.UrlsWithResponse.ContainsKey(
                 "http://www.test.local/new-url")); 
         }
     }
