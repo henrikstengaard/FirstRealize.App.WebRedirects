@@ -4,5 +4,6 @@
     {
         string Type { get; }
         string Message { get; }
+        Url Url { get; }
     }
 }

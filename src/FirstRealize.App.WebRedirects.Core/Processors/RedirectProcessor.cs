@@ -171,18 +171,21 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 redirect.NewUrl.Parsed != null &&
                 redirectCount < 20);
 
+            // add optimized redirect result, if redirect count is higher than 1
             if (redirectCount > 1)
-
             {
-                //processedRedirect.Results.Add(
-                //    new Result
-                //    {
-                //        Type = "Optimized",
-                //        Message =
-                //    string.Format(
-                //        "Last redirect to url '{0}'",
-                //        url)
-                //    });
+                var optimizedRedirectResult = new Result
+                {
+                    Type = ResultTypes.OptimizedRedirect,
+                    Message =string.Format(
+                        "Optimized redirect to url '{0}'",
+                        url),
+                    Url = url
+                };
+                processedRedirect.Results.Add(
+                    optimizedRedirectResult);
+                _results.Add(
+                    optimizedRedirectResult);
             }
 
             if (isCyclicRedirect)

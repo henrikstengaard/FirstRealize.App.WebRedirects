@@ -5,6 +5,7 @@ using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Processors;
 using FirstRealize.App.WebRedirects.Test.Clients;
 using NUnit.Framework;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
@@ -17,7 +18,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         public void NoCyclicRedirectsWithoutPreload()
         {
             // process redirects
-            var processedRedirects = 
+            var processedRedirects =
                 TestData.TestData.GetProcessedRedirects(
                 new[]
                 { new RedirectProcessor(
@@ -76,7 +77,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             var controlledHttpClient = new ControlledHttpClient();
 
             // parsed redirects
-            var parsedRedirects = 
+            var parsedRedirects =
                 TestData.TestData.GetParsedRedirects();
 
             // add moved response for parsed redirects
@@ -121,7 +122,77 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             Assert.IsNotNull(urlWithResponse);
             Assert.AreEqual(
                 "http://www.test.local/new-url",
-                urlWithResponse.Url.Parsed.AbsoluteUri); 
+                urlWithResponse.Url.Parsed.AbsoluteUri);
+        }
+
+        [Test]
+        public void DetectOptimizedRedirect()
+        {
+            var configuration = 
+                TestData.TestData.DefaultConfiguration;
+            var urlParser = new UrlParser();
+            var redirectParser = new RedirectParser(
+                configuration,
+                urlParser);
+
+            // create redirect processor
+            var redirectProcessor = new RedirectProcessor(
+                configuration,
+                new ControlledHttpClient(),
+                urlParser);
+
+            // add redirects for optimizing
+            var redirect1 = new Redirect
+            {
+                OldUrl = new Url
+                {
+                    Raw = "/optimize-url1"
+                },
+                NewUrl = new Url
+                {
+                    Raw = "/optimize-url2"
+                }
+            };
+            var redirect2 = new Redirect
+            {
+                OldUrl = new Url
+                {
+                    Raw = "/optimize-url2"
+                },
+                NewUrl = new Url
+                {
+                    Raw = "/optimize-url3"
+                }
+            };
+            var redirects = new List<Redirect>();
+            foreach (var redirect in new[] { redirect1, redirect2 })
+            {
+                redirectParser.ParseRedirect(redirect);
+                redirects.Add(redirect);
+            }
+
+            // preload redirects
+            redirectProcessor.PreloadRedirects(
+                redirects);
+
+            // process redirects using redirect processor
+            var processedRedirects = TestData.TestData.GetProcessedRedirects(
+                redirects,
+                new[] { redirectProcessor });
+
+            // verify redirect is optimized
+            var optimizedRedirects = 
+                processedRedirects
+                .Where(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.OptimizedRedirect)))
+                .ToList();
+            Assert.AreNotEqual(0, optimizedRedirects.Count);
+            var optimizedRedirect = optimizedRedirects
+                .FirstOrDefault(or => or.Redirect.OldUrl.Parsed.AbsoluteUri.Equals("http://www.test.local/optimize-url1"));
+            Assert.IsNotNull(optimizedRedirect);
+            var optimizedRedirectResult = optimizedRedirect.Results
+                .FirstOrDefault(r => r.Type.Equals(ResultTypes.OptimizedRedirect) &&
+                r.Url.Parsed.AbsoluteUri.Equals("http://www.test.local/optimize-url3"));
+            Assert.IsNotNull(optimizedRedirectResult);
         }
     }
 }
