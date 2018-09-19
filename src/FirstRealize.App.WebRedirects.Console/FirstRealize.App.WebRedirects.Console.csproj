@@ -52,6 +52,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FirstRealize.App.WebRedirects.Core\FirstRealize.App.WebRedirects.Core.csproj">
+      <Project>{7CDBB0E2-CD8E-49A5-AF73-59E14A3028D4}</Project>
+      <Name>FirstRealize.App.WebRedirects.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

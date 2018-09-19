@@ -1,4 +1,9 @@
-﻿using System.IO;
+﻿using FirstRealize.App.WebRedirects.Core.Clients;
+using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Engines;
+using FirstRealize.App.WebRedirects.Core.Parsers;
+using FirstRealize.App.WebRedirects.Core.Readers;
+using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -25,8 +30,8 @@ namespace FirstRealize.App.WebRedirects.Console
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(configurationFile) ||
-                !File.Exists(configurationFile))
+            // write error, if configuration file argument is not defined
+            if (string.IsNullOrWhiteSpace(configurationFile))
             {
                 System.Console.WriteLine(
                     "ERROR: Configuration file argument is not defined");
@@ -34,7 +39,8 @@ namespace FirstRealize.App.WebRedirects.Console
                 return 1;
             }
 
-            if (File.Exists(configurationFile))
+            // write error, if configuration file doesn't exist
+            if (!File.Exists(configurationFile))
             {
                 System.Console.WriteLine(
                     "ERROR: Configuration file '{0}' doesn't exist",
@@ -43,11 +49,31 @@ namespace FirstRealize.App.WebRedirects.Console
                 return 1;
             }
 
-            // create redirect engine with path to configuration file
-            // - load configuration
-            // - load redirect csv files
-            // - process redirects
-            // - write process report, if argument is defined
+            // load configuration file
+            IConfiguration configuration;
+            using (var configurationJsonReader = new ConfigurationJsonReader())
+            {
+                configuration = configurationJsonReader
+                    .ReadConfiguationFile(configurationFile);
+            }
+
+            // create redirect engine
+            var urlParser = new UrlParser();
+            var redirectParser = new RedirectParser(
+                configuration,
+                urlParser);
+            var redirectEngine = new RedirectEngine(
+                configuration,
+                urlParser,
+                redirectParser,
+                new HttpClient()
+                );
+
+            // run redirect engine
+            redirectEngine.Run();
+
+            // write processed redirects report
+
 
             return 0;
         }

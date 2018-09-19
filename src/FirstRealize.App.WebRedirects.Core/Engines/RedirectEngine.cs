@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace FirstRealize.App.WebRedirects.Core.Engines
 {
-    public class RedirectEngine
+    public class RedirectEngine : IRedirectEngine
     {
         private readonly IConfiguration _configuration;
         private readonly IUrlParser _urlParser;

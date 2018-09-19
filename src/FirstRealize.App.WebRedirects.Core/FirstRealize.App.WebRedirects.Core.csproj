@@ -54,6 +54,7 @@
     <Compile Include="Clients\IHttpClient.cs" />
     <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="Configuration\IConfiguration.cs" />
+    <Compile Include="Engines\IRedirectEngine.cs" />
     <Compile Include="Engines\RedirectEngine.cs" />
     <Compile Include="Iis.cs" />
     <Compile Include="IisExpress.cs" />
