@@ -4,8 +4,10 @@ using System.Collections.Generic;
 
 namespace FirstRealize.App.WebRedirects.Core.Engines
 {
-    public interface IRedirectEngine
+    public interface IRedirectProcessingResult
     {
-        IRedirectProcessingResult Run();
+        IEnumerable<Redirect> Redirects { get; }
+        IEnumerable<IProcessedRedirect> ProcessedRedirects { get; }
+        IEnumerable<IResult> Results { get; }
     }
 }

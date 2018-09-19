@@ -55,9 +55,12 @@
     <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="Configuration\IConfiguration.cs" />
     <Compile Include="Engines\IRedirectEngine.cs" />
+    <Compile Include="Engines\IRedirectProcessingResult.cs" />
     <Compile Include="Engines\RedirectEngine.cs" />
+    <Compile Include="Engines\RedirectProcessingResult.cs" />
     <Compile Include="Iis.cs" />
     <Compile Include="IisExpress.cs" />
+    <Compile Include="Models\Reports\OldUrlDomainRecord.cs" />
     <Compile Include="Models\Results\IResult.cs" />
     <Compile Include="Models\ProcessedRedirect.cs" />
     <Compile Include="Models\Redirect.cs" />
@@ -78,6 +81,9 @@
     <Compile Include="Readers\ConfigurationJsonReader.cs" />
     <Compile Include="Readers\RedirectCsvReader.cs" />
     <Compile Include="Configuration\UriJsonConverter.cs" />
+    <Compile Include="Reports\IReport.cs" />
+    <Compile Include="Reports\OldUrlDomainReport.cs" />
+    <Compile Include="Writers\ReportCsvWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

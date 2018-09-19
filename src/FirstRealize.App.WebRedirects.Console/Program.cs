@@ -72,7 +72,7 @@ namespace FirstRealize.App.WebRedirects.Console
             // run redirect engine
             redirectEngine.Run();
 
-            // write processed redirects report
+            // write reports
 
 
             return 0;

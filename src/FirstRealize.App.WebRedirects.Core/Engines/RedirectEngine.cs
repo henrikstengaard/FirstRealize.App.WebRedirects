@@ -19,7 +19,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
         private readonly IList<IProcessor> _processors;
 
         private List<Redirect> _redirects;
-        private List<ProcessedRedirect> _processedRedirects;
+        private List<IProcessedRedirect> _processedRedirects;
         private List<IResult> _results;
 
         public RedirectEngine(
@@ -43,41 +43,24 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             };
 
             _redirects = new List<Redirect>();
-            _processedRedirects = new List<ProcessedRedirect>();
+            _processedRedirects = new List<IProcessedRedirect>();
             _results = new List<IResult>();
         }
 
-        public IEnumerable<Redirect> Redirects
-        {
-            get
-            {
-                return _redirects;
-            }
-        }
-
-        public IEnumerable<IProcessedRedirect> ProcessedRedirects
-        {
-            get
-            {
-                return _processedRedirects;
-            }
-        }
-
-        public IEnumerable<IResult> Results
-        {
-            get
-            {
-                return _results;
-            }
-        }
-
-        public void Run()
+        public IRedirectProcessingResult Run()
         {
             LoadRedirectsFromCsvFiles();
             ParseRedirects();
             PreloadRedirects();
             ProcessRedirects();
             CollectResults();
+
+            return new RedirectProcessingResult
+            {
+                Redirects = _redirects,
+                ProcessedRedirects = _processedRedirects,
+                Results = _results
+            };
         }
 
         private void LoadRedirectsFromCsvFiles()
@@ -117,7 +100,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
 
         private void ProcessRedirects()
         {
-            _processedRedirects = new List<ProcessedRedirect>();
+            _processedRedirects = new List<IProcessedRedirect>();
 
             foreach (var redirect in _redirects.ToList())
             {

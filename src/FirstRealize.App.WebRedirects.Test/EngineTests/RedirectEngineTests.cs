@@ -36,10 +36,11 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
                 new ControlledHttpClient());
 
             // run redirect engine
-            redirectEngine.Run();
+            var redirectProcessingResult = 
+                redirectEngine.Run();
 
             // verify redirect engine has processed redirects with results
-            var processedRedirects = redirectEngine
+            var processedRedirects = redirectProcessingResult
                 .ProcessedRedirects
                 .ToList();
             Assert.AreNotEqual(0, processedRedirects.Count);
@@ -54,7 +55,7 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
                 .Any(r => r.Type.Equals(ResultTypes.CyclicRedirect))));
 
             // verify redirect engine has results
-            var results = redirectEngine
+            var results = redirectProcessingResult
                 .Results
                 .ToList();
             Assert.AreNotEqual(0, results
