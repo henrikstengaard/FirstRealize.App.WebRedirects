@@ -52,6 +52,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Clients\ControlledHttpClient.cs" />
+    <Compile Include="EngineTests\RedirectEngineTests.cs" />
     <Compile Include="ModelTests\RedirectTests.cs" />
     <Compile Include="ParserTests\RedirectParserTests.cs" />
     <Compile Include="ProcessorTests\RedirectProcessorTests.cs" />
@@ -73,6 +74,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="TestData\configuration.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="TestData\redirects.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

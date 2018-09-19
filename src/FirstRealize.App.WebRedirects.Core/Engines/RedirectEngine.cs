@@ -18,6 +18,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
         private readonly IList<IProcessor> _processors;
 
         private List<Redirect> _redirects;
+        private List<ProcessedRedirect> _processedRedirects;
 
         public RedirectEngine(
             IConfiguration configuration,
@@ -40,6 +41,23 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             };
 
             _redirects = new List<Redirect>();
+            _processedRedirects = new List<ProcessedRedirect>();
+        }
+
+        public IEnumerable<Redirect> Redirects
+        {
+            get
+            {
+                return _redirects;
+            }
+        }
+
+        public IEnumerable<IProcessedRedirect> ProcessedRedirects
+        {
+            get
+            {
+                return _processedRedirects;
+            }
         }
 
         public void Run()
@@ -71,9 +89,11 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             {
                 _redirectParser.ParseRedirect(redirect);
             }
+
+            _redirects.Sort();
         }
 
-        public void PreloadRedirects()
+        private void PreloadRedirects()
         {
             foreach (var processor in _processors
                 .OfType<IProcessorPreload>()
@@ -83,26 +103,30 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             }
         }
 
-        public void ProcessRedirects()
+        private void ProcessRedirects()
         {
-            //var processedRedirect = new ProcessedRedirect
-            //{
-            //    Redirect = redirect
-            //};
+            _processedRedirects = new List<ProcessedRedirect>();
 
-            //if (!redirect.IsValid ||
-            //    redirect.IsIdentical)
-            //{
-            //    return processedRedirect;
-            //}
+            foreach (var redirect in _redirects.ToList())
+            {
+                var processedRedirect = new ProcessedRedirect
+                {
+                    Redirect = redirect
+                };
 
-            //foreach (var processor in _processors)
-            //{
-            //    processor.Process(processedRedirect);
-            //}
+                _processedRedirects.Add(processedRedirect);
 
-            //return processedRedirect;
+                if (!redirect.IsValid ||
+                    redirect.IsIdentical)
+                {
+                    continue;
+                }
+
+                foreach (var processor in _processors)
+                {
+                    processor.Process(processedRedirect);
+                }
+            }
         }
-
     }
 }

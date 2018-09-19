@@ -1,0 +1,7 @@
+﻿{
+  "redirectCsvFiles": [
+    "redirects.csv"
+  ],
+  "defaultOldUrl": "http://www.test.local",
+  "defaultNewUrl": "http://www.test.local"
+}

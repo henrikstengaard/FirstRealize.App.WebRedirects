@@ -1,3 +1,5 @@
 ﻿"OldUrl";"NewUrl"
-"/some/path";"/new/path"
-"/another/path";"/somewhere/else"
+"/example/path";"/new-url"
+"/new-url";"/another/path"
+"/new-url";"/redirect/somwhere/else"
+"/another/path";"/example/path"

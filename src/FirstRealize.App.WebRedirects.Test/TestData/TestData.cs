@@ -4,12 +4,25 @@ using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Processors;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace FirstRealize.App.WebRedirects.Test.TestData
 {
     class TestData
     {
+        public static string CurrentDirectory
+        {
+            get
+            {
+                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                return Path.GetDirectoryName(path);
+            }
+        }
+
         public static Uri DefaultHost =
             new Uri("http://www.test.local");
 

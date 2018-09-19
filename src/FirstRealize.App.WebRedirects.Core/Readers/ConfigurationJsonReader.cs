@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace FirstRealize.App.WebRedirects.Core.Readers
 {
@@ -13,17 +14,43 @@ namespace FirstRealize.App.WebRedirects.Core.Readers
         }
 
         public IConfiguration ReadConfiguationFile(
-            string path)
+            string configurationFile)
         {
-            return ReadConfiguationJson(
-                File.ReadAllText(path));
-        }
-
-        public IConfiguration ReadConfiguationJson(
-            string json)
-        {
-            return JsonConvert.DeserializeObject<Configuration.Configuration>(
+            var json = File.ReadAllText(configurationFile);
+            var configuration = JsonConvert
+                .DeserializeObject<Configuration.Configuration>(
                 json);
+
+            var configurationDir = 
+                Path.GetDirectoryName(configurationFile);
+
+            var redirectCsvFiles = configuration.RedirectCsvFiles
+                .ToList();
+
+            for (int i = 0; i < redirectCsvFiles.Count; i++)
+            {
+                // absolute path
+                if (Path.IsPathRooted(redirectCsvFiles[i]))
+                {
+                    continue;
+                }
+
+                // make relative path absolute
+                redirectCsvFiles[i] = Path.Combine(configurationDir, redirectCsvFiles[i]);
+
+                // throw file not found exception, if file doesn't exist
+                if (!File.Exists(redirectCsvFiles[i]))
+                {
+                    throw new FileNotFoundException(
+                        string.Format(
+                            "Redirect csv file '{0}' is not found",
+                            redirectCsvFiles[i]));
+                }
+            }
+
+            configuration.RedirectCsvFiles = redirectCsvFiles;
+
+            return configuration;
         }
     }
 }

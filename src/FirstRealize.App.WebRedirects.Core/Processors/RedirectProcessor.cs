@@ -64,8 +64,10 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             var urlsVisited = new List<string>();
             var urlsIndex = new HashSet<string>();
 
-            urlsVisited.Add(FormatUrl(
-                processedRedirect.Redirect.OldUrl.Parsed.AbsoluteUri));
+            var oldUrl = FormatUrl(
+                processedRedirect.Redirect.OldUrl.Parsed.AbsoluteUri);
+            urlsVisited.Add(oldUrl);
+            urlsIndex.Add(oldUrl);
 
             Redirect redirect = processedRedirect.Redirect;
 
