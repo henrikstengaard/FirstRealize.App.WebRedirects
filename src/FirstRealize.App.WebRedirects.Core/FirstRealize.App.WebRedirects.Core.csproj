@@ -77,7 +77,6 @@
     <Compile Include="Readers\ConfigurationJsonReader.cs" />
     <Compile Include="Readers\RedirectCsvReader.cs" />
     <Compile Include="Configuration\UriJsonConverter.cs" />
-    <Compile Include="Validators\UrlValidator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
