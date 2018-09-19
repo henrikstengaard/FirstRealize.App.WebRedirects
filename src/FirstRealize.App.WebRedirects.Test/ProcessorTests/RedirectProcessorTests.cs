@@ -1,6 +1,7 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Clients;
 using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Models;
+using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Processors;
 using FirstRealize.App.WebRedirects.Test.Clients;

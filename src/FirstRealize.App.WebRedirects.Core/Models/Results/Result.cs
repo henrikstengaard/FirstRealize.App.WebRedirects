@@ -1,4 +1,4 @@
-﻿namespace FirstRealize.App.WebRedirects.Core.Models
+﻿namespace FirstRealize.App.WebRedirects.Core.Models.Results
 {
     public class Result : IResult
     {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using FirstRealize.App.WebRedirects.Core.Models.Results;
+using System.Collections.Generic;
 
 namespace FirstRealize.App.WebRedirects.Core.Models
 {

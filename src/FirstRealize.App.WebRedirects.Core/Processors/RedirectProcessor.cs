@@ -1,6 +1,7 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Clients;
 using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Models;
+using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
         private readonly IUrlParser _urlParser;
 
         private readonly IDictionary<string, Redirect> _oldUrlIndex;
-        private readonly IList<Result> _results;
+        private readonly IList<IResult> _results;
 
         public RedirectProcessor(
             IConfiguration configuration,
@@ -29,10 +30,10 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             _urlParser = urlParser;
 
             _oldUrlIndex = new Dictionary<string, Redirect>();
-            _results = new List<Result>();
+            _results = new List<IResult>();
         }
 
-        public IEnumerable<Result> Results
+        public IEnumerable<IResult> Results
         {
             get
             {

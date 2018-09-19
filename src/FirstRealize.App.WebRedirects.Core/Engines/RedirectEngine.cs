@@ -1,6 +1,7 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Clients;
 using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Models;
+using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Processors;
 using FirstRealize.App.WebRedirects.Core.Readers;
@@ -19,7 +20,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
 
         private List<Redirect> _redirects;
         private List<ProcessedRedirect> _processedRedirects;
-        private List<Result> _results;
+        private List<IResult> _results;
 
         public RedirectEngine(
             IConfiguration configuration,
@@ -43,7 +44,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
 
             _redirects = new List<Redirect>();
             _processedRedirects = new List<ProcessedRedirect>();
-            _results = new List<Result>();
+            _results = new List<IResult>();
         }
 
         public IEnumerable<Redirect> Redirects
@@ -62,7 +63,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             }
         }
 
-        public IEnumerable<Result> Results
+        public IEnumerable<IResult> Results
         {
             get
             {

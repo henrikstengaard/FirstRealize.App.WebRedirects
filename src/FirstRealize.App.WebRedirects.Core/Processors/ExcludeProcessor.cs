@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Models;
+using FirstRealize.App.WebRedirects.Core.Models.Results;
 
 namespace FirstRealize.App.WebRedirects.Core.Processors
 {
@@ -11,16 +12,16 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
     {
         private readonly IConfiguration _configuration;
 
-        private readonly IList<Result> _results;
+        private readonly IList<IResult> _results;
 
         public ExcludeProcessor(
             IConfiguration configuration)
         {
             _configuration = configuration;
-            _results = new List<Result>();
+            _results = new List<IResult>();
         }
 
-        public IEnumerable<Result> Results
+        public IEnumerable<IResult> Results
         {
             get
             {

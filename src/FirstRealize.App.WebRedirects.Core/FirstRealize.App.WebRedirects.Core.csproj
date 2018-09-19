@@ -57,10 +57,10 @@
     <Compile Include="Engines\RedirectEngine.cs" />
     <Compile Include="Iis.cs" />
     <Compile Include="IisExpress.cs" />
-    <Compile Include="Models\IResult.cs" />
+    <Compile Include="Models\Results\IResult.cs" />
     <Compile Include="Models\ProcessedRedirect.cs" />
     <Compile Include="Models\Redirect.cs" />
-    <Compile Include="Models\Result.cs" />
+    <Compile Include="Models\Results\Result.cs" />
     <Compile Include="Models\Url.cs" />
     <Compile Include="Parsers\IRedirectParser.cs" />
     <Compile Include="Parsers\IUrlParser.cs" />
@@ -71,7 +71,7 @@
     <Compile Include="Processors\DuplicateProcessor.cs" />
     <Compile Include="Processors\ExcludeProcessor.cs" />
     <Compile Include="Processors\IProcessor.cs" />
-    <Compile Include="Models\ResultTypes.cs" />
+    <Compile Include="Models\Results\ResultTypes.cs" />
     <Compile Include="Processors\IProcessorPreload.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Readers\ConfigurationJsonReader.cs" />

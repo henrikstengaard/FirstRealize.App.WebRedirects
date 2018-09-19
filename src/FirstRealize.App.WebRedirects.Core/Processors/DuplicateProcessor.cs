@@ -1,4 +1,5 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Models;
+using FirstRealize.App.WebRedirects.Core.Models.Results;
 using System.Collections.Generic;
 
 namespace FirstRealize.App.WebRedirects.Core.Processors
@@ -7,7 +8,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
     {
         private readonly IDictionary<string, IProcessedRedirect> _oldUrlDuplicateOfFirstIndex;
         private readonly IDictionary<string, IProcessedRedirect> _oldUrlDuplicateOfLastIndex;
-        private readonly IList<Result> _results;
+        private readonly IList<IResult> _results;
 
         public DuplicateProcessor()
         {
@@ -15,10 +16,10 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 new Dictionary<string, IProcessedRedirect>();
             _oldUrlDuplicateOfLastIndex =
                 new Dictionary<string, IProcessedRedirect>();
-            _results = new List<Result>();
+            _results = new List<IResult>();
         }
 
-        public IEnumerable<Result> Results
+        public IEnumerable<IResult> Results
         {
             get
             {
