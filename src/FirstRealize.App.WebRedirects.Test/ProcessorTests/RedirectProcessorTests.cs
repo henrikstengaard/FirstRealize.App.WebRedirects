@@ -70,7 +70,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         }
 
         [Test]
-        public void DetectOldUrlWithResponse()
+        public void DetectUrlWithResponse()
         {
             // create controlled http client
             var controlledHttpClient = new ControlledHttpClient();
@@ -116,9 +116,12 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 new[] { redirectProcessor });
 
             // verify redirect processor detects overridden url with response
-            Assert.IsTrue(
-                redirectProcessor.UrlsWithResponse.ContainsKey(
-                "http://www.test.local/new-url")); 
+            var urlWithResponse = redirectProcessor.Results
+                .FirstOrDefault(x => x.Type.Equals(ResultTypes.UrlWithResponse));
+            Assert.IsNotNull(urlWithResponse);
+            Assert.AreEqual(
+                "http://www.test.local/new-url",
+                urlWithResponse.Url.Parsed.AbsoluteUri); 
         }
     }
 }

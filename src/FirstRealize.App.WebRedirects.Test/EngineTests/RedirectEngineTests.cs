@@ -52,6 +52,17 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
             Assert.AreNotEqual(0, processedRedirects
                 .Count(pr => pr.Results
                 .Any(r => r.Type.Equals(ResultTypes.Cyclic))));
+
+            // verify redirect engine has results
+            var results = redirectEngine
+                .Results
+                .ToList();
+            Assert.AreNotEqual(0, results
+                .Count(r => r.Type.Equals(ResultTypes.DuplicateOfFirst)));
+            Assert.AreNotEqual(0, results
+                .Count(r => r.Type.Equals(ResultTypes.DuplicateOfLast)));
+            Assert.AreNotEqual(0, results
+                .Count(r => r.Type.Equals(ResultTypes.Cyclic)));
         }
     }
 }

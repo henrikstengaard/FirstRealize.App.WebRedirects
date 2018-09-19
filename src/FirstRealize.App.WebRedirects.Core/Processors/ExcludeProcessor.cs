@@ -11,10 +11,21 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
     {
         private readonly IConfiguration _configuration;
 
+        private readonly IList<Result> _results;
+
         public ExcludeProcessor(
             IConfiguration configuration)
         {
             _configuration = configuration;
+            _results = new List<Result>();
+        }
+
+        public IEnumerable<Result> Results
+        {
+            get
+            {
+                return _results;
+            }
         }
 
         public void Process(IProcessedRedirect processedRedirect)

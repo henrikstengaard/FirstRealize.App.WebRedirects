@@ -6,5 +6,6 @@
         public static string DuplicateOfFirst = "DuplicateOfFirst";
         public static string DuplicateOfLast = "DuplicateOfLast";
         public static string Cyclic = "Cyclic";
+        public static string UrlWithResponse = "UrlWithResponse";
     }
 }

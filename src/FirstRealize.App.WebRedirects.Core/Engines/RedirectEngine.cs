@@ -19,6 +19,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
 
         private List<Redirect> _redirects;
         private List<ProcessedRedirect> _processedRedirects;
+        private List<Result> _results;
 
         public RedirectEngine(
             IConfiguration configuration,
@@ -42,6 +43,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
 
             _redirects = new List<Redirect>();
             _processedRedirects = new List<ProcessedRedirect>();
+            _results = new List<Result>();
         }
 
         public IEnumerable<Redirect> Redirects
@@ -60,12 +62,21 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             }
         }
 
+        public IEnumerable<Result> Results
+        {
+            get
+            {
+                return _results;
+            }
+        }
+
         public void Run()
         {
             LoadRedirectsFromCsvFiles();
             ParseRedirects();
             PreloadRedirects();
             ProcessRedirects();
+            CollectResults();
         }
 
         private void LoadRedirectsFromCsvFiles()
@@ -126,6 +137,15 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
                 {
                     processor.Process(processedRedirect);
                 }
+            }
+        }
+
+        private void CollectResults()
+        {
+            foreach (var processor in _processors)
+            {
+                _results.AddRange(
+                    processor.Results);
             }
         }
     }
