@@ -49,12 +49,15 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             var message = new StringBuilder(
                 "Excluded redirect matches ");
 
+            Url url = null;
+
             if (oldUrlPatternMatches.Any())
             {
                 message.Append(
                     string.Format(
                         "old url exclude patterns '{0}'", 
                         string.Join(",", oldUrlPatternMatches)));
+                url = processedRedirect.Redirect.OldUrl;
             }
 
             if (newUrlPatternMatches.Any())
@@ -63,6 +66,9 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 {
                     message.Append(" and ");
                 }
+                {
+                    url = processedRedirect.Redirect.NewUrl;
+                }
 
                 message.Append(
                     string.Format(
@@ -70,12 +76,15 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                         string.Join(",", newUrlPatternMatches)));
             }
 
+            var excludedRedirectResult = new Result
+            {
+                Type = ResultTypes.ExcludedRedirect,
+                Message = message.ToString(),
+                Url = url
+            };
             processedRedirect.Results.Add(
-                new Result
-                {
-                    Type = ResultTypes.Excluded,
-                    Message = message.ToString()
-                });
+                excludedRedirectResult);
+            _results.Add(excludedRedirectResult);
         }
 
         private IEnumerable<string> GetMatchingUrlPatterns(

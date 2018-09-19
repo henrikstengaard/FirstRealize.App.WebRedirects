@@ -23,7 +23,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 });
 
             var excludedRedirectsMatchingOldUrl = processedRedirects
-                .Where(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.Excluded)) &&
+                .Where(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.ExcludedRedirect)) &&
                 pr.Redirect.OldUrl.Parsed.AbsoluteUri.Contains("new-url"))
                 .ToList();
             Assert.AreEqual(2, excludedRedirectsMatchingOldUrl.Count);
@@ -35,7 +35,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             }
 
             var excludedRedirectsMatchingNewUrl = processedRedirects
-                .Where(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.Excluded)) &&
+                .Where(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.ExcludedRedirect)) &&
                 pr.Redirect.NewUrl.Parsed.AbsoluteUri.Contains("/redirect/somwhere/else"))
                 .ToList();
             var excludedRedirectMatchingNewUrl = excludedRedirectsMatchingNewUrl

@@ -189,7 +189,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             {
                 var cyclicResult = new Result
                 {
-                    Type = ResultTypes.Cyclic,
+                    Type = ResultTypes.CyclicRedirect,
                     Message =
                     string.Format(
                         "Cyclic redirect for urls '{0}'",

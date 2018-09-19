@@ -28,7 +28,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
 
             // verify no cyclic redirects are detected
             var cyclicRedirects = processedRedirects
-                .Where(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.Cyclic)))
+                .Where(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.CyclicRedirect)))
                 .ToList();
             Assert.AreEqual(0, cyclicRedirects.Count);
         }
@@ -59,7 +59,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
 
             // verify cyclic redirect is detected
             var cyclicRedirect = processedRedirects
-                .FirstOrDefault(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.Cyclic)));
+                .FirstOrDefault(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.CyclicRedirect)));
             Assert.IsNotNull(cyclicRedirect);
             Assert.AreEqual(
                 "http://www.test.local/example/path",
