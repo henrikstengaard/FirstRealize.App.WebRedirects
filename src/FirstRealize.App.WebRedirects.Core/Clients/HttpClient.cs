@@ -8,7 +8,7 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
             string url)
         {
             var request = (HttpWebRequest)WebRequest.Create(url);
-            request.UserAgent = "WebRedirects";
+            request.UserAgent = "WebRedirects Crawler";
             request.AllowAutoRedirect = false;
 
             var httpResponse = new HttpResponse();
