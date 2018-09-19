@@ -27,13 +27,13 @@ namespace FirstRealize.App.WebRedirects.Core.Models
 
         public int CompareTo(Redirect other)
         {
-            var oldUrlCompared = other.OldUrl.Parsed.AbsoluteUri.CompareTo(
-                OldUrl.Parsed.AbsoluteUri);
+            var oldUrlCompared = OldUrl.Parsed.AbsoluteUri.CompareTo(
+                other.OldUrl.Parsed.AbsoluteUri);
 
             return oldUrlCompared != 0
                 ? oldUrlCompared
-                : other.NewUrl.Parsed.AbsoluteUri.CompareTo(
-                    NewUrl.Parsed.AbsoluteUri);
+                : NewUrl.Parsed.AbsoluteUri.CompareTo(
+                    other.NewUrl.Parsed.AbsoluteUri);
         }
     }
 }
