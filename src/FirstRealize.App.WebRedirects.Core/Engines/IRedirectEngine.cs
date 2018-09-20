@@ -2,7 +2,6 @@
 {
     public interface IRedirectEngine
     {
-        IRedirectProcessingResult Run(
-            bool process);
+        IRedirectProcessingResult Run();
     }
 }

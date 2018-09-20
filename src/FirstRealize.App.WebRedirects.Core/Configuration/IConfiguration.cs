@@ -8,6 +8,7 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
         IEnumerable<string> RedirectCsvFiles { get; }
         Uri DefaultOldUrl { get; }
         Uri DefaultNewUrl { get; }
+        IEnumerable<string> Processors { get; }
         IEnumerable<string> OldUrlExcludePatterns { get; }
         IEnumerable<string> NewUrlExcludePatterns { get; }
         bool ForceHttp { get; }

@@ -37,7 +37,7 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
 
             // run redirect engine
             var redirectProcessingResult = 
-                redirectEngine.Run(true);
+                redirectEngine.Run();
 
             // verify redirect engine has processed redirects with results
             var processedRedirects = redirectProcessingResult

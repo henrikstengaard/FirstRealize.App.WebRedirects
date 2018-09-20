@@ -32,8 +32,6 @@ namespace FirstRealize.App.WebRedirects.Console
             // parse arguments
             string configurationFile = argumentParser
                 .ParseArgumentValue("^(-c|--config)");
-            bool process = argumentParser
-                .ParseArgumentSwitch("^(-p|--process)");
 
             // write error, if configuration file argument is not defined
             if (string.IsNullOrWhiteSpace(configurationFile))
@@ -79,7 +77,7 @@ namespace FirstRealize.App.WebRedirects.Console
 
             // run redirect engine
             var redirectProcessingResult = 
-                redirectEngine.Run(process);
+                redirectEngine.Run();
 
             // create and write old url domain report
             var oldUrlDomainReport =

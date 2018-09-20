@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using FirstRealize.App.WebRedirects.Core.Configuration;
-using FirstRealize.App.WebRedirects.Core.Models;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 
@@ -11,16 +10,22 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 {
     public class ExcludeProcessor : IProcessor
     {
-        private readonly IConfiguration _configuration;
-
         private readonly IList<IResult> _results;
 
-        public ExcludeProcessor(
-            IConfiguration configuration)
+        public ExcludeProcessor()
         {
-            _configuration = configuration;
             _results = new List<IResult>();
         }
+
+        public string Name
+        {
+            get
+            {
+                return GetType().Name;
+            }
+        }
+
+        public IConfiguration Configuration { get; set; }
 
         public IEnumerable<IResult> Results
         {
@@ -34,12 +39,12 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
         {
             var oldUrlPatternMatches = GetMatchingUrlPatterns(
                 processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri,
-                _configuration.OldUrlExcludePatterns)
+                Configuration.OldUrlExcludePatterns)
                 .ToList();
 
             var newUrlPatternMatches = GetMatchingUrlPatterns(
                 processedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri,
-                _configuration.NewUrlExcludePatterns)
+                Configuration.NewUrlExcludePatterns)
                 .ToList();
 
             if (!oldUrlPatternMatches.Any() &&

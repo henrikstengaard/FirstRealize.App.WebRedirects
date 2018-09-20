@@ -1,6 +1,5 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Clients;
 using FirstRealize.App.WebRedirects.Core.Configuration;
-using FirstRealize.App.WebRedirects.Core.Models;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Parsers;
@@ -19,14 +18,20 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         [Test]
         public void NoCyclicRedirectsWithoutPreload()
         {
+            // create redirect processor
+            var redirectProcessor = new RedirectProcessor(
+                new ControlledHttpClient(),
+                new UrlParser()
+            );
+            redirectProcessor.Configuration = 
+                TestData.TestData.DefaultConfiguration;
+
             // process redirects
             var processedRedirects =
                 TestData.TestData.GetProcessedRedirects(
                 new[]
-                { new RedirectProcessor(
-                    TestData.TestData.DefaultConfiguration,
-                    new ControlledHttpClient(),
-                    new UrlParser())
+                {
+                    redirectProcessor
                 });
 
             // verify no cyclic redirects are detected
@@ -40,13 +45,14 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         public void DetectCyclicRedirect()
         {
             // create redirect processor
+            var configuration = new Configuration
+            {
+                ForceHttp = true
+            };
             var redirectProcessor = new RedirectProcessor(
-                new Configuration
-                {
-                    ForceHttp = true
-                },
                 new ControlledHttpClient(),
                 new UrlParser());
+            redirectProcessor.Configuration = configuration;
 
             // parsed redirects
             var redirects = TestData.TestData.GetParsedRedirects();
@@ -101,13 +107,14 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 };
 
             // create redirect processor
+            var configuration = new Configuration
+            {
+                ForceHttp = true
+            };
             var redirectProcessor = new RedirectProcessor(
-                new Configuration
-                {
-                    ForceHttp = true
-                },
                 controlledHttpClient,
                 new UrlParser());
+            redirectProcessor.Configuration = configuration;
 
             // preload redirects
             redirectProcessor.PreloadParsedRedirects(
@@ -139,9 +146,9 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
 
             // create redirect processor
             var redirectProcessor = new RedirectProcessor(
-                configuration,
                 new ControlledHttpClient(),
                 urlParser);
+            redirectProcessor.Configuration = configuration;
 
             // add redirects for optimizing
             var redirect1 = new Redirect
@@ -198,9 +205,9 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
 
             // create redirect processor
             var redirectProcessor = new RedirectProcessor(
-                configuration,
                 new ControlledHttpClient(),
                 urlParser);
+            redirectProcessor.Configuration = configuration;
 
             // add redirects
             var parsedRedirects = new List<IParsedRedirect>();

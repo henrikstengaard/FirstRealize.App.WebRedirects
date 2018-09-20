@@ -12,14 +12,17 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         [Test]
         public void CanProcessExcludedRedirects()
         {
+            var configuration = new Configuration
+            {
+                OldUrlExcludePatterns = new[] { "new-url" },
+                NewUrlExcludePatterns = new[] { "/redirect/somwhere/else" }
+            };
+            var excludeProcessor = new ExcludeProcessor();
+            excludeProcessor.Configuration = configuration;
             var processedRedirects = TestData.TestData.GetProcessedRedirects(
                 new[]
                 {
-                    new ExcludeProcessor(new Configuration
-                    {
-                        OldUrlExcludePatterns = new []{ "new-url" },
-                        NewUrlExcludePatterns = new []{ "/redirect/somwhere/else" }
-                    })
+                    excludeProcessor
                 });
 
             var excludedRedirectsMatchingOldUrl = processedRedirects

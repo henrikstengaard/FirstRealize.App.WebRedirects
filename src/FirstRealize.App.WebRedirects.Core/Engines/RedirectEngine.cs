@@ -35,10 +35,9 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             _httpClient = httpClient;
             _processors = new List<IProcessor>
             {
-                new ExcludeProcessor(_configuration),
+                new ExcludeProcessor(),
                 new DuplicateProcessor(),
                 new RedirectProcessor(
-                    _configuration,
                     httpClient,
                     _urlParser)
             };
@@ -49,18 +48,12 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             _results = new List<IResult>();
         }
 
-        public IRedirectProcessingResult Run(
-            bool process)
+        public IRedirectProcessingResult Run()
         {
             LoadRedirectsFromCsvFiles();
             ParseRedirects();
-
-            if (process)
-            {
-                PreloadParsedRedirects();
-                ProcessParsedRedirects();
-            }
-
+            PreloadParsedRedirects();
+            ProcessParsedRedirects();
             CollectResults();
 
             return new RedirectProcessingResult
