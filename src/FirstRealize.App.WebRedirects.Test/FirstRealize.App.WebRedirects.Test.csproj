@@ -59,6 +59,7 @@
     <Compile Include="ProcessorTests\RedirectProcessorTests.cs" />
     <Compile Include="ProcessorTests\DuplicateProcessorTests.cs" />
     <Compile Include="ProcessorTests\ExcludeProcessorTests.cs" />
+    <Compile Include="ResolverTests\TestProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReaderTests\ConfigurationJsonReaderTests.cs" />
     <Compile Include="ReaderTests\RedirectCsvReaderTests.cs" />
