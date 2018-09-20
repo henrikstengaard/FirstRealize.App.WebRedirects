@@ -1,10 +1,11 @@
-﻿using System;
+﻿using FirstRealize.App.WebRedirects.Core.Models;
+using System;
 
 namespace FirstRealize.App.WebRedirects.Core.Parsers
 {
     public interface IUrlParser
     {
-        Uri ParseUrl(
+        Url ParseUrl(
             string url,
             Uri host = null,
             bool stripFragment = false);

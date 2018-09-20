@@ -15,78 +15,120 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
         }
 
         [Test]
-        public void ParseUrlWithHttp()
+        public void ParseUrlWithAbsoluteUri()
         {
-            var url = "http://www.example.local";
-            var uri = _urlParser.ParseUrl(url);
+            var rawUrl = "http://www.example.local";
+            var url = _urlParser.ParseUrl(
+                rawUrl);
 
-            Assert.IsNotNull(uri);
-            Assert.AreEqual("http", uri.Scheme);
-            Assert.AreEqual("www.example.local", uri.DnsSafeHost);
+            Assert.IsNotNull(url);
+            Assert.AreEqual(
+                "http",
+                url.Parsed.Scheme);
+            Assert.AreEqual(
+                "www.example.local",
+                url.Parsed.DnsSafeHost);
         }
 
         [Test]
-        public void ParseUrlPathWithDefaultHost()
+        public void ParseUrlWithOnlyPathUsingHost()
         {
-            var url = "/a/path";
-            var uri = _urlParser.ParseUrl(
-                url, 
+            var rawUrl = "/a/path";
+            var url = _urlParser.ParseUrl(
+                rawUrl, 
                 new Uri("http://www.defaulthost.local"));
 
-            Assert.IsNotNull(uri);
-            Assert.AreEqual("http", uri.Scheme);
-            Assert.AreEqual("www.defaulthost.local", uri.DnsSafeHost);
-            Assert.AreEqual("/a/path", uri.AbsolutePath);
+            Assert.IsNotNull(url);
+            Assert.AreEqual(
+                "http",
+                url.Parsed.Scheme);
+            Assert.AreEqual(
+                "www.defaulthost.local",
+                url.Parsed.DnsSafeHost);
+            Assert.AreEqual(
+                "/a/path",
+                url.Parsed.AbsolutePath);
         }
 
         [Test]
-        public void ParseUrlWithDomainAndPath()
+        public void ParseUrlWithOnlyHostAndPath()
         {
-            var url = "example.local/another/path";
-            var uri = _urlParser.ParseUrl(
-                url);
+            var rawUrl = "example.local/another/path";
+            var url = _urlParser.ParseUrl(
+                rawUrl);
 
-            Assert.IsNotNull(uri);
-            Assert.AreEqual("http", uri.Scheme);
-            Assert.AreEqual("example.local", uri.DnsSafeHost);
-            Assert.AreEqual("/another/path", uri.AbsolutePath);
+            Assert.IsNotNull(url);
+            Assert.AreEqual(
+                "http",
+                url.Parsed.Scheme);
+            Assert.AreEqual(
+                "example.local",
+                url.Parsed.DnsSafeHost);
+            Assert.AreEqual(
+                "/another/path",
+                url.Parsed.AbsolutePath);
         }
 
         [Test]
-        public void ParseUrlPathWithoutDefaultHost()
+        public void ParseUrlWithoutHostReturnsNull()
         {
-            var url = "another/path";
-            var uri = _urlParser.ParseUrl(
-                url);
+            var rawUrl = "another/path";
+            var url = _urlParser.ParseUrl(
+                rawUrl);
 
-            Assert.IsNull(uri);
+            Assert.IsNull(url);
         }
 
         [Test]
-        public void CanRemoveTailingSlash()
+        public void ParseUrlRemovesTailingSlash()
         {
-            var url = "/another/path/";
-            var uri = _urlParser.ParseUrl(
-                url,
+            var rawUrl = "/another/path/";
+            var url = _urlParser.ParseUrl(
+                rawUrl,
                 TestData.TestData.DefaultHost);
 
             Assert.AreEqual(
                 "http://www.test.local/another/path", 
-                uri.AbsoluteUri);
+                url.Parsed.AbsoluteUri);
         }
 
         [Test]
-        public void CanRemoveFragment()
+        public void ParseUrlRemovesFragment()
         {
-            var url = "/another/path/#anchor";
-            var uri = _urlParser.ParseUrl(
-                url,
+            var rawUrl = "/another/path/#anchor";
+            var url = _urlParser.ParseUrl(
+                rawUrl,
                 TestData.TestData.DefaultHost,
                 true);
 
             Assert.AreEqual(
                 "http://www.test.local/another/path",
-                uri.AbsoluteUri);
+                url.Parsed.AbsoluteUri);
+        }
+
+        [Test]
+        public void ParseUrlWithOnlyPathDoesntHaveHost()
+        {
+            var rawUrl = "/another/path/";
+            var url = _urlParser.ParseUrl(
+                rawUrl,
+                TestData.TestData.DefaultHost);
+
+            Assert.AreEqual(
+                false,
+                url.HasHost);
+        }
+
+        [Test]
+        public void ParseUrlWithAbsoluteUriHasHost()
+        {
+            var rawUrl = "http://example.local/another/path/";
+            var url = _urlParser.ParseUrl(
+                rawUrl);
+
+            Assert.AreEqual(
+                true,
+                url.HasHost);
         }
     }
 }

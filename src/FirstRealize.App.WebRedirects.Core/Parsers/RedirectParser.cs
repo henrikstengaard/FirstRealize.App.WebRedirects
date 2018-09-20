@@ -19,12 +19,14 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
         public void ParseRedirect(
             Redirect redirect)
         {
-            redirect.OldUrl.Parsed = _urlParser.ParseUrl(
+            // parse old url
+            redirect.OldUrl = _urlParser.ParseUrl(
                 redirect.OldUrl.Raw,
                 _configuration.DefaultOldUrl,
                 true);
 
-            redirect.NewUrl.Parsed = _urlParser.ParseUrl(
+            // parse new url
+            redirect.NewUrl = _urlParser.ParseUrl(
                 redirect.NewUrl.Raw,
                 _configuration.DefaultNewUrl,
                 false);

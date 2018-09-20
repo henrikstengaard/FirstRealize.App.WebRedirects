@@ -13,13 +13,6 @@ namespace FirstRealize.App.WebRedirects.Core.Models
                 return Parsed != null;
             }
         }
-        public bool HasHost
-        {
-            get
-            {
-                return IsValid && 
-                    !string.IsNullOrEmpty(Parsed.DnsSafeHost);
-            }
-        }
+        public bool HasHost { get; set; }
     }
 }

@@ -1,11 +1,12 @@
-﻿using System;
+﻿using FirstRealize.App.WebRedirects.Core.Models;
+using System;
 using System.Text.RegularExpressions;
 
 namespace FirstRealize.App.WebRedirects.Core.Parsers
 {
     public class UrlParser : IUrlParser
     {
-        public Uri ParseUrl(
+        public Url ParseUrl(
             string url,
             Uri host = null,
             bool stripFragment = false)
@@ -16,32 +17,55 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
             }
 
             // remove whitespaces
-            url = Regex.Replace(url, "\\s+", "", RegexOptions.Compiled);
+            var formattedUrl = Regex.Replace(
+                url,
+                "\\s+", "",
+                RegexOptions.Compiled);
 
             // return uri of url, if url starts with "http://" or "https://"
-            if (Regex.IsMatch(url, "https?://", RegexOptions.Compiled))
+            if (Regex.IsMatch(
+                formattedUrl,
+                "https?://",
+                RegexOptions.Compiled))
             {
-                return FormatUri(
-                    new Uri(url),
-                    stripFragment);
+                return new Url
+                {
+                    Raw = url,
+                    Parsed = FormatUri(
+                        new Uri(formattedUrl),
+                        stripFragment),
+                    HasHost = true
+                };
             }
 
             // return uri of host combined with url, if url starts with "/" and host is defined
-            if (url.StartsWith("/") && host != null)
+            if (formattedUrl.StartsWith("/") && host != null)
             {
-                return FormatUri(
-                    new Uri(host, url),
-                    stripFragment);
+                return new Url
+                {
+                    Raw = url,
+                    Parsed = FormatUri(
+                        new Uri(host, formattedUrl),
+                        stripFragment)
+                };
             }
 
-            var domainMatch = Regex.Match(url, "^[a-z0-9]+\\.[a-z0-9]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            var domainMatch = Regex.Match(
+                formattedUrl, 
+                "^[a-z0-9]+\\.[a-z0-9]+", 
+                RegexOptions.IgnoreCase | RegexOptions.Compiled);
             if (domainMatch.Success)
             {
-                return FormatUri(new Uri(
-                    string.Format("{0}://{1}",
-                    host != null ? host.Scheme : "http",
-                    url)),
-                    stripFragment);
+                return new Url
+                {
+                    Raw = url,
+                    Parsed = FormatUri(new Uri(
+                        string.Format("{0}://{1}",
+                        host != null ? host.Scheme : "http",
+                        formattedUrl)),
+                        stripFragment),
+                    HasHost = true
+                };
             }
 
             // return null as url is not a valid

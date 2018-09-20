@@ -119,11 +119,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                             redirect = new Redirect
                             {
                                 OldUrl = redirect.NewUrl,
-                                NewUrl = new Url
-                                {
-                                    Raw = newUrl,
-                                    Parsed = _urlParser.ParseUrl(newUrl)
-                                }
+                                NewUrl = _urlParser.ParseUrl(newUrl)
                             };
                             break;
                         case HttpStatusCode.NotFound:
