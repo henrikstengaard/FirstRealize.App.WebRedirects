@@ -81,7 +81,7 @@ namespace FirstRealize.App.WebRedirects.Console
             var redirectProcessingResult = 
                 redirectEngine.Run(process);
 
-            // create and write reports
+            // create and write old url domain report
             var oldUrlDomainReport =
                 new OldUrlDomainReport();
             oldUrlDomainReport.Build(
@@ -92,6 +92,17 @@ namespace FirstRealize.App.WebRedirects.Console
             oldUrlDomainReport.WriteReportCsvFile(
                 oldUrlDomainReportCsvFile);
 
+            // create and write new url domain report
+            var newUrlDomainReport =
+                new NewUrlDomainReport();
+            newUrlDomainReport.Build(
+                redirectProcessingResult);
+            var newUrlDomainReportCsvFile = Path.Combine(
+                outputDir,
+                "newurl_domains.csv");
+            newUrlDomainReport.WriteReportCsvFile(
+                newUrlDomainReportCsvFile);
+
             return 0;
         }
 
@@ -99,7 +110,13 @@ namespace FirstRealize.App.WebRedirects.Console
         {
             var consoleFilename = Path.GetFileName(
                 Assembly.GetExecutingAssembly().CodeBase);
-            System.Console.WriteLine("Usage: {0} -c \"configuration.json\"", consoleFilename);
+            System.Console.WriteLine(
+                string.Join(Environment.NewLine, new[]
+                {
+                    string.Format("Usage: {0}", consoleFilename),
+                    "  -c|--config \"configuration.json\"",
+                    "  -p|--process"
+                }));
         }
     }
 }
