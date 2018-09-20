@@ -70,6 +70,8 @@
     <Compile Include="Models\Redirects\ParsedRedirect.cs" />
     <Compile Include="Models\Results\Result.cs" />
     <Compile Include="Models\Redirects\Url.cs" />
+    <Compile Include="Parsers\ArgumentParser.cs" />
+    <Compile Include="Parsers\IArgumentParser.cs" />
     <Compile Include="Parsers\IRedirectParser.cs" />
     <Compile Include="Parsers\IUrlParser.cs" />
     <Compile Include="Parsers\RedirectParser.cs" />

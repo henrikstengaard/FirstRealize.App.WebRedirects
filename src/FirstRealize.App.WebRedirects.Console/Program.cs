@@ -5,7 +5,6 @@ using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Readers;
 using System.IO;
 using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace FirstRealize.App.WebRedirects.Console
 {
@@ -19,16 +18,12 @@ namespace FirstRealize.App.WebRedirects.Console
                 return 1;
             }
 
-            string configurationFile = null;
+            var argumentParser =
+                new ArgumentParser(args);
 
-            for (int i = 0; i < args.Length; i++)
-            {
-                if (Regex.IsMatch(args[i], "^(-c|--config)", RegexOptions.IgnoreCase | RegexOptions.Compiled) 
-                    && i + 1 < args.Length)
-                {
-                    configurationFile = args[i + 1].Trim();
-                }
-            }
+            // parse configuration file argument
+            string configurationFile = argumentParser
+                .ParseArgumentValue("^(-c|--config)");
 
             // write error, if configuration file argument is not defined
             if (string.IsNullOrWhiteSpace(configurationFile))
