@@ -4,8 +4,8 @@ namespace FirstRealize.App.WebRedirects.Core.Models.Redirects
 {
     public class ParsedRedirect : IParsedRedirect, IComparable
     {
-        public Url OldUrl { get; set; }
-        public Url NewUrl { get; set; }
+        public IUrl OldUrl { get; set; }
+        public IUrl NewUrl { get; set; }
 
         public bool IsValid
         {

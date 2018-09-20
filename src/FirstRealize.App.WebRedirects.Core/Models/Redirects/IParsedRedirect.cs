@@ -2,8 +2,8 @@
 {
     public interface IParsedRedirect
     {
-        Url OldUrl { get; }
-        Url NewUrl { get; }
+        IUrl OldUrl { get; }
+        IUrl NewUrl { get; }
         bool IsValid { get; }
         bool IsIdentical { get; }
     }

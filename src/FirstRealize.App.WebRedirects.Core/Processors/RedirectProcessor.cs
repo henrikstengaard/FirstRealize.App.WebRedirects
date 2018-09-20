@@ -81,7 +81,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             urlsIndex.Add(oldUrl);
 
             var redirect = processedRedirect.ParsedRedirect;
-            Url url = null;
+            IUrl url = null;
 
             do
             {

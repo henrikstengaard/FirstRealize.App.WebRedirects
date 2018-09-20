@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Models;
+using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 
 namespace FirstRealize.App.WebRedirects.Core.Processors
@@ -50,7 +51,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             var message = new StringBuilder(
                 "Excluded redirect matches ");
 
-            Url url = null;
+            IUrl url = null;
 
             if (oldUrlPatternMatches.Any())
             {
