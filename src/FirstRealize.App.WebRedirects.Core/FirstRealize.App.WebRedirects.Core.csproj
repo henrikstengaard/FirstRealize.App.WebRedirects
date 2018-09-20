@@ -64,6 +64,7 @@
     <Compile Include="Models\Redirects\IRedirect.cs" />
     <Compile Include="Models\Redirects\IUrl.cs" />
     <Compile Include="Models\Redirects\Redirect.cs" />
+    <Compile Include="Models\Reports\NewUrlDomainRecord.cs" />
     <Compile Include="Models\Reports\OldUrlDomainRecord.cs" />
     <Compile Include="Models\Results\IResult.cs" />
     <Compile Include="Models\Redirects\ProcessedRedirect.cs" />
@@ -88,7 +89,10 @@
     <Compile Include="Readers\RedirectCsvReader.cs" />
     <Compile Include="Configuration\UriJsonConverter.cs" />
     <Compile Include="Reports\IReport.cs" />
+    <Compile Include="Reports\NewUrlDomainReport.cs" />
+    <Compile Include="Reports\UrlDomainReportBase.cs" />
     <Compile Include="Reports\OldUrlDomainReport.cs" />
+    <Compile Include="Reports\ReportBase.cs" />
     <Compile Include="Writers\ReportCsvWriter.cs" />
   </ItemGroup>
   <ItemGroup>

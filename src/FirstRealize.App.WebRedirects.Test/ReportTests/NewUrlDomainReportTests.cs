@@ -9,10 +9,10 @@ using System.Linq;
 namespace FirstRealize.App.WebRedirects.Test.ReportTests
 {
     [TestFixture]
-    public class OldUrlDomainReportTests
+    public class NewUrlDomainReportTests
     {
         [Test]
-        public void BuildOldUrlDomainReport()
+        public void BuildNewUrlDomainReport()
         {
             var redirectProcessingResult = new RedirectProcessingResult
             {
@@ -26,7 +26,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
                         },
                         NewUrl = new Url
                         {
-                            Parsed = new Uri("http://www.test3.local")
+                            Parsed = new Uri("http://www.test3.local/url8")
                         }
                     },
                     new ParsedRedirect
@@ -37,7 +37,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
                         },
                         NewUrl = new Url
                         {
-                            Parsed = new Uri("http://www.test3.local")
+                            Parsed = new Uri("http://www.test2.local/url5")
                         }
                     },
                     new ParsedRedirect
@@ -48,28 +48,28 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
                         },
                         NewUrl = new Url
                         {
-                            Parsed = new Uri("http://www.test3.local")
+                            Parsed = new Uri("http://www.test2.local/url9")
                         }
                     }
                 }
             };
 
-            // create and build old url domain report
-            var oldUrlDomainReport = new OldUrlDomainReport();
-            oldUrlDomainReport.Build(redirectProcessingResult);
+            // create and build new url domain report
+            var newUrlDomainReport = new NewUrlDomainReport();
+            newUrlDomainReport.Build(redirectProcessingResult);
 
-            // verify old url domains records are build
-            var records = oldUrlDomainReport
+            // verify new url domains records are build
+            var records = newUrlDomainReport
                 .GetRecords()
-                .OfType<OldUrlDomainRecord>()
+                .OfType<NewUrlDomainRecord>()
                 .ToList();
             Assert.AreEqual(2, records.Count);
             Assert.AreEqual(
-                "www.test1.local",
-                records[0].OldUrlDomain);
-            Assert.AreEqual(
                 "www.test2.local",
-                records[1].OldUrlDomain);
+                records[0].NewUrlDomain);
+            Assert.AreEqual(
+                "www.test3.local",
+                records[1].NewUrlDomain);
         }
     }
 }

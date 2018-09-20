@@ -5,28 +5,28 @@ using System.Linq;
 
 namespace FirstRealize.App.WebRedirects.Core.Reports
 {
-    public class OldUrlDomainReport : UrlDomainReportBase<OldUrlDomainRecord>
+    public class NewUrlDomainReport : UrlDomainReportBase<NewUrlDomainRecord>
     {
         protected override void IndexUrlDomain(IParsedRedirect parsedRedirect)
         {
             if (_urlDomainsIndex.Contains(
-                    parsedRedirect.OldUrl.Parsed.Host))
+                    parsedRedirect.NewUrl.Parsed.Host))
             {
                 return;
             }
 
             _urlDomainsIndex.Add(
-                parsedRedirect.OldUrl.Parsed.Host);
+                parsedRedirect.NewUrl.Parsed.Host);
         }
 
-        public override IEnumerable<OldUrlDomainRecord> GetRecords()
+        public override IEnumerable<NewUrlDomainRecord> GetRecords()
         {
             return _urlDomainsIndex
                 .ToList()
                 .OrderBy(x => x)
-                .Select(x => new OldUrlDomainRecord
+                .Select(x => new NewUrlDomainRecord
                 {
-                    OldUrlDomain = x
+                    NewUrlDomain = x
                 });
         }
     }
