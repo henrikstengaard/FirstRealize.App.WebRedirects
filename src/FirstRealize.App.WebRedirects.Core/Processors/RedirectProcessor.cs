@@ -189,8 +189,8 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 {
                     Type = ResultTypes.OptimizedRedirect,
                     Message = string.Format(
-                        "Optimized redirect to url '{0}'",
-                        url),
+                        "Optimized redirect to urls '{0}'",
+                        string.Join(",", urlsVisited)),
                     Url = url,
                     RedirectCount = redirectCount
                 };
