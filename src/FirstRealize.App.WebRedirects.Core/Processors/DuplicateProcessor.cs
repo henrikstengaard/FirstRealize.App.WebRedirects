@@ -1,5 +1,4 @@
-﻿using FirstRealize.App.WebRedirects.Core.Configuration;
-using FirstRealize.App.WebRedirects.Core.Models.Redirects;
+﻿using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using System.Collections.Generic;
 
@@ -27,8 +26,6 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 return GetType().Name;
             }
         }
-
-        public IConfiguration Configuration { get; set; }
 
         public IEnumerable<IResult> Results
         {

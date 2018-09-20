@@ -20,11 +20,10 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         {
             // create redirect processor
             var redirectProcessor = new RedirectProcessor(
+                TestData.TestData.DefaultConfiguration,
                 new ControlledHttpClient(),
                 new UrlParser()
             );
-            redirectProcessor.Configuration = 
-                TestData.TestData.DefaultConfiguration;
 
             // process redirects
             var processedRedirects =
@@ -50,9 +49,9 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 ForceHttp = true
             };
             var redirectProcessor = new RedirectProcessor(
+                configuration,
                 new ControlledHttpClient(),
                 new UrlParser());
-            redirectProcessor.Configuration = configuration;
 
             // parsed redirects
             var redirects = TestData.TestData.GetParsedRedirects();
@@ -112,9 +111,9 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 ForceHttp = true
             };
             var redirectProcessor = new RedirectProcessor(
+                configuration,
                 controlledHttpClient,
                 new UrlParser());
-            redirectProcessor.Configuration = configuration;
 
             // preload redirects
             redirectProcessor.PreloadParsedRedirects(
@@ -146,9 +145,9 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
 
             // create redirect processor
             var redirectProcessor = new RedirectProcessor(
+                configuration,
                 new ControlledHttpClient(),
                 urlParser);
-            redirectProcessor.Configuration = configuration;
 
             // add redirects for optimizing
             var redirect1 = new Redirect
@@ -205,9 +204,9 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
 
             // create redirect processor
             var redirectProcessor = new RedirectProcessor(
+                configuration,
                 new ControlledHttpClient(),
                 urlParser);
-            redirectProcessor.Configuration = configuration;
 
             // add redirects
             var parsedRedirects = new List<IParsedRedirect>();

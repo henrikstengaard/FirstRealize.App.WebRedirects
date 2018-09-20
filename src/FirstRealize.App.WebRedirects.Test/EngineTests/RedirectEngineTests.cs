@@ -13,8 +13,7 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
     [TestFixture]
     public class RedirectEngineTests
     {
-        [Test]
-        public void ProcessedRedirectsWithResults()
+        private IConfiguration CreateConfiguration()
         {
             // read configuration file
             IConfiguration configuration;
@@ -25,15 +24,29 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
                     Path.Combine(TestData.TestData.CurrentDirectory, @"TestData\configuration.json"));
             }
 
+            return configuration;
+        }
+
+        private IRedirectEngine CreateRedirectEngine(
+            IConfiguration configuration)
+        {
             // create redirect engine
             var urlParser = new UrlParser();
-            var redirectEngine = new RedirectEngine(
+            return new RedirectEngine(
                 configuration,
                 urlParser,
                 new RedirectParser(
                     configuration,
                     urlParser),
                 new ControlledHttpClient());
+        }
+
+        [Test]
+        public void RunDefaultProcessors()
+        {
+            // create redirect engine
+            var redirectEngine = CreateRedirectEngine(
+                CreateConfiguration());
 
             // run redirect engine
             var redirectProcessingResult = 
@@ -64,6 +77,46 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
                 .Count(r => r.Type.Equals(ResultTypes.DuplicateOfLast)));
             Assert.AreNotEqual(0, results
                 .Count(r => r.Type.Equals(ResultTypes.CyclicRedirect)));
+        }
+
+        [Test]
+        public void ChangeActiveProcessors()
+        {
+            // create and customize configuration
+            var testProcessor = new TestProcessor();
+            var configuration = CreateConfiguration();
+            var customizedConfiguration = new Configuration
+            {
+                RedirectCsvFiles = configuration.RedirectCsvFiles,
+                DefaultOldUrl = configuration.DefaultOldUrl,
+                DefaultNewUrl = configuration.DefaultNewUrl,
+                Processors = new[]
+                {
+                    testProcessor.Name
+                }
+            };
+
+            // create redirect engine
+            var redirectEngine = CreateRedirectEngine(
+                customizedConfiguration);
+            redirectEngine.Processors.Add(
+                testProcessor);
+
+            // run redirect engine
+            var redirectProcessingResult =
+                redirectEngine.Run();
+
+            // verify redirect engine processed redirects only has test processor results
+            var processedRedirects = redirectProcessingResult
+                .ProcessedRedirects
+                .ToList();
+            Assert.AreNotEqual(
+                0, processedRedirects.Count);
+            Assert.AreEqual(
+                processedRedirects.Count,
+                processedRedirects.Count(
+                    pr => pr.Results.Count() == 1 && pr.Results.All(
+                        r => r.Type.Equals(testProcessor.Name))));
         }
     }
 }

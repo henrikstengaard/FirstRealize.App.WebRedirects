@@ -4,7 +4,7 @@ using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Processors;
 
-namespace FirstRealize.App.WebRedirects.Test.ResolverTests
+namespace FirstRealize.App.WebRedirects.Test.EngineTests
 {
     class TestProcessor : IProcessor
     {
@@ -22,6 +22,13 @@ namespace FirstRealize.App.WebRedirects.Test.ResolverTests
 
         public void Process(IProcessedRedirect processedRedirect)
         {
+            processedRedirect.Results.Add(
+                new Result
+                {
+                    Type = Name,
+                    Message = Name,
+                    Url = processedRedirect.ParsedRedirect.OldUrl
+                });
         }
     }
 }

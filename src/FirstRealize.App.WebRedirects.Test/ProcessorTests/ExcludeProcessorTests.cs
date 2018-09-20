@@ -17,8 +17,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 OldUrlExcludePatterns = new[] { "new-url" },
                 NewUrlExcludePatterns = new[] { "/redirect/somwhere/else" }
             };
-            var excludeProcessor = new ExcludeProcessor();
-            excludeProcessor.Configuration = configuration;
+            var excludeProcessor = new ExcludeProcessor(
+                configuration);
             var processedRedirects = TestData.TestData.GetProcessedRedirects(
                 new[]
                 {

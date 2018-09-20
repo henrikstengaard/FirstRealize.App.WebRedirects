@@ -10,10 +10,13 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 {
     public class ExcludeProcessor : IProcessor
     {
+        private readonly IConfiguration _configuration;
         private readonly IList<IResult> _results;
 
-        public ExcludeProcessor()
+        public ExcludeProcessor(
+            IConfiguration configuration)
         {
+            _configuration = configuration;
             _results = new List<IResult>();
         }
 
@@ -24,8 +27,6 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 return GetType().Name;
             }
         }
-
-        public IConfiguration Configuration { get; set; }
 
         public IEnumerable<IResult> Results
         {
@@ -39,12 +40,12 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
         {
             var oldUrlPatternMatches = GetMatchingUrlPatterns(
                 processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri,
-                Configuration.OldUrlExcludePatterns)
+                _configuration.OldUrlExcludePatterns)
                 .ToList();
 
             var newUrlPatternMatches = GetMatchingUrlPatterns(
                 processedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri,
-                Configuration.NewUrlExcludePatterns)
+                _configuration.NewUrlExcludePatterns)
                 .ToList();
 
             if (!oldUrlPatternMatches.Any() &&

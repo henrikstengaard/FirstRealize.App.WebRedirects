@@ -13,23 +13,18 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 {
     public class RedirectProcessor : IProcessor, IProcessorPreload
     {
+        private readonly IConfiguration _configuration;
         private readonly IHttpClient _httpClient;
         private readonly IUrlParser _urlParser;
-
         private readonly IDictionary<string, IParsedRedirect> _oldUrlIndex;
         private readonly IList<IResult> _results;
 
-        public RedirectProcessor() 
-            : this(
-                  new HttpClient(),
-                  new UrlParser())
-        {
-        }
-
         public RedirectProcessor(
+            IConfiguration configuration,
             IHttpClient httpClient,
             IUrlParser urlParser)
         {
+            _configuration = configuration;
             _httpClient = httpClient;
             _urlParser = urlParser;
 
@@ -45,8 +40,6 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             }
         }
 
-        public IConfiguration Configuration { get; set; }
-
         public IEnumerable<IResult> Results
         {
             get
@@ -57,7 +50,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
         private string FormatUrl(string url)
         {
-            return Configuration.ForceHttp
+            return _configuration.ForceHttp
                 ? Regex.Replace(url, "^https?://", "http://", RegexOptions.IgnoreCase | RegexOptions.Compiled)
                 : url;
         }
@@ -183,7 +176,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 redirectCount < 20);
 
             // add optimized redirect result, if redirect count is higher than 1 and less than max redirect count
-            if (redirectCount > 1 && redirectCount < Configuration.MaxRedirectCount)
+            if (redirectCount > 1 && redirectCount < _configuration.MaxRedirectCount)
             {
                 var optimizedRedirectResult = new Result
                 {
@@ -198,7 +191,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 _results.Add(
                     optimizedRedirectResult);
             }
-            else if (redirectCount >= Configuration.MaxRedirectCount)
+            else if (redirectCount >= _configuration.MaxRedirectCount)
             {
                 var tooManyRedirectsResult = new Result
                 {
@@ -206,7 +199,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     Message = string.Format(
                         "Too many redirect from url '{0}' exceeding max redirect count of {1}",
                         url,
-                        Configuration.MaxRedirectCount),
+                        _configuration.MaxRedirectCount),
                     Url = url
                 };
                 processedRedirect.Results.Add(

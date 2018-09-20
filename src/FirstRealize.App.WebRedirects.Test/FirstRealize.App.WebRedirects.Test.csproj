@@ -59,14 +59,13 @@
     <Compile Include="ProcessorTests\RedirectProcessorTests.cs" />
     <Compile Include="ProcessorTests\DuplicateProcessorTests.cs" />
     <Compile Include="ProcessorTests\ExcludeProcessorTests.cs" />
-    <Compile Include="ResolverTests\TestProcessor.cs" />
+    <Compile Include="EngineTests\TestProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReaderTests\ConfigurationJsonReaderTests.cs" />
     <Compile Include="ReaderTests\RedirectCsvReaderTests.cs" />
     <Compile Include="ReportTests\NewUrlDomainReportTests.cs" />
     <Compile Include="ReportTests\OldUrlDomainReportTests.cs" />
     <Compile Include="ReportTests\ProcessedRedirectReportTests.cs" />
-    <Compile Include="ResolverTests\ProcessorResolverTests.cs" />
     <Compile Include="TestData\TestData.cs" />
     <Compile Include="ParserTests\UrlParserTests.cs" />
     <Compile Include="TestData\UrlReport.cs" />

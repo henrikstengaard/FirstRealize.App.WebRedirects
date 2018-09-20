@@ -8,7 +8,6 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
     public interface IProcessor
     {
         string Name { get; }
-        IConfiguration Configuration { get; set; }
         void Process(IProcessedRedirect processedRedirect);
         IEnumerable<IResult> Results { get; }
     }
