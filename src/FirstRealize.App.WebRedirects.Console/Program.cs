@@ -63,6 +63,10 @@ namespace FirstRealize.App.WebRedirects.Console
             var outputDir = Path.GetDirectoryName(
                 configurationFile);
 
+            // TODO: Apply if needed
+            //ServicePointManager.SecurityProtocol = 
+            //	SecurityProtocolType.Tls12;
+
             // create redirect engine
             var urlParser = new UrlParser();
             var redirectParser = new RedirectParser(
@@ -72,7 +76,8 @@ namespace FirstRealize.App.WebRedirects.Console
                 configuration,
                 urlParser,
                 redirectParser,
-                new HttpClient()
+                new HttpClient(
+                    configuration)
                 );
 
             // run redirect engine
