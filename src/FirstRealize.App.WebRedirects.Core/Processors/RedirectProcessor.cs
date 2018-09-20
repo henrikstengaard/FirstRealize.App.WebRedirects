@@ -99,13 +99,13 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
                 urlsVisited.Add(parsedUrl);
 
-                if (urlsIndex.Contains(parsedUrl))
+                var formattedUrl = FormatUrl(parsedUrl);
+                if (urlsIndex.Contains(formattedUrl))
                 {
                     isCyclicRedirect = true;
                     break;
                 }
-
-                urlsIndex.Add(parsedUrl);
+                urlsIndex.Add(formattedUrl);
 
                 // get url
                 var response = _httpClient.Get(parsedUrl);
@@ -114,7 +114,9 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 // if url returns 301 and has location
                 if (response != null)
                 {
-                    var statusCode = (int)response.StatusCode;
+                    var statusCode = response.StatusCode.HasValue
+                        ? (int)response.StatusCode
+                        : 0;
                     var locationUrl = !Regex.IsMatch(
                         response.Location ?? string.Empty, "https?://", RegexOptions.IgnoreCase | RegexOptions.Compiled)
                         ? new Uri(url.Parsed, response.Location).AbsoluteUri

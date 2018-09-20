@@ -41,7 +41,10 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
             catch (WebException e)
             {
                 var response = (HttpWebResponse)e.Response;
-                httpResponse.StatusCode = response.StatusCode;
+                if (response != null)
+                {
+                    httpResponse.StatusCode = response.StatusCode;
+                }
             }
 
             return httpResponse;
