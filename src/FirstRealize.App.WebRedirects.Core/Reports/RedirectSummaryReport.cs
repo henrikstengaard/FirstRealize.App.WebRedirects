@@ -29,24 +29,11 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                     RedirectSummaryType = "parsed redirects"
                 });
 
-            // are valid redirects
-            _redirectSummaryReportRecords.Add(
-                new RedirectSummaryReportRecord
-                {
-                    RedirectSummaryCount = redirectProcessingResult
-                    .ProcessedRedirects
-                    .Count(
-                        pr => pr.ParsedRedirect.IsValid)
-                        .ToString(),
-                    RedirectSummaryType = "invalid redirects"
-                });
-
             // processors
             var processors = redirectProcessingResult
                 .Processors
-                .Select(p => p.Name)
                 .Distinct()
-                .OrderBy(p => p)
+                .OrderBy(p => p.Name)
                 .ToList();
 
             // processors used
@@ -65,13 +52,10 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                 _redirectSummaryReportRecords.Add(
                     new RedirectSummaryReportRecord
                     {
-                        RedirectSummaryCount = redirectProcessingResult
-                        .ParsedRedirects
-                        .Count()
-                        .ToString(),
+                        RedirectSummaryCount = "1",
                         RedirectSummaryType = string.Format(
-                            "result(s) from processor '{0}'",
-                            processor)
+                            "processor '{0}'",
+                            processor.Name)
                     });
             }
 

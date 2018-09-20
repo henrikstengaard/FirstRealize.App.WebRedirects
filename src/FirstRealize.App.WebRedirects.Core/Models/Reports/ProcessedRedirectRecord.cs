@@ -7,10 +7,11 @@
         public string OldUrlParsed { get; set; }
         public string NewUrlParsed { get; set; }
 
-        public bool Valid { get; set; }
-
         public int ResultCount { get; set; }
         public string ResultTypes { get; set; }
+
+        public bool InvalidRedirect { get; set; }
+        public string InvalidRedirectMessage { get; set; }
 
         public bool IdenticalRedirect { get; set; }
         public string IdenticalRedirectMessage { get; set; }

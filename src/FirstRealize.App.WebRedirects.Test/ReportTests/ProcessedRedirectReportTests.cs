@@ -98,10 +98,6 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
                 records[0].NewUrlParsed);
 
             Assert.AreEqual(
-                true,
-                records[0].Valid);
-
-            Assert.AreEqual(
                 3,
                 records[0].ResultCount);
             Assert.AreEqual(

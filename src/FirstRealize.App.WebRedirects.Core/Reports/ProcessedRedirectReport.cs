@@ -41,10 +41,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
             foreach(var processedRedirect in processedRedirects)
             {
                 var processedRedirectRecord =
-                    new ProcessedRedirectRecord
-                    {
-                        Valid = processedRedirect.ParsedRedirect.IsValid,
-                    };
+                    new ProcessedRedirectRecord();
 
                 if (processedRedirect.ParsedRedirect != null)
                 {
@@ -75,6 +72,11 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                     resultTypes.Count;
                 processedRedirectRecord.ResultTypes = 
                     string.Join(",", resultTypes);
+
+                // invalid redirect result
+                AddInvalidRedirect(
+                    processedRedirect,
+                    processedRedirectRecord);
 
                 // identical redirect result
                 AddIdenticalRedirect(
@@ -119,6 +121,24 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                 _processedRedirectRecords.Add(
                     processedRedirectRecord);
             }
+        }
+
+        private void AddInvalidRedirect(
+            IProcessedRedirect processedRedirect,
+            ProcessedRedirectRecord processedRedirectRecord)
+        {
+            var invalidRedirectResult = processedRedirect.Results
+                .FirstOrDefault(r => r.Type.Equals(
+                    ResultTypes.InvalidResult));
+
+            if (invalidRedirectResult == null)
+            {
+                return;
+            }
+
+            processedRedirectRecord.IdenticalRedirect = true;
+            processedRedirectRecord.IdenticalRedirectMessage =
+                invalidRedirectResult.Message;
         }
 
         private void AddIdenticalRedirect(

@@ -34,6 +34,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             _httpClient = httpClient;
             Processors = new List<IProcessor>
             {
+                new InvalidProcessor(),
                 new IdenticalProcessor(),
                 new DuplicateProcessor(),
                 new ExcludeProcessor(
