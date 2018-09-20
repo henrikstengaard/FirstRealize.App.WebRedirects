@@ -7,9 +7,33 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
     public class ArgumentParserTests
     {
         [Test]
+        public void ParseArgumentSwitch()
+        {
+            // arguments
+            var arguments = new[]
+            {
+                "--process"
+            };
+
+            // create argument parser
+            var argumentParser =
+                new ArgumentParser(arguments);
+
+            // parse argument switch
+            var argumentSwitch =
+                argumentParser.ParseArgumentSwitch(
+                    "^(-p|--process)$");
+
+            // verify argument switch is parsed
+            Assert.AreEqual(
+                true,
+                argumentSwitch);
+        }
+
+        [Test]
         public void ParseArgumentValue()
         {
-            // test arguments
+            // arguments
             var arguments = new[]
             {
                 "--config",
@@ -23,9 +47,9 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
             // parse argument value
             var argumentValue = 
                 argumentParser.ParseArgumentValue(
-                    "^(-c|--config)");
+                    "^(-c|--config)$");
 
-            // verify long argument value is parsed
+            // verify argument value is parsed
             Assert.AreEqual(
                 "\"configuration.json\"",
                 argumentValue);

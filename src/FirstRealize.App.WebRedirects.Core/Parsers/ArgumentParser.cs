@@ -14,12 +14,32 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
             _arguments = arguments.ToList();
         }
 
+        public bool ParseArgumentSwitch(
+            string argumentNamePattern)
+        {
+            for (int i = 0; i < _arguments.Count; i++)
+            {
+                if (Regex.IsMatch(
+                    _arguments[i],
+                    argumentNamePattern,
+                    RegexOptions.IgnoreCase | RegexOptions.Compiled))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public string ParseArgumentValue(
             string argumentNamePattern)
         {
             for (int i = 0; i < _arguments.Count; i++)
             {
-                if (Regex.IsMatch(_arguments[i], argumentNamePattern, RegexOptions.IgnoreCase | RegexOptions.Compiled)
+                if (Regex.IsMatch(
+                    _arguments[i],
+                    argumentNamePattern,
+                    RegexOptions.IgnoreCase | RegexOptions.Compiled)
                     && i + 1 < _arguments.Count)
                 {
                     return _arguments[i + 1].Trim();

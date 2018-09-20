@@ -21,9 +21,11 @@ namespace FirstRealize.App.WebRedirects.Console
             var argumentParser =
                 new ArgumentParser(args);
 
-            // parse configuration file argument
+            // parse arguments
             string configurationFile = argumentParser
                 .ParseArgumentValue("^(-c|--config)");
+            bool process = argumentParser
+                .ParseArgumentSwitch("^(-p|--process)");
 
             // write error, if configuration file argument is not defined
             if (string.IsNullOrWhiteSpace(configurationFile))
