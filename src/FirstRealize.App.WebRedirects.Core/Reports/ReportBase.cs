@@ -7,7 +7,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
     public abstract class ReportBase<T> : IReport<T> where T : class
     {
         public abstract void Build(
-            IRedirectProcessingResult redirectEngine);
+            IRedirectProcessingResult redirectProcessingResult);
 
         public abstract IEnumerable<T> GetRecords();
 

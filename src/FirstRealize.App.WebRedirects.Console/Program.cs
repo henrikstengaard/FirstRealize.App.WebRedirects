@@ -79,6 +79,17 @@ namespace FirstRealize.App.WebRedirects.Console
             var redirectProcessingResult = 
                 redirectEngine.Run();
 
+            // create and write redirect summary report
+            var redirectSummaryReport =
+                new RedirectSummaryReport();
+            redirectSummaryReport.Build(
+                redirectProcessingResult);
+            var redirectSummaryReportCsvFile = Path.Combine(
+                outputDir,
+                "redirect_summary.csv");
+            redirectSummaryReport.WriteReportCsvFile(
+                redirectSummaryReportCsvFile);
+
             // create and write old url domain report
             var oldUrlDomainReport =
                 new OldUrlDomainReport();

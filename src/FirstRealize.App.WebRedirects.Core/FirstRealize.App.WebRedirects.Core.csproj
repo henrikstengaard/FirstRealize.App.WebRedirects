@@ -67,6 +67,7 @@
     <Compile Include="Models\Reports\NewUrlDomainRecord.cs" />
     <Compile Include="Models\Reports\OldUrlDomainRecord.cs" />
     <Compile Include="Models\Reports\ProcessedRedirectRecord.cs" />
+    <Compile Include="Models\Reports\RedirectSummaryReportRecord.cs" />
     <Compile Include="Models\Results\IResult.cs" />
     <Compile Include="Models\Redirects\ProcessedRedirect.cs" />
     <Compile Include="Models\Redirects\ParsedRedirect.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Reports\IReport.cs" />
     <Compile Include="Reports\NewUrlDomainReport.cs" />
     <Compile Include="Reports\ProcessedRedirectReport.cs" />
+    <Compile Include="Reports\RedirectSummaryReport.cs" />
     <Compile Include="Reports\UrlDomainReportBase.cs" />
     <Compile Include="Reports\OldUrlDomainReport.cs" />
     <Compile Include="Reports\ReportBase.cs" />

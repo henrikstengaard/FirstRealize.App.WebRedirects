@@ -66,6 +66,7 @@
     <Compile Include="ReportTests\NewUrlDomainReportTests.cs" />
     <Compile Include="ReportTests\OldUrlDomainReportTests.cs" />
     <Compile Include="ReportTests\ProcessedRedirectReportTests.cs" />
+    <Compile Include="ReportTests\RedirectSummaryReportTests.cs" />
     <Compile Include="TestData\TestData.cs" />
     <Compile Include="ParserTests\UrlParserTests.cs" />
     <Compile Include="TestData\UrlReport.cs" />
