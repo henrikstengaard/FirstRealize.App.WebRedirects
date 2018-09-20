@@ -48,5 +48,8 @@
         public string TooManyRedirectsMessage { get; set; }
         public string TooManyRedirectsUrl { get; set; }
         public int TooManyRedirectsCount { get; set; }
+
+        public bool UnknownError { get; set; }
+        public string UnknownErrorMessage { get; set; }
     }
 }

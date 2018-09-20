@@ -118,5 +118,45 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
                     pr => pr.Results.Count() == 1 && pr.Results.All(
                         r => r.Type.Equals(testProcessor.Name))));
         }
+
+        [Test]
+        public void DetectUnkownErrors()
+        {
+            // create and customize configuration
+            var causeErrorProcessor = new CauseErrorProcessor();
+            var configuration = CreateConfiguration();
+            var customizedConfiguration = new Configuration
+            {
+                RedirectCsvFiles = configuration.RedirectCsvFiles,
+                DefaultOldUrl = configuration.DefaultOldUrl,
+                DefaultNewUrl = configuration.DefaultNewUrl,
+                Processors = new[]
+                {
+                    causeErrorProcessor.Name
+                }
+            };
+
+            // create redirect engine
+            var redirectEngine = CreateRedirectEngine(
+                customizedConfiguration);
+            redirectEngine.Processors.Add(
+                causeErrorProcessor);
+
+            // run redirect engine
+            var redirectProcessingResult =
+                redirectEngine.Run();
+
+            // verify redirect engine processed redirects and has unknown error result
+            var processedRedirects = redirectProcessingResult
+                .ProcessedRedirects
+                .ToList();
+            Assert.AreNotEqual(
+                0, processedRedirects.Count);
+            Assert.AreEqual(
+                processedRedirects.Count,
+                processedRedirects.Count(
+                    pr => pr.Results.Count() == 1 && pr.Results.All(
+                        r => r.Type.Equals(ResultTypes.UnknownErrorResult))));
+        }
     }
 }

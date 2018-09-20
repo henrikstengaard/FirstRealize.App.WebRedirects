@@ -11,5 +11,6 @@
         public static string TooManyRedirects = "TooManyRedirects";
         public static string OptimizedRedirect = "OptimizedRedirect";
         public static string UrlResponse = "UrlResponse";
+        public static string UnknownErrorResult = "UnknownErrorResult";
     }
 }

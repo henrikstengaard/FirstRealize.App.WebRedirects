@@ -52,6 +52,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Clients\ControlledHttpClient.cs" />
+    <Compile Include="EngineTests\CauseErrorProcessor.cs" />
     <Compile Include="EngineTests\RedirectEngineTests.cs" />
     <Compile Include="ModelTests\RedirectTests.cs" />
     <Compile Include="ParserTests\ArgumentParserTests.cs" />

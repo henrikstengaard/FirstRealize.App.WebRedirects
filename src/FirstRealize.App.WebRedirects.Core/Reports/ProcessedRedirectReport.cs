@@ -118,6 +118,11 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                     processedRedirect,
                     processedRedirectRecord);
 
+                // unknown error result
+                AddUnknownError(
+                    processedRedirect,
+                    processedRedirectRecord);
+
                 _processedRedirectRecords.Add(
                     processedRedirectRecord);
             }
@@ -309,6 +314,24 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
         public override IEnumerable<ProcessedRedirectRecord> GetRecords()
         {
             return _processedRedirectRecords;
+        }
+
+        private void AddUnknownError(
+            IProcessedRedirect processedRedirect,
+            ProcessedRedirectRecord processedRedirectRecord)
+        {
+            var unknownErrorResult = processedRedirect.Results
+                .FirstOrDefault(r => r.Type.Equals(
+                    ResultTypes.UnknownErrorResult));
+
+            if (unknownErrorResult == null)
+            {
+                return;
+            }
+
+            processedRedirectRecord.UnknownError = true;
+            processedRedirectRecord.UnknownErrorMessage =
+                unknownErrorResult.Message;
         }
     }
 }

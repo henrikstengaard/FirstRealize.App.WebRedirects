@@ -137,9 +137,23 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
 
                 _processedRedirects.Add(processedRedirect);
 
-                foreach (var processor in _activeProcessors)
+                try
                 {
-                    processor.Process(processedRedirect);
+                    foreach (var processor in _activeProcessors)
+                    {
+                        processor.Process(processedRedirect);
+                    }
+                }
+                catch (Exception e)
+                {
+                    processedRedirect.Results.Add(
+                        new Result
+                        {
+                            Type = ResultTypes.UnknownErrorResult,
+                            Message = string.Format(
+                                "Unknown error '{0}'!",
+                                e.Message)
+                        });
                 }
             }
         }
