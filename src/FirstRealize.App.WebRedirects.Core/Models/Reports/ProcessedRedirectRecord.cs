@@ -8,10 +8,12 @@
         public string NewUrlParsed { get; set; }
 
         public bool Valid { get; set; }
-        public bool Identical { get; set; }
 
         public int ResultCount { get; set; }
         public string ResultTypes { get; set; }
+
+        public bool IdenticalRedirect { get; set; }
+        public string IdenticalRedirectMessage { get; set; }
 
         public bool ExcludedRedirect { get; set; }
         public string ExcludedRedirectMessage { get; set; }

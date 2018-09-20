@@ -44,7 +44,6 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                     new ProcessedRedirectRecord
                     {
                         Valid = processedRedirect.ParsedRedirect.IsValid,
-                        Identical = processedRedirect.ParsedRedirect.IsIdentical
                     };
 
                 if (processedRedirect.ParsedRedirect != null)
@@ -77,8 +76,13 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                 processedRedirectRecord.ResultTypes = 
                     string.Join(",", resultTypes);
 
-                // excluded result
-                AddExcludedResult(
+                // identical redirect result
+                AddIdenticalRedirect(
+                    processedRedirect,
+                    processedRedirectRecord);
+
+                // excluded redirect result
+                AddExcludedRedirectResult(
                     processedRedirect,
                     processedRedirectRecord);
 
@@ -117,23 +121,41 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
             }
         }
 
-        private void AddExcludedResult(
+        private void AddIdenticalRedirect(
             IProcessedRedirect processedRedirect,
             ProcessedRedirectRecord processedRedirectRecord)
         {
-            var excludedResult = processedRedirect.Results
+            var identicalRedirectResult = processedRedirect.Results
+                .FirstOrDefault(r => r.Type.Equals(
+                    ResultTypes.IdenticalResult));
+
+            if (identicalRedirectResult == null)
+            {
+                return;
+            }
+
+            processedRedirectRecord.IdenticalRedirect = true;
+            processedRedirectRecord.IdenticalRedirectMessage = 
+                identicalRedirectResult.Message;
+        }
+
+        private void AddExcludedRedirectResult(
+            IProcessedRedirect processedRedirect,
+            ProcessedRedirectRecord processedRedirectRecord)
+        {
+            var excludedRedirectResult = processedRedirect.Results
                 .FirstOrDefault(r => r.Type.Equals(
                     ResultTypes.ExcludedRedirect));
 
-            if (excludedResult == null)
+            if (excludedRedirectResult == null)
             {
                 return;
             }
 
             processedRedirectRecord.ExcludedRedirect = true;
-            processedRedirectRecord.ExcludedRedirectMessage = excludedResult.Message;
+            processedRedirectRecord.ExcludedRedirectMessage = excludedRedirectResult.Message;
             processedRedirectRecord.ExcludedRedirectUrl =
-                FormatParsedUrl(excludedResult.Url);
+                FormatParsedUrl(excludedRedirectResult.Url);
         }
 
         private void AddDuplicateOfFirstResult(

@@ -75,6 +75,12 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
         public void Process(IProcessedRedirect processedRedirect)
         {
+            if (!processedRedirect.ParsedRedirect.IsValid ||
+                processedRedirect.ParsedRedirect.IsIdentical)
+            {
+                return;
+            }
+
             var checkRedirect = false;
             var isCyclicRedirect = false;
             var redirectCount = 0;

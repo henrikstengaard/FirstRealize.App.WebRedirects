@@ -56,6 +56,7 @@
     <Compile Include="ModelTests\RedirectTests.cs" />
     <Compile Include="ParserTests\ArgumentParserTests.cs" />
     <Compile Include="ParserTests\RedirectParserTests.cs" />
+    <Compile Include="ProcessorTests\IdenticalProcessorTests.cs" />
     <Compile Include="ProcessorTests\RedirectProcessorTests.cs" />
     <Compile Include="ProcessorTests\DuplicateProcessorTests.cs" />
     <Compile Include="ProcessorTests\ExcludeProcessorTests.cs" />

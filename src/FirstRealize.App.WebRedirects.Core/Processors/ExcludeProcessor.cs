@@ -38,6 +38,12 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
         public void Process(IProcessedRedirect processedRedirect)
         {
+            if (!processedRedirect.ParsedRedirect.IsValid ||
+                processedRedirect.ParsedRedirect.IsIdentical)
+            {
+                return;
+            }
+
             var oldUrlPatternMatches = GetMatchingUrlPatterns(
                 processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri,
                 _configuration.OldUrlExcludePatterns)

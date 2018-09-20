@@ -34,6 +34,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             _httpClient = httpClient;
             Processors = new List<IProcessor>
             {
+                new IdenticalProcessor(),
                 new DuplicateProcessor(),
                 new ExcludeProcessor(
                     _configuration),
@@ -60,6 +61,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
 
             return new RedirectProcessingResult
             {
+                Processors = Processors,
                 Redirects = _redirects,
                 ParsedRedirects = _parsedRedirects,
                 ProcessedRedirects = _processedRedirects,
@@ -127,12 +129,6 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
                 };
 
                 _processedRedirects.Add(processedRedirect);
-
-                if (!parsedRedirect.IsValid ||
-                    parsedRedirect.IsIdentical)
-                {
-                    continue;
-                }
 
                 foreach (var processor in activeProcessors)
                 {

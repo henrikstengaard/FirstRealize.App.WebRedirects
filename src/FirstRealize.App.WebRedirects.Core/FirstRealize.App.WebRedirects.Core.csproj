@@ -88,6 +88,7 @@
     <Compile Include="Processors\IProcessor.cs" />
     <Compile Include="Models\Results\ResultTypes.cs" />
     <Compile Include="Processors\IProcessorPreload.cs" />
+    <Compile Include="Processors\IdenticalProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Readers\ConfigurationJsonReader.cs" />
     <Compile Include="Readers\RedirectCsvReader.cs" />

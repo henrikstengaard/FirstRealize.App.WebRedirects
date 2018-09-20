@@ -100,9 +100,6 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
             Assert.AreEqual(
                 true,
                 records[0].Valid);
-            Assert.AreEqual(
-                false,
-                records[0].Identical);
 
             Assert.AreEqual(
                 3,
