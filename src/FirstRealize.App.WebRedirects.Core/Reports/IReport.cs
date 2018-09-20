@@ -5,7 +5,10 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
 {
     public interface IReport<TEntity> where TEntity : class
     {
-        void Build(IRedirectProcessingResult redirectEngine);
+        void Build(
+            IRedirectProcessingResult redirectEngine);
         IEnumerable<TEntity> GetRecords();
+        void WriteReportCsvFile(
+            string path);
     }
 }

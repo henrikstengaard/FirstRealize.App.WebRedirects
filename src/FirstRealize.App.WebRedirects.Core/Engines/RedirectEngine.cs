@@ -1,6 +1,5 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Clients;
 using FirstRealize.App.WebRedirects.Core.Configuration;
-using FirstRealize.App.WebRedirects.Core.Models;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Parsers;
@@ -50,12 +49,18 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             _results = new List<IResult>();
         }
 
-        public IRedirectProcessingResult Run()
+        public IRedirectProcessingResult Run(
+            bool process)
         {
             LoadRedirectsFromCsvFiles();
             ParseRedirects();
-            PreloadParsedRedirects();
-            ProcessParsedRedirects();
+
+            if (process)
+            {
+                PreloadParsedRedirects();
+                ProcessParsedRedirects();
+            }
+
             CollectResults();
 
             return new RedirectProcessingResult

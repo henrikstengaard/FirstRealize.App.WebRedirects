@@ -1,5 +1,6 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Engines;
 using FirstRealize.App.WebRedirects.Core.Models.Reports;
+using FirstRealize.App.WebRedirects.Core.Writers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +44,16 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                 {
                     OldUrlDomain = x
                 });
+        }
+
+        public void WriteReportCsvFile(
+            string path)
+        {
+            using (var reportCsvWriter = new ReportCsvWriter<OldUrlDomainRecord>(
+                path))
+            {
+                reportCsvWriter.Write(this);
+            }
         }
     }
 }

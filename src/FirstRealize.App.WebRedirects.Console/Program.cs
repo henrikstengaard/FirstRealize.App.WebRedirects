@@ -3,7 +3,10 @@ using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Engines;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Readers;
+using FirstRealize.App.WebRedirects.Core.Reports;
+using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace FirstRealize.App.WebRedirects.Console
@@ -17,6 +20,11 @@ namespace FirstRealize.App.WebRedirects.Console
                 Usage();
                 return 1;
             }
+
+            // expand environment variables in arguments
+            args = args.Select(x =>
+                Environment.ExpandEnvironmentVariables(x))
+                .ToArray();
 
             var argumentParser =
                 new ArgumentParser(args);
@@ -54,6 +62,9 @@ namespace FirstRealize.App.WebRedirects.Console
                     .ReadConfiguationFile(configurationFile);
             }
 
+            var outputDir = Path.GetDirectoryName(
+                configurationFile);
+
             // create redirect engine
             var urlParser = new UrlParser();
             var redirectParser = new RedirectParser(
@@ -67,10 +78,19 @@ namespace FirstRealize.App.WebRedirects.Console
                 );
 
             // run redirect engine
-            redirectEngine.Run();
+            var redirectProcessingResult = 
+                redirectEngine.Run(process);
 
-            // write reports
-
+            // create and write reports
+            var oldUrlDomainReport =
+                new OldUrlDomainReport();
+            oldUrlDomainReport.Build(
+                redirectProcessingResult);
+            var oldUrlDomainReportCsvFile = Path.Combine(
+                outputDir,
+                "oldurl_domains.csv");
+            oldUrlDomainReport.WriteReportCsvFile(
+                oldUrlDomainReportCsvFile);
 
             return 0;
         }
