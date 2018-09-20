@@ -18,7 +18,43 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
         public override void Build(
             IRedirectProcessingResult redirectProcessingResult)
         {
+            // processors
+            var processors = redirectProcessingResult
+                .Processors
+                .Select(p => p.Name)
+                .Distinct()
+                .OrderBy(p => p)
+                .ToList();
+
+            // processors used
+            _redirectSummaryReportRecords.Add(
+                new RedirectSummaryReportRecord
+                {
+                    RedirectSummaryCount = processors.Count,
+                    RedirectSummaryType = "processors used"
+                });
+
+            // results from processor
+            foreach(var processor in processors)
+            {
+                _redirectSummaryReportRecords.Add(
+                    new RedirectSummaryReportRecord
+                    {
+                        RedirectSummaryCount = redirectProcessingResult
+                        .ParsedRedirects
+                        .Count(),
+                        RedirectSummaryType = string.Format(
+                            "result(s) from processor '{0}'",
+                            processor)
+                    });
+            }
+
             // parsed redirects
+            _redirectSummaryReportRecords.Add(
+                new RedirectSummaryReportRecord
+                {
+                    RedirectSummaryType = "---"
+                });
             _redirectSummaryReportRecords.Add(
                 new RedirectSummaryReportRecord
                 {
