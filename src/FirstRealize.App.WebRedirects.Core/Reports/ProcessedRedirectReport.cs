@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FirstRealize.App.WebRedirects.Core.Engines;
+using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Reports;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 
@@ -14,6 +15,20 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
         {
             _processedRedirectRecords =
                 new List<ProcessedRedirectRecord>();
+        }
+
+        private string FormatRawUrl(IUrl url)
+        {
+            return url != null && url.Raw != null
+                ? url.Raw ?? string.Empty
+                : string.Empty;
+        }
+
+        private string FormatParsedUrl(IUrl url)
+        {
+            return url != null && url.Parsed != null
+                ? url.Parsed.AbsoluteUri
+                : string.Empty;
         }
 
         public override void Build(
@@ -37,25 +52,17 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                     if (processedRedirect.ParsedRedirect.OldUrl != null)
                     {
                         processedRedirectRecord.OldUrlRaw =
-                            processedRedirect.ParsedRedirect.OldUrl != null
-                            ? processedRedirect.ParsedRedirect.OldUrl.Raw ?? string.Empty
-                            : string.Empty;
+                            FormatRawUrl(processedRedirect.ParsedRedirect.OldUrl);
                         processedRedirectRecord.OldUrlParsed =
-                            processedRedirect.ParsedRedirect.OldUrl.Parsed != null
-                            ? processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri
-                            : string.Empty;
+                            FormatParsedUrl(processedRedirect.ParsedRedirect.OldUrl);
                     }
 
                     if (processedRedirect.ParsedRedirect.NewUrl != null)
                     {
                         processedRedirectRecord.NewUrlRaw =
-                            processedRedirect.ParsedRedirect.NewUrl != null
-                            ? processedRedirect.ParsedRedirect.NewUrl.Raw ?? string.Empty
-                            : string.Empty;
+                            FormatRawUrl(processedRedirect.ParsedRedirect.NewUrl);
                         processedRedirectRecord.NewUrlParsed =
-                            processedRedirect.ParsedRedirect.NewUrl.Parsed != null
-                            ? processedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri
-                            : string.Empty;
+                            FormatParsedUrl(processedRedirect.ParsedRedirect.NewUrl);
                     }
                 }
 
@@ -70,51 +77,191 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                 processedRedirectRecord.ResultTypes = 
                     string.Join(",", resultTypes);
 
-                var excludedResult = processedRedirect.Results
-                    .FirstOrDefault(r => r.Type.Equals(ResultTypes.ExcludedRedirect));
+                // excluded result
+                AddExcludedResult(
+                    processedRedirect,
+                    processedRedirectRecord);
 
-                if (excludedResult != null)
-                {
-                    processedRedirectRecord.ExcludedRedirect = true;
-                    processedRedirectRecord.ExcludedRedirectMessage = excludedResult.Message;
-                    processedRedirectRecord.ExcludedRedirectUrl =
-                        excludedResult.Url != null &&
-                        excludedResult.Url.Parsed != null
-                        ? excludedResult.Url.Parsed.AbsoluteUri
-                        : string.Empty;
-                }
+                // duplicate of first result
+                AddDuplicateOfFirstResult(
+                    processedRedirect,
+                    processedRedirectRecord);
 
-                var duplicateOfFirstResult = processedRedirect.Results
-                    .FirstOrDefault(r => r.Type.Equals(ResultTypes.DuplicateOfFirst));
+                // duplicate of last result
+                AddDuplicateOfLastResult(
+                    processedRedirect,
+                    processedRedirectRecord);
 
-                if (duplicateOfFirstResult != null)
-                {
-                    processedRedirectRecord.DuplicateOfFirst = true;
-                    processedRedirectRecord.DuplicateOfFirstMessage = duplicateOfFirstResult.Message;
-                    processedRedirectRecord.DuplicateOfFirstUrl =
-                        duplicateOfFirstResult.Url != null &&
-                        duplicateOfFirstResult.Url.Parsed != null
-                        ? duplicateOfFirstResult.Url.Parsed.AbsoluteUri
-                        : string.Empty;
-                }
+                // url response result
+                AddUrlResponseResult(
+                    processedRedirect,
+                    processedRedirectRecord);
 
-                var duplicateOfLastResult = processedRedirect.Results
-                    .FirstOrDefault(r => r.Type.Equals(ResultTypes.DuplicateOfLast));
+                // optimized redirect result
+                AddOptimizedRedirectResult(
+                    processedRedirect,
+                    processedRedirectRecord);
 
-                if (duplicateOfLastResult != null)
-                {
-                    processedRedirectRecord.DuplicateOfLast = true;
-                    processedRedirectRecord.DuplicateOfLastMessage = duplicateOfLastResult.Message;
-                    processedRedirectRecord.DuplicateOfLastUrl =
-                        duplicateOfLastResult.Url != null &&
-                        duplicateOfLastResult.Url.Parsed != null
-                        ? duplicateOfLastResult.Url.Parsed.AbsoluteUri
-                        : string.Empty;
-                }
+                // cyclic redirect result
+                AddCyclicRedirectResult(
+                    processedRedirect,
+                    processedRedirectRecord);
+
+                // too many redirects result
+                AddTooManyRedirectsResult(
+                    processedRedirect,
+                    processedRedirectRecord);
 
                 _processedRedirectRecords.Add(
                     processedRedirectRecord);
             }
+        }
+
+        private void AddExcludedResult(
+            IProcessedRedirect processedRedirect,
+            ProcessedRedirectRecord processedRedirectRecord)
+        {
+            var excludedResult = processedRedirect.Results
+                .FirstOrDefault(r => r.Type.Equals(
+                    ResultTypes.ExcludedRedirect));
+
+            if (excludedResult == null)
+            {
+                return;
+            }
+
+            processedRedirectRecord.ExcludedRedirect = true;
+            processedRedirectRecord.ExcludedRedirectMessage = excludedResult.Message;
+            processedRedirectRecord.ExcludedRedirectUrl =
+                FormatParsedUrl(excludedResult.Url);
+        }
+
+        private void AddDuplicateOfFirstResult(
+            IProcessedRedirect processedRedirect,
+            ProcessedRedirectRecord processedRedirectRecord)
+        {
+            var duplicateOfFirstResult = processedRedirect.Results
+                .FirstOrDefault(r => r.Type.Equals(
+                    ResultTypes.DuplicateOfFirst));
+
+            if (duplicateOfFirstResult == null)
+            {
+                return;
+            }
+
+            processedRedirectRecord.DuplicateOfFirst = true;
+            processedRedirectRecord.DuplicateOfFirstMessage =
+                duplicateOfFirstResult.Message;
+            processedRedirectRecord.DuplicateOfFirstUrl =
+                FormatParsedUrl(duplicateOfFirstResult.Url);
+        }
+
+        private void AddDuplicateOfLastResult(
+            IProcessedRedirect processedRedirect,
+            ProcessedRedirectRecord processedRedirectRecord)
+        {
+            var duplicateOfLastResult = processedRedirect.Results
+                .FirstOrDefault(r => r.Type.Equals(
+                    ResultTypes.DuplicateOfLast));
+
+            if (duplicateOfLastResult == null)
+            {
+                return;
+            }
+
+            processedRedirectRecord.DuplicateOfLast = true;
+            processedRedirectRecord.DuplicateOfLastMessage =
+                duplicateOfLastResult.Message;
+            processedRedirectRecord.DuplicateOfLastUrl =
+                FormatParsedUrl(duplicateOfLastResult.Url);
+        }
+
+        private void AddUrlResponseResult(
+            IProcessedRedirect processedRedirect,
+            ProcessedRedirectRecord processedRedirectRecord)
+        {
+            var urlResponseResult = processedRedirect.Results
+                .FirstOrDefault(r => r.Type.Equals(
+                    ResultTypes.UrlResponse)) as UrlResponseResult;
+
+            if (urlResponseResult == null)
+            {
+                return;
+            }
+
+            processedRedirectRecord.UrlResponse = true;
+            processedRedirectRecord.UrlResponseMessage =
+                urlResponseResult.Message;
+            processedRedirectRecord.UrlResponseUrl =
+                FormatParsedUrl(urlResponseResult.Url);
+            processedRedirectRecord.UrlResponseStatusCode =
+                urlResponseResult.StatusCode;
+            processedRedirectRecord.UrlResponseLocation =
+                urlResponseResult.Location;
+        }
+
+        private void AddOptimizedRedirectResult(
+            IProcessedRedirect processedRedirect,
+            ProcessedRedirectRecord processedRedirectRecord)
+        {
+            var optimizedRedirectResult = processedRedirect.Results
+                .FirstOrDefault(r => r.Type.Equals(
+                    ResultTypes.OptimizedRedirect)) as RedirectResult;
+
+            if (optimizedRedirectResult == null)
+            {
+                return;
+            }
+
+            processedRedirectRecord.OptimizedRedirect = true;
+            processedRedirectRecord.OptimizedRedirectMessage =
+                optimizedRedirectResult.Message;
+            processedRedirectRecord.OptimizedRedirectUrl =
+                FormatParsedUrl(optimizedRedirectResult.Url);
+            processedRedirectRecord.OptimizedRedirectCount =
+                optimizedRedirectResult.RedirectCount;
+        }
+
+        private void AddCyclicRedirectResult(
+            IProcessedRedirect processedRedirect,
+            ProcessedRedirectRecord processedRedirectRecord)
+        {
+            var cyclicRedirectResult = processedRedirect.Results
+                .FirstOrDefault(r => r.Type.Equals(ResultTypes.CyclicRedirect)) as RedirectResult;
+
+            if (cyclicRedirectResult == null)
+            {
+                return;
+            }
+
+            processedRedirectRecord.CyclicRedirect = true;
+            processedRedirectRecord.CyclicRedirectMessage =
+                cyclicRedirectResult.Message;
+            processedRedirectRecord.CyclicRedirectUrl =
+                FormatParsedUrl(cyclicRedirectResult.Url);
+            processedRedirectRecord.CyclicRedirectCount =
+                cyclicRedirectResult.RedirectCount;
+        }
+
+        private void AddTooManyRedirectsResult(
+            IProcessedRedirect processedRedirect,
+            ProcessedRedirectRecord processedRedirectRecord)
+        {
+            var tooManyRedirectsResult = processedRedirect.Results
+                .FirstOrDefault(r => r.Type.Equals(ResultTypes.TooManyRedirects)) as RedirectResult;
+
+            if (tooManyRedirectsResult == null)
+            {
+                return;
+            }
+
+            processedRedirectRecord.TooManyRedirects = true;
+            processedRedirectRecord.TooManyRedirectsMessage =
+                tooManyRedirectsResult.Message;
+            processedRedirectRecord.TooManyRedirectsUrl =
+                FormatParsedUrl(tooManyRedirectsResult.Url);
+            processedRedirectRecord.TooManyRedirectsCount =
+                tooManyRedirectsResult.RedirectCount;
         }
 
         public override IEnumerable<ProcessedRedirectRecord> GetRecords()
