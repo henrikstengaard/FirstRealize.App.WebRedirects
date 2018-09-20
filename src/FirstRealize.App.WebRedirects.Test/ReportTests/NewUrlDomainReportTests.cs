@@ -61,7 +61,6 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
             // verify new url domains records are build
             var records = newUrlDomainReport
                 .GetRecords()
-                .OfType<NewUrlDomainRecord>()
                 .ToList();
             Assert.AreEqual(2, records.Count);
             Assert.AreEqual(

@@ -103,6 +103,17 @@ namespace FirstRealize.App.WebRedirects.Console
             newUrlDomainReport.WriteReportCsvFile(
                 newUrlDomainReportCsvFile);
 
+            // create and write processed redirect report
+            var processedRedirectReport =
+                new ProcessedRedirectReport();
+            processedRedirectReport.Build(
+                redirectProcessingResult);
+            var processedRedirectReportCsvFile = Path.Combine(
+                outputDir,
+                "processed_redirects.csv");
+            processedRedirectReport.WriteReportCsvFile(
+                processedRedirectReportCsvFile);
+
             return 0;
         }
 
