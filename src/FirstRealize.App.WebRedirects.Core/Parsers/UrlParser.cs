@@ -1,5 +1,4 @@
-﻿using FirstRealize.App.WebRedirects.Core.Models;
-using FirstRealize.App.WebRedirects.Core.Models.Redirects;
+﻿using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using System;
 using System.Text.RegularExpressions;
 
@@ -14,7 +13,7 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
         {
             if (string.IsNullOrWhiteSpace(url))
             {
-                throw new ArgumentNullException(nameof(url));
+                return null;
             }
 
             // remove whitespaces
@@ -26,7 +25,7 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
             // return uri of url, if url starts with "http://" or "https://"
             if (Regex.IsMatch(
                 formattedUrl,
-                "https?://",
+                "^https?://",
                 RegexOptions.Compiled))
             {
                 return new Url
