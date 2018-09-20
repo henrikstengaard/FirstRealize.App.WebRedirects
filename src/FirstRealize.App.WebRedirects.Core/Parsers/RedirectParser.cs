@@ -1,5 +1,5 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Configuration;
-using FirstRealize.App.WebRedirects.Core.Models;
+using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 
 namespace FirstRealize.App.WebRedirects.Core.Parsers
 {
@@ -16,20 +16,20 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
             _urlParser = urlParser;
         }
 
-        public void ParseRedirect(
-            Redirect redirect)
+        public IParsedRedirect ParseRedirect(
+            IRedirect redirect)
         {
-            // parse old url
-            redirect.OldUrl = _urlParser.ParseUrl(
-                redirect.OldUrl.Raw,
-                _configuration.DefaultOldUrl,
-                true);
-
-            // parse new url
-            redirect.NewUrl = _urlParser.ParseUrl(
-                redirect.NewUrl.Raw,
-                _configuration.DefaultNewUrl,
-                false);
+            return new ParsedRedirect
+            {
+                OldUrl = _urlParser.ParseUrl(
+                    redirect.OldUrl,
+                    _configuration.DefaultOldUrl,
+                    true),
+                NewUrl = _urlParser.ParseUrl(
+                    redirect.NewUrl,
+                    _configuration.DefaultNewUrl,
+                    false)
+            };
         }
     }
 }

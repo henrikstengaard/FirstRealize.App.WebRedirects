@@ -1,11 +1,12 @@
-﻿using FirstRealize.App.WebRedirects.Core.Models.Results;
+﻿using FirstRealize.App.WebRedirects.Core.Models.Redirects;
+using FirstRealize.App.WebRedirects.Core.Models.Results;
 using System.Collections.Generic;
 
 namespace FirstRealize.App.WebRedirects.Core.Models
 {
     public interface IProcessedRedirect
     {
-        Redirect Redirect { get; }
+        IParsedRedirect ParsedRedirect { get; }
         IList<IResult> Results { get; }
     }
 }

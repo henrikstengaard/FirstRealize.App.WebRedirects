@@ -1,6 +1,7 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Clients;
 using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Models;
+using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Processors;
@@ -18,7 +19,8 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
         private readonly IHttpClient _httpClient;
         private readonly IList<IProcessor> _processors;
 
-        private List<Redirect> _redirects;
+        private List<IRedirect> _redirects;
+        private List<IParsedRedirect> _parsedRedirects;
         private List<IProcessedRedirect> _processedRedirects;
         private List<IResult> _results;
 
@@ -42,7 +44,8 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
                     _urlParser)
             };
 
-            _redirects = new List<Redirect>();
+            _redirects = new List<IRedirect>();
+            _parsedRedirects = new List<IParsedRedirect>();
             _processedRedirects = new List<IProcessedRedirect>();
             _results = new List<IResult>();
         }
@@ -51,13 +54,14 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
         {
             LoadRedirectsFromCsvFiles();
             ParseRedirects();
-            PreloadRedirects();
-            ProcessRedirects();
+            PreloadParsedRedirects();
+            ProcessParsedRedirects();
             CollectResults();
 
             return new RedirectProcessingResult
             {
                 Redirects = _redirects,
+                ParsedRedirects = _parsedRedirects,
                 ProcessedRedirects = _processedRedirects,
                 Results = _results
             };
@@ -65,7 +69,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
 
         private void LoadRedirectsFromCsvFiles()
         {
-            _redirects = new List<Redirect>();
+            _redirects = new List<IRedirect>();
 
             foreach (var redirectsCsvFile in _configuration.RedirectCsvFiles)
             {
@@ -80,39 +84,43 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
 
         private void ParseRedirects()
         {
+            _parsedRedirects = new List<IParsedRedirect>();
+
             foreach(var redirect in _redirects.ToList())
             {
-                _redirectParser.ParseRedirect(redirect);
+                _parsedRedirects.Add(
+                    _redirectParser.ParseRedirect(redirect));
             }
 
-            _redirects.Sort();
+            _parsedRedirects.Sort();
         }
 
-        private void PreloadRedirects()
+        private void PreloadParsedRedirects()
         {
             foreach (var processor in _processors
                 .OfType<IProcessorPreload>()
                 .ToList())
             {
-                processor.PreloadRedirects(_redirects);
+                processor.PreloadParsedRedirects(
+                    _parsedRedirects);
             }
         }
 
-        private void ProcessRedirects()
+        private void ProcessParsedRedirects()
         {
             _processedRedirects = new List<IProcessedRedirect>();
 
-            foreach (var redirect in _redirects.ToList())
+            foreach (var parsedRedirect in _parsedRedirects.ToList())
             {
                 var processedRedirect = new ProcessedRedirect
                 {
-                    Redirect = redirect
+                    ParsedRedirect = parsedRedirect
                 };
 
                 _processedRedirects.Add(processedRedirect);
 
-                if (!redirect.IsValid ||
-                    redirect.IsIdentical)
+                if (!parsedRedirect.IsValid ||
+                    parsedRedirect.IsIdentical)
                 {
                     continue;
                 }

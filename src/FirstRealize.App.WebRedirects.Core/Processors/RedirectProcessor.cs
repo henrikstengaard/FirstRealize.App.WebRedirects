@@ -1,6 +1,7 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Clients;
 using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Models;
+using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using System;
@@ -17,7 +18,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
         private readonly IHttpClient _httpClient;
         private readonly IUrlParser _urlParser;
 
-        private readonly IDictionary<string, Redirect> _oldUrlIndex;
+        private readonly IDictionary<string, IParsedRedirect> _oldUrlIndex;
         private readonly IList<IResult> _results;
 
         public RedirectProcessor(
@@ -29,7 +30,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             _httpClient = httpClient;
             _urlParser = urlParser;
 
-            _oldUrlIndex = new Dictionary<string, Redirect>();
+            _oldUrlIndex = new Dictionary<string, IParsedRedirect>();
             _results = new List<IResult>();
         }
 
@@ -48,21 +49,21 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 : url;
         }
 
-        public void PreloadRedirects(IEnumerable<Redirect> redirects)
+        public void PreloadParsedRedirects(IEnumerable<IParsedRedirect> parsedRedirects)
         {
-            foreach(var redirect in redirects
+            foreach(var parsedRedirect in parsedRedirects
                 .Where(r => r.IsValid && !r.IsIdentical)
                 .ToList())
             {
                 var oldUrl = FormatUrl(
-                    redirect.OldUrl.Parsed.AbsoluteUri);
+                    parsedRedirect.OldUrl.Parsed.AbsoluteUri);
 
                 if (_oldUrlIndex.ContainsKey(oldUrl))
                 {
                     continue;
                 }
 
-                _oldUrlIndex.Add(oldUrl, redirect);
+                _oldUrlIndex.Add(oldUrl, parsedRedirect);
             }
         }
 
@@ -75,11 +76,11 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             var urlsIndex = new HashSet<string>();
 
             var oldUrl = FormatUrl(
-                processedRedirect.Redirect.OldUrl.Parsed.AbsoluteUri);
+                processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri);
             urlsVisited.Add(oldUrl);
             urlsIndex.Add(oldUrl);
 
-            Redirect redirect = processedRedirect.Redirect;
+            var redirect = processedRedirect.ParsedRedirect;
             Url url = null;
 
             do
@@ -116,7 +117,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                                 response.Location ?? string.Empty, "https?://", RegexOptions.IgnoreCase | RegexOptions.Compiled)
                                 ? new Uri(url.Parsed, response.Location).AbsoluteUri
                                 : response.Location ?? string.Empty;
-                            redirect = new Redirect
+                            redirect = new ParsedRedirect
                             {
                                 OldUrl = redirect.NewUrl,
                                 NewUrl = _urlParser.ParseUrl(newUrl)
@@ -151,7 +152,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                         // update redirect with new url from existing redirect
                         var newUrl = FormatUrl(
                             _oldUrlIndex[parsedUrl].NewUrl.Parsed.AbsoluteUri);
-                        redirect = new Redirect
+                        redirect = new ParsedRedirect
                         {
                             OldUrl = redirect.NewUrl,
                             NewUrl = _oldUrlIndex[parsedUrl].NewUrl

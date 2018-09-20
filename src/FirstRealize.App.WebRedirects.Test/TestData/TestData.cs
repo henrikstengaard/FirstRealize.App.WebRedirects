@@ -1,5 +1,6 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Models;
+using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Processors;
 using System;
@@ -35,73 +36,48 @@ namespace FirstRealize.App.WebRedirects.Test.TestData
                 MaxRedirectCount = 10
             };
 
-        public static IEnumerable<Redirect> GetRedirects()
+        public static IEnumerable<IRedirect> GetRedirects()
         {
-            return new List<Redirect>
+            return new List<IRedirect>
             {
                 new Redirect
                 {
-                    OldUrl = new Url
-                    {
-                        Raw = "/example/path"
-                    },
-                    NewUrl = new Url
-                    {
-                        Raw = "/new-url"
-                    }
+                    OldUrl = "/example/path",
+                    NewUrl = "/new-url"
                 },
                 new Redirect
                 {
-                    OldUrl = new Url
-                    {
-                        Raw = "/new-url"
-                    },
-                    NewUrl = new Url
-                    {
-                        Raw = "/another/path"
-                    }
+                    OldUrl = "/new-url",
+                    NewUrl = "/another/path"
                 },
                 // causes duplicate redirect
                 new Redirect
                 {
-                    OldUrl = new Url
-                    {
-                        Raw = "/new-url"
-                    },
-                    NewUrl = new Url
-                    {
-                        Raw = "/redirect/somwhere/else"
-                    }
+                    OldUrl = "/new-url",
+                    NewUrl = "/redirect/somwhere/else"
                 },
                 // causes cyclic redirect for redirect from old url '/example/path' to '/new-url'
                 new Redirect
                 {
-                    OldUrl = new Url
-                    {
-                        Raw = "/another/path"
-                    },
-                    NewUrl = new Url
-                    {
-                        Raw = "/example/path"
-                    }
+                    OldUrl = "/another/path",
+                    NewUrl = "/example/path"
                 }
             };
         }
 
-        public static IEnumerable<Redirect> GetParsedRedirects()
+        public static IEnumerable<IParsedRedirect> GetParsedRedirects()
         {
             var redirectParser = new RedirectParser(
                 DefaultConfiguration,
                 new UrlParser());
 
-            var parsedRedirects = new List<Redirect>();
+            var parsedRedirects = new List<IParsedRedirect>();
 
             foreach (var redirect in GetRedirects())
             {
-                redirectParser.ParseRedirect(
-                    redirect);
-
-                parsedRedirects.Add(redirect);
+                parsedRedirects.Add(
+                    redirectParser.ParseRedirect(
+                        redirect));
             }
 
             return parsedRedirects;
@@ -116,10 +92,10 @@ namespace FirstRealize.App.WebRedirects.Test.TestData
         }
 
         public static IEnumerable<IProcessedRedirect> GetProcessedRedirects(
-            IEnumerable<Redirect> redirects,
+            IEnumerable<IParsedRedirect> parsedRedirects,
             IEnumerable<IProcessor> processors)
         {
-            var redirectsList = redirects.ToList();
+            var redirectsList = parsedRedirects.ToList();
             var processorsList = processors.ToList();
 
             var processedRedirects =
@@ -129,7 +105,7 @@ namespace FirstRealize.App.WebRedirects.Test.TestData
             {
                 var processedRedirect = new ProcessedRedirect
                 {
-                    Redirect = redirect
+                    ParsedRedirect = redirect
                 };
 
                 foreach(var processor in processors)

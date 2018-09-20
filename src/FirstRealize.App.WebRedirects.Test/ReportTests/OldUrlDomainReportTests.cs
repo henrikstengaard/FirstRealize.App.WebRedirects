@@ -1,5 +1,6 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Engines;
 using FirstRealize.App.WebRedirects.Core.Models;
+using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Reports;
 using FirstRealize.App.WebRedirects.Core.Reports;
 using NUnit.Framework;
@@ -16,9 +17,9 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
         {
             var redirectProcessingResult = new RedirectProcessingResult
             {
-                Redirects = new[]
+                ParsedRedirects = new[]
                 {
-                    new Redirect
+                    new ParsedRedirect
                     {
                         OldUrl = new Url
                         {
@@ -29,7 +30,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
                             Parsed = new Uri("http://www.test3.local")
                         }
                     },
-                    new Redirect
+                    new ParsedRedirect
                     {
                         OldUrl = new Url
                         {
@@ -40,7 +41,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
                             Parsed = new Uri("http://www.test3.local")
                         }
                     },
-                    new Redirect
+                    new ParsedRedirect
                     {
                         OldUrl = new Url
                         {

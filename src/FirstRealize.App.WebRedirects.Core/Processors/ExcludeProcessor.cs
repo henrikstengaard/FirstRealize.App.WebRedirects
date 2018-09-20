@@ -32,12 +32,12 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
         public void Process(IProcessedRedirect processedRedirect)
         {
             var oldUrlPatternMatches = GetMatchingUrlPatterns(
-                processedRedirect.Redirect.OldUrl.Parsed.AbsoluteUri,
+                processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri,
                 _configuration.OldUrlExcludePatterns)
                 .ToList();
 
             var newUrlPatternMatches = GetMatchingUrlPatterns(
-                processedRedirect.Redirect.NewUrl.Parsed.AbsoluteUri,
+                processedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri,
                 _configuration.NewUrlExcludePatterns)
                 .ToList();
 
@@ -58,7 +58,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     string.Format(
                         "old url exclude patterns '{0}'", 
                         string.Join(",", oldUrlPatternMatches)));
-                url = processedRedirect.Redirect.OldUrl;
+                url = processedRedirect.ParsedRedirect.OldUrl;
             }
 
             if (newUrlPatternMatches.Any())
@@ -68,7 +68,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     message.Append(" and ");
                 }
                 {
-                    url = processedRedirect.Redirect.NewUrl;
+                    url = processedRedirect.ParsedRedirect.NewUrl;
                 }
 
                 message.Append(

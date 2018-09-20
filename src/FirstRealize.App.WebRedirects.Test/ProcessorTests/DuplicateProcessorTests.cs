@@ -21,7 +21,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             Assert.IsNotNull(duplicateOfFirstRedirect);
             Assert.AreEqual(
                 "http://www.test.local/redirect/somwhere/else",
-                duplicateOfFirstRedirect.Redirect.NewUrl.Parsed.AbsoluteUri);
+                duplicateOfFirstRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri);
         }
 
         [Test]
@@ -37,7 +37,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             Assert.IsNotNull(duplicateOfLastRedirect);
             Assert.AreEqual(
                 "http://www.test.local/another/path",
-                duplicateOfLastRedirect.Redirect.NewUrl.Parsed.AbsoluteUri);
+                duplicateOfLastRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri);
         }
     }
 }

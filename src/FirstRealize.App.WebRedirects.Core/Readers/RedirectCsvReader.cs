@@ -1,5 +1,5 @@
 ﻿using CsvHelper;
-using FirstRealize.App.WebRedirects.Core.Models;
+using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,7 +43,7 @@ namespace FirstRealize.App.WebRedirects.Core.Readers
             GC.SuppressFinalize(this);
         }
 
-        public IEnumerable<Redirect> ReadAllRedirects()
+        public IEnumerable<IRedirect> ReadAllRedirects()
         {
             if (_csvReader.Read())
             {
@@ -53,14 +53,8 @@ namespace FirstRealize.App.WebRedirects.Core.Readers
             {
                 yield return new Redirect
                 {
-                    OldUrl = new Url
-                    {
-                        Raw = _csvReader["oldurl"]
-                    },
-                    NewUrl = new Url
-                    {
-                        Raw = _csvReader["newurl"]
-                    }
+                    OldUrl = _csvReader["oldurl"],
+                    NewUrl = _csvReader["newurl"]
                 };
             }
         }

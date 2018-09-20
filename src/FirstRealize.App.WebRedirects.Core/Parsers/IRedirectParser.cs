@@ -1,10 +1,10 @@
-﻿using FirstRealize.App.WebRedirects.Core.Models;
+﻿using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 
 namespace FirstRealize.App.WebRedirects.Core.Parsers
 {
     public interface IRedirectParser
     {
-        void ParseRedirect(
-            Redirect redirect);
+        IParsedRedirect ParseRedirect(
+            IRedirect redirect);
     }
 }

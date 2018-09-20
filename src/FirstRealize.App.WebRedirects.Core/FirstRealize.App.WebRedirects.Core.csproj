@@ -60,10 +60,13 @@
     <Compile Include="Engines\RedirectProcessingResult.cs" />
     <Compile Include="Iis.cs" />
     <Compile Include="IisExpress.cs" />
+    <Compile Include="Models\Redirects\IParsedRedirect.cs" />
+    <Compile Include="Models\Redirects\IRedirect.cs" />
+    <Compile Include="Models\Redirects\Redirect.cs" />
     <Compile Include="Models\Reports\OldUrlDomainRecord.cs" />
     <Compile Include="Models\Results\IResult.cs" />
     <Compile Include="Models\ProcessedRedirect.cs" />
-    <Compile Include="Models\Redirect.cs" />
+    <Compile Include="Models\Redirects\ParsedRedirect.cs" />
     <Compile Include="Models\Results\Result.cs" />
     <Compile Include="Models\Url.cs" />
     <Compile Include="Parsers\IRedirectParser.cs" />

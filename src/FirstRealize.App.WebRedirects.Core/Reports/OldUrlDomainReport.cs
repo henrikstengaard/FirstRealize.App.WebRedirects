@@ -19,18 +19,18 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
         public void Build(
             IRedirectProcessingResult redirectProcessingResult)
         {
-            foreach(var redirect in redirectProcessingResult
-                .Redirects)
+            foreach(var parsedRedirect in redirectProcessingResult
+                .ParsedRedirects)
             {
-                if (!redirect.IsValid ||
+                if (!parsedRedirect.IsValid ||
                     _oldUrlDomainsIndex.Contains(
-                        redirect.OldUrl.Parsed.Host))
+                        parsedRedirect.OldUrl.Parsed.Host))
                 {
                     continue;
                 }
 
                 _oldUrlDomainsIndex.Add(
-                    redirect.OldUrl.Parsed.Host);
+                    parsedRedirect.OldUrl.Parsed.Host);
             }
         }
 
