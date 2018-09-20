@@ -8,6 +8,6 @@
         public static string CyclicRedirect = "CyclicRedirect";
         public static string TooManyRedirects = "TooManyRedirects";
         public static string OptimizedRedirect = "OptimizedRedirect";
-        public static string UrlWithResponse = "UrlWithResponse";
+        public static string UrlResponse = "UrlResponse";
     }
 }

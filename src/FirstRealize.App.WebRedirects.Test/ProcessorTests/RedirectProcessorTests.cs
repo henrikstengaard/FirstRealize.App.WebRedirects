@@ -125,12 +125,12 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 new[] { redirectProcessor });
 
             // verify redirect processor detects overridden url with response
-            var urlWithResponse = redirectProcessor.Results
-                .FirstOrDefault(x => x.Type.Equals(ResultTypes.UrlWithResponse));
-            Assert.IsNotNull(urlWithResponse);
+            var urlResponse = redirectProcessor.Results
+                .FirstOrDefault(x => x.Type.Equals(ResultTypes.UrlResponse));
+            Assert.IsNotNull(urlResponse);
             Assert.AreEqual(
                 "http://www.test.local/new-url",
-                urlWithResponse.Url.Parsed.AbsoluteUri);
+                urlResponse.Url.Parsed.AbsoluteUri);
         }
 
         [Test]

@@ -57,7 +57,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
         public void PreloadParsedRedirects(IEnumerable<IParsedRedirect> parsedRedirects)
         {
-            foreach(var parsedRedirect in parsedRedirects
+            foreach (var parsedRedirect in parsedRedirects
                 .Where(r => r.IsValid && !r.IsIdentical)
                 .ToList())
             {
@@ -114,19 +114,32 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 // if url returns 301 and has location
                 if (response != null)
                 {
-                    switch(response.StatusCode)
+                    var statusCode = (int)response.StatusCode;
+                    var locationUrl = !Regex.IsMatch(
+                        response.Location ?? string.Empty, "https?://", RegexOptions.IgnoreCase | RegexOptions.Compiled)
+                        ? new Uri(url.Parsed, response.Location).AbsoluteUri
+                        : response.Location ?? string.Empty;
+                    var urlResponseResult = new UrlResponseResult
+                    {
+                        Type = ResultTypes.UrlResponse,
+                        Message = string.Format(
+                            "Url '{0}' returned response with status code '{1}'",
+                            redirect.NewUrl.Parsed.AbsoluteUri,
+                            statusCode),
+                        Url = redirect.NewUrl,
+                        StatusCode = statusCode,
+                        Location = locationUrl
+                    };
+
+                    switch (response.StatusCode)
                     {
                         case HttpStatusCode.Moved:
                             // url returns 301
                             // update redirect with url from location
-                            var newUrl = !Regex.IsMatch(
-                                response.Location ?? string.Empty, "https?://", RegexOptions.IgnoreCase | RegexOptions.Compiled)
-                                ? new Uri(url.Parsed, response.Location).AbsoluteUri
-                                : response.Location ?? string.Empty;
                             redirect = new ParsedRedirect
                             {
                                 OldUrl = redirect.NewUrl,
-                                NewUrl = _urlParser.ParseUrl(newUrl)
+                                NewUrl = _urlParser.ParseUrl(locationUrl)
                             };
                             break;
                         case HttpStatusCode.NotFound:
@@ -136,15 +149,9 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                         default:
                             // urls not returning 301 or 404 are considered a url with a response
                             // stop redirecting
-                            _results.Add(new Result
-                            {
-                                Type = ResultTypes.UrlWithResponse,
-                                Message = string.Format(
-                                    "Url '{0}' returned response with status code '{1}'",
-                                    (int)response.StatusCode,
-                                    redirect.NewUrl.Parsed.AbsoluteUri),
-                                Url = redirect.NewUrl
-                            });
+                            processedRedirect.Results.Add(
+                                urlResponseResult);
+                            _results.Add(urlResponseResult);
                             redirect = null;
                             break;
                     }
@@ -171,20 +178,21 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                         redirect = null;
                     }
                 }
-            } while (redirect != null && 
+            } while (redirect != null &&
                 redirect.NewUrl.Parsed != null &&
                 redirectCount < 20);
 
             // add optimized redirect result, if redirect count is higher than 1 and less than max redirect count
             if (redirectCount > 1 && redirectCount < _configuration.MaxRedirectCount)
             {
-                var optimizedRedirectResult = new Result
+                var optimizedRedirectResult = new RedirectResult
                 {
                     Type = ResultTypes.OptimizedRedirect,
-                    Message =string.Format(
+                    Message = string.Format(
                         "Optimized redirect to url '{0}'",
                         url),
-                    Url = url
+                    Url = url,
+                    RedirectCount = redirectCount
                 };
                 processedRedirect.Results.Add(
                     optimizedRedirectResult);
@@ -193,14 +201,15 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             }
             else if (redirectCount >= _configuration.MaxRedirectCount)
             {
-                var tooManyRedirectsResult = new Result
+                var tooManyRedirectsResult = new RedirectResult
                 {
                     Type = ResultTypes.TooManyRedirects,
                     Message = string.Format(
                         "Too many redirect from url '{0}' exceeding max redirect count of {1}",
                         url,
                         _configuration.MaxRedirectCount),
-                    Url = url
+                    Url = url,
+                    RedirectCount = redirectCount
                 };
                 processedRedirect.Results.Add(
                     tooManyRedirectsResult);
@@ -210,14 +219,15 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
             if (isCyclicRedirect)
             {
-                var cyclicResult = new Result
+                var cyclicResult = new RedirectResult
                 {
                     Type = ResultTypes.CyclicRedirect,
                     Message =
                     string.Format(
                         "Cyclic redirect for urls '{0}'",
                         string.Join(",", urlsVisited)),
-                    Url = url
+                    Url = url,
+                    RedirectCount = redirectCount
                 };
                 processedRedirect.Results.Add(
                     cyclicResult);
