@@ -38,8 +38,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
         public void Process(IProcessedRedirect processedRedirect)
         {
-            if (!processedRedirect.ParsedRedirect.IsValid ||
-                processedRedirect.ParsedRedirect.IsIdentical)
+            if (!processedRedirect.ParsedRedirect.IsValid)
             {
                 return;
             }
