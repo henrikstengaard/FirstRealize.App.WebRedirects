@@ -24,7 +24,8 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                 {
                     RedirectSummaryCount = redirectProcessingResult
                     .ParsedRedirects
-                    .Count(),
+                    .Count()
+                    .ToString(),
                     RedirectSummaryType = "parsed redirects"
                 });
 
@@ -35,8 +36,9 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                     RedirectSummaryCount = redirectProcessingResult
                     .ProcessedRedirects
                     .Count(
-                        pr => pr.ParsedRedirect.IsValid),
-                    RedirectSummaryType = "valid redirects"
+                        pr => pr.ParsedRedirect.IsValid)
+                        .ToString(),
+                    RedirectSummaryType = "invalid redirects"
                 });
 
             // processors
@@ -49,14 +51,11 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
 
             // processors used
             _redirectSummaryReportRecords.Add(
-                new RedirectSummaryReportRecord
-                {
-                    RedirectSummaryType = "---"
-                });
+                new RedirectSummaryReportRecord());
             _redirectSummaryReportRecords.Add(
                 new RedirectSummaryReportRecord
                 {
-                    RedirectSummaryCount = processors.Count,
+                    RedirectSummaryCount = processors.Count.ToString(),
                     RedirectSummaryType = "processors used"
                 });
 
@@ -68,7 +67,8 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                     {
                         RedirectSummaryCount = redirectProcessingResult
                         .ParsedRedirects
-                        .Count(),
+                        .Count()
+                        .ToString(),
                         RedirectSummaryType = string.Format(
                             "result(s) from processor '{0}'",
                             processor)
@@ -88,14 +88,12 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
 
             // domains in parsed and valid old urls
             _redirectSummaryReportRecords.Add(
-                new RedirectSummaryReportRecord
-                {
-                    RedirectSummaryType = "---"
-                });
+                new RedirectSummaryReportRecord());
             _redirectSummaryReportRecords.Add(
                 new RedirectSummaryReportRecord
                 {
-                    RedirectSummaryCount = oldUrlDomains.Count,
+                    RedirectSummaryCount = 
+                    oldUrlDomains.Count.ToString(),
                     RedirectSummaryType = "domains in parsed and valid old urls"
                 });
 
@@ -107,7 +105,8 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                     {
                         RedirectSummaryCount = redirectProcessingResult
                         .ParsedRedirects
-                        .Count(pr => pr.IsValid && pr.OldUrl.Parsed.Host.Equals(oldUrlDomain)),
+                        .Count(pr => pr.IsValid && pr.OldUrl.Parsed.Host.Equals(oldUrlDomain))
+                        .ToString(),
                         RedirectSummaryType = string.Format(
                             "parsed and valid old urls has domain '{0}'",
                             oldUrlDomain)
@@ -127,14 +126,11 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
 
             // domains in parsed and valid old urls
             _redirectSummaryReportRecords.Add(
-                new RedirectSummaryReportRecord
-                {
-                    RedirectSummaryType = "---"
-                });
+                new RedirectSummaryReportRecord());
             _redirectSummaryReportRecords.Add(
                 new RedirectSummaryReportRecord
                 {
-                    RedirectSummaryCount = newUrlDomains.Count,
+                    RedirectSummaryCount = newUrlDomains.Count.ToString(),
                     RedirectSummaryType = "domains in parsed and valid new urls"
                 });
 
@@ -146,7 +142,8 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                     {
                         RedirectSummaryCount = redirectProcessingResult
                         .ParsedRedirects
-                        .Count(pr => pr.IsValid && pr.NewUrl.Parsed.Host.Equals(newUrlDomain)),
+                        .Count(pr => pr.IsValid && pr.NewUrl.Parsed.Host.Equals(newUrlDomain))
+                        .ToString(),
                         RedirectSummaryType = string.Format(
                             "parsed and valid new urls has domain '{0}'",
                             newUrlDomain)
@@ -155,16 +152,14 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
 
             // processed redirects summary
             _redirectSummaryReportRecords.Add(
-                new RedirectSummaryReportRecord
-                {
-                    RedirectSummaryType = "---"
-                });
+                new RedirectSummaryReportRecord());
             _redirectSummaryReportRecords.Add(
                 new RedirectSummaryReportRecord
                 {
                     RedirectSummaryCount = redirectProcessingResult
                     .ProcessedRedirects
-                    .Count(),
+                    .Count()
+                    .ToString(),
                     RedirectSummaryType = "processed redirects"
                 });
 
@@ -181,7 +176,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
             _redirectSummaryReportRecords.Add(
                 new RedirectSummaryReportRecord
                 {
-                    RedirectSummaryCount = resultTypes.Count,
+                    RedirectSummaryCount = resultTypes.Count.ToString(),
                     RedirectSummaryType = "result types in processed redirects"
                 });
 
@@ -194,7 +189,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                         RedirectSummaryCount = redirectProcessingResult
                         .ProcessedRedirects
                         .Sum(
-                        pr => pr.Results.Count(r => r.Type.Equals(resultType))),
+                        pr => pr.Results.Count(r => r.Type.Equals(resultType))).ToString(),
                         RedirectSummaryType = string.Format(
                             "processed redirects has result type '{0}'",
                             resultType)

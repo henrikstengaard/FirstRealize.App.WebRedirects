@@ -2,7 +2,7 @@
 {
     public class RedirectSummaryReportRecord
     {
-        public int RedirectSummaryCount { get; set; }
+        public string RedirectSummaryCount { get; set; }
         public string RedirectSummaryType { get; set; }
     }
 }
