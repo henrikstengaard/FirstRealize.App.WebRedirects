@@ -31,7 +31,9 @@ namespace FirstRealize.App.WebRedirects.Core.Models.Redirects
         {
             var other = obj as ParsedRedirect;
 
-            if (other == null)
+            if (other == null ||
+                other.OldUrl == null ||
+                other.NewUrl == null)
             {
                 return 1;
             }
