@@ -115,7 +115,11 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
                     p.Name, StringComparer.OrdinalIgnoreCase))
                 : Processors;
 
-            foreach (var parsedRedirect in _parsedRedirects.ToList())
+            var parsedRedirects = (_configuration.SampleParseRedirects
+                ? _parsedRedirects.Take(50)
+                : _parsedRedirects).ToList();
+
+            foreach (var parsedRedirect in parsedRedirects)
             {
                 var processedRedirect = new ProcessedRedirect
                 {

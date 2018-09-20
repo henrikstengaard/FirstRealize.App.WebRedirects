@@ -13,5 +13,6 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
         IEnumerable<string> NewUrlExcludePatterns { get; }
         bool ForceHttp { get; }
         int MaxRedirectCount { get; }
+        bool SampleParseRedirects { get; }
     }
 }
