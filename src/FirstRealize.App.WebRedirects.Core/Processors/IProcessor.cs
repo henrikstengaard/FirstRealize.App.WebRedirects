@@ -1,4 +1,4 @@
-﻿using FirstRealize.App.WebRedirects.Core.Models;
+﻿using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using System.Collections.Generic;
 
