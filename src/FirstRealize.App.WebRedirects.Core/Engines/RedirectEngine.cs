@@ -21,6 +21,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
         private readonly List<IParsedRedirect> _parsedRedirects;
         private readonly List<IProcessedRedirect> _processedRedirects;
         private readonly List<IResult> _results;
+        private List<IProcessor> _activeProcessors;
 
         public RedirectEngine(
             IConfiguration configuration,
@@ -48,12 +49,14 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             _parsedRedirects = new List<IParsedRedirect>();
             _processedRedirects = new List<IProcessedRedirect>();
             _results = new List<IResult>();
+            _activeProcessors = new List<IProcessor>();
         }
 
         public IList<IProcessor> Processors { get; }
 
         public IRedirectProcessingResult Run()
         {
+            ActiveProcessors();
             LoadRedirectsFromCsvFiles();
             ParseRedirects();
             PreloadParsedRedirects();
@@ -62,12 +65,20 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
 
             return new RedirectProcessingResult
             {
-                Processors = Processors,
+                Processors = _activeProcessors,
                 Redirects = _redirects,
                 ParsedRedirects = _parsedRedirects,
                 ProcessedRedirects = _processedRedirects,
                 Results = _results
             };
+        }
+
+        private void ActiveProcessors()
+        {
+            _activeProcessors = (_configuration.Processors.Any()
+                ? Processors.Where(p => _configuration.Processors.Contains(
+                    p.Name, StringComparer.OrdinalIgnoreCase))
+                : Processors).ToList();
         }
 
         private void LoadRedirectsFromCsvFiles()
@@ -113,11 +124,6 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
         {
             _processedRedirects.Clear();
 
-            var activeProcessors = _configuration.Processors.Any()
-                ? Processors.Where(p => _configuration.Processors.Contains(
-                    p.Name, StringComparer.OrdinalIgnoreCase))
-                : Processors;
-
             var parsedRedirects = (_configuration.SampleParseRedirects
                 ? _parsedRedirects.Take(50)
                 : _parsedRedirects).ToList();
@@ -131,7 +137,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
 
                 _processedRedirects.Add(processedRedirect);
 
-                foreach (var processor in activeProcessors)
+                foreach (var processor in _activeProcessors)
                 {
                     processor.Process(processedRedirect);
                 }
