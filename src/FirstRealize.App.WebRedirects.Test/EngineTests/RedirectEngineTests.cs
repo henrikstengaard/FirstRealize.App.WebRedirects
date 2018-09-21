@@ -13,7 +13,7 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
     [TestFixture]
     public class RedirectEngineTests
     {
-        private IConfiguration CreateConfiguration()
+        private Configuration CreateConfiguration()
         {
             // read configuration file
             IConfiguration configuration;
@@ -24,7 +24,7 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
                     Path.Combine(TestData.TestData.CurrentDirectory, @"TestData\configuration.json"));
             }
 
-            return configuration;
+            return configuration as Configuration;
         }
 
         private IRedirectEngine CreateRedirectEngine(
@@ -117,6 +117,38 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
                 processedRedirects.Count(
                     pr => pr.Results.Count() == 1 && pr.Results.All(
                         r => r.Type.Equals(testProcessor.Name))));
+        }
+
+        [Test]
+        public void SampleProcessedRedirects()
+        {
+            var configuration = CreateConfiguration();
+            configuration.SampleCount = 1;
+
+            // create redirect engine
+            var redirectEngine = CreateRedirectEngine(
+                configuration);
+
+            // run redirect engine
+            var redirectProcessingResult =
+                redirectEngine.Run();
+
+            // verify redirect engine has processed redirects with results
+            var processedRedirects = redirectProcessingResult
+                .ProcessedRedirects
+                .ToList();
+
+            // verify parsed more than 1 redirect and processed only 1 redirect controlled by sample count set to 1
+            Assert.IsTrue(
+                redirectProcessingResult
+                .ParsedRedirects
+                .Count() > 1);
+            Assert.AreEqual(
+                1,
+                redirectProcessingResult
+                .ProcessedRedirects
+                .Count()
+                );
         }
 
         [Test]

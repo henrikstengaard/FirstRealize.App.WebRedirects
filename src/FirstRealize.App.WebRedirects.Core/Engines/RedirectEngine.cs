@@ -130,8 +130,8 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
         {
             _processedRedirects.Clear();
 
-            var parsedRedirects = (_configuration.SampleParseRedirects
-                ? _parsedRedirects.Take(50)
+            var parsedRedirects = (_configuration.SampleCount > 0
+                ? _parsedRedirects.Take(_configuration.SampleCount)
                 : _parsedRedirects).ToList();
 
             foreach (var parsedRedirect in parsedRedirects)

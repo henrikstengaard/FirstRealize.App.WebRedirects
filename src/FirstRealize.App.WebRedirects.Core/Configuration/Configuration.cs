@@ -16,7 +16,7 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
         public IEnumerable<string> NewUrlExcludePatterns { get; set; }
         public bool ForceHttp { get; set; }
         public int MaxRedirectCount { get; set; }
-        public bool SampleParseRedirects { get; set; }
+        public int SampleCount { get; set; }
 
         public Configuration()
         {
@@ -25,7 +25,7 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
             OldUrlExcludePatterns = new List<string>();
             NewUrlExcludePatterns = new List<string>();
             MaxRedirectCount = 20;
-            SampleParseRedirects = true;
+            SampleCount = 0;
         }
     }
 }

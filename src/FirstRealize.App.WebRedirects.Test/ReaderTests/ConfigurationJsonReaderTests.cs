@@ -25,7 +25,9 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
     newUrlExcludePatterns: [
         ""/newurl-exclude""
     ],
-    forceHttp: ""True""
+    forceHttp: ""True"",
+    maxRedirectCount: ""50"",
+    sampleCount: ""100""
 }";
             // write configuration file
             var configurationFile =
@@ -81,6 +83,12 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
             Assert.AreEqual(
                 true,
                 configuration.ForceHttp);
+            Assert.AreEqual(
+                50,
+                configuration.MaxRedirectCount);
+            Assert.AreEqual(
+                100,
+                configuration.SampleCount);
         }
     }
 }
