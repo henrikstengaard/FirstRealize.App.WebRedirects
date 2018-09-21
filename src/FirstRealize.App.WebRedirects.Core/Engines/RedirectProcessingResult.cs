@@ -1,7 +1,7 @@
-﻿using FirstRealize.App.WebRedirects.Core.Models;
-using FirstRealize.App.WebRedirects.Core.Models.Redirects;
+﻿using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Processors;
+using System;
 using System.Collections.Generic;
 
 namespace FirstRealize.App.WebRedirects.Core.Engines
@@ -14,6 +14,8 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
         public IEnumerable<IParsedRedirect> ParsedRedirects { get; set; }
         public IEnumerable<IProcessedRedirect> ProcessedRedirects { get; set; }
         public IEnumerable<IResult> Results { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
 
         public RedirectProcessingResult()
         {

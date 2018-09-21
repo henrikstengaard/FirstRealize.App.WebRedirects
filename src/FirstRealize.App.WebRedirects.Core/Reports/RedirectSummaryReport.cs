@@ -179,6 +179,39 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                             resultType)
                     });
             }
+
+            // start, end and elapsed time
+            _redirectSummaryReportRecords.Add(
+                new RedirectSummaryReportRecord());
+            _redirectSummaryReportRecords.Add(
+                new RedirectSummaryReportRecord
+                {
+                    RedirectSummaryType = "processing time"
+                });
+            _redirectSummaryReportRecords.Add(
+                new RedirectSummaryReportRecord
+                {
+                    RedirectSummaryType = string.Format(
+                        "processing started at '{0}'",
+                        redirectProcessingResult.StartTime.ToString("o"))
+                });
+            _redirectSummaryReportRecords.Add(
+                new RedirectSummaryReportRecord
+                {
+                    RedirectSummaryType = string.Format(
+                        "processing ended at '{0}'",
+                        redirectProcessingResult.EndTime.ToString("o"))
+                });
+            var elapsedTime =
+                redirectProcessingResult.EndTime -
+                redirectProcessingResult.StartTime;
+            _redirectSummaryReportRecords.Add(
+                new RedirectSummaryReportRecord
+                {
+                    RedirectSummaryType = string.Format(
+                        "processing elapsed for '{0}'",
+                        elapsedTime)
+                });
         }
 
         public override IEnumerable<RedirectSummaryReportRecord> GetRecords()

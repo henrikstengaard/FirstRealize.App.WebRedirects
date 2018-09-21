@@ -56,6 +56,8 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
 
         public IRedirectProcessingResult Run()
         {
+            var startTime = DateTime.UtcNow;
+
             ActiveProcessors();
             LoadRedirectsFromCsvFiles();
             ParseRedirects();
@@ -63,13 +65,17 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             ProcessParsedRedirects();
             CollectResults();
 
+            var endTime = DateTime.UtcNow;
+
             return new RedirectProcessingResult
             {
                 Processors = _activeProcessors,
                 Redirects = _redirects,
                 ParsedRedirects = _parsedRedirects,
                 ProcessedRedirects = _processedRedirects,
-                Results = _results
+                Results = _results,
+                StartTime = startTime,
+                EndTime = endTime
             };
         }
 
