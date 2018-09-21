@@ -247,5 +247,97 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 "http://www.test.local/url2",
                 redirectWithTooManyRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri);
         }
+
+        [Test]
+        public void RedirectProcessorCachesResponse()
+        {
+            var configuration =
+                TestData.TestData.DefaultConfiguration;
+            var urlParser = new UrlParser();
+            var redirectParser = new RedirectParser(
+                configuration,
+                urlParser);
+
+            // create redirect processor
+            var controlledHttpClient =
+                new ControlledHttpClient();
+            var redirectProcessor = new RedirectProcessor(
+                configuration,
+                controlledHttpClient,
+                urlParser);
+
+            // create and parse redirects
+            var redirects = new List<IRedirect>
+            {
+                new Redirect
+                {
+                    OldUrl = "/url1",
+                    NewUrl = "/url3"
+                },
+                new Redirect
+                {
+                    OldUrl = "/url2",
+                    NewUrl = "/url3"
+                }
+            };
+            var parsedRedirects = new List<IParsedRedirect>();
+            foreach(var redirect in redirects)
+            {
+                parsedRedirects.Add(
+                    redirectParser.ParseRedirect(
+                        redirect));
+            }
+
+            // verify controlled http client doesn't have any responses
+            Assert.AreEqual(
+                0,
+                controlledHttpClient.Responses.Count);
+
+            // process redirects and verify responses are cached by overriding responses
+            UrlResponseResult urlResponseResult = null;
+            var processedRedirects = new List<IProcessedRedirect>();
+            foreach (var parsedRedirect in parsedRedirects)
+            {
+                var processedRedirect = new ProcessedRedirect
+                {
+                    ParsedRedirect = parsedRedirect
+                };
+
+                redirectProcessor.Process(
+                    processedRedirect);
+
+                // get url response result, if url response result is null and
+                // controlled http client has a response for old url
+                if (urlResponseResult == null &&
+                    controlledHttpClient.Responses.ContainsKey(
+                    parsedRedirect.NewUrl.Parsed.AbsoluteUri))
+                {
+                    urlResponseResult = processedRedirect.Results
+                        .FirstOrDefault(r => r.Type.Equals(
+                            ResultTypes.UrlResponse)) as UrlResponseResult;
+                }
+                else
+                {
+                    // override response with forbidden status code
+                    controlledHttpClient.Responses[
+                        parsedRedirect.NewUrl.Parsed.AbsoluteUri] =
+                        new HttpResponse
+                        {
+                            StatusCode = HttpStatusCode.Forbidden
+                        };
+                }
+            }
+
+            // verify url response result for /url3 has status code ok and not forbidden
+            Assert.IsNotNull(
+                urlResponseResult);
+            Assert.AreEqual(
+                "/url3",
+                urlResponseResult.Url.Raw);
+            Assert.AreEqual(
+                404,
+                urlResponseResult.StatusCode
+                );
+        }
     }
 }

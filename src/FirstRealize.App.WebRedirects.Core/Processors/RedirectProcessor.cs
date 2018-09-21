@@ -17,6 +17,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
         private readonly IHttpClient _httpClient;
         private readonly IUrlParser _urlParser;
         private readonly IDictionary<string, IParsedRedirect> _oldUrlIndex;
+        private readonly IDictionary<string, HttpResponse> _responseCache;
         private readonly IList<IResult> _results;
 
         public RedirectProcessor(
@@ -29,6 +30,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             _urlParser = urlParser;
 
             _oldUrlIndex = new Dictionary<string, IParsedRedirect>();
+            _responseCache = new Dictionary<string, HttpResponse>();
             _results = new List<IResult>();
         }
 
@@ -94,6 +96,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
             var redirect = processedRedirect.ParsedRedirect;
             IUrl url = null;
+            UrlResponseResult urlResponseResult = null;
 
             do
             {
@@ -113,8 +116,21 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 }
                 urlsIndex.Add(formattedUrl);
 
-                // get url
-                var response = _httpClient.Get(parsedUrl);
+                // get response from url
+                HttpResponse response;
+                if (_responseCache.ContainsKey(parsedUrl))
+                {
+                    // get response from cache
+                    response = _responseCache[parsedUrl];
+                }
+                else
+                {
+                    // get response from url
+                    response = _httpClient.Get(parsedUrl);
+
+                    // add response to cache
+                    _responseCache.Add(parsedUrl, response);
+                }
 
                 // set has redirect and url to response location, 
                 // if url returns 301 and has location
@@ -127,7 +143,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                         response.Location ?? string.Empty, "https?://", RegexOptions.IgnoreCase | RegexOptions.Compiled)
                         ? new Uri(url.Parsed, response.Location).AbsoluteUri
                         : response.Location ?? string.Empty;
-                    var urlResponseResult = new UrlResponseResult
+                    urlResponseResult = new UrlResponseResult
                     {
                         Type = ResultTypes.UrlResponse,
                         Message = string.Format(
@@ -157,12 +173,16 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                         default:
                             // urls not returning 301 or 404 are considered a url with a response
                             // stop redirecting
-                            processedRedirect.Results.Add(
-                                urlResponseResult);
-                            _results.Add(urlResponseResult);
+                            //processedRedirect.Results.Add(
+                            //    urlResponseResult);
+                            //_results.Add(urlResponseResult);
                             redirect = null;
                             break;
                     }
+                }
+                else
+                {
+                    urlResponseResult = null;
                 }
 
                 // check redirect for url
@@ -189,6 +209,14 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             } while (redirect != null &&
                 redirect.NewUrl.Parsed != null &&
                 redirectCount < 20);
+
+            // add url response result, if it's defined
+            if (urlResponseResult != null)
+            {
+                processedRedirect.Results.Add(
+                    urlResponseResult);
+                _results.Add(urlResponseResult);
+            }
 
             // add optimized redirect result, if redirect count is higher than 1 and less than max redirect count
             if (redirectCount > 1 && redirectCount < _configuration.MaxRedirectCount)
