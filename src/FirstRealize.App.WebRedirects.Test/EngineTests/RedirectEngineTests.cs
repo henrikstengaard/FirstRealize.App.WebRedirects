@@ -38,7 +38,7 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
                 new RedirectParser(
                     configuration,
                     urlParser),
-                new ControlledHttpClient());
+                new TestHttpClient());
         }
 
         [Test]

@@ -5,9 +5,9 @@ using System.Net;
 
 namespace FirstRealize.App.WebRedirects.Test.Clients
 {
-    class ControlledHttpClient : IHttpClient
+    class TestHttpClient : IHttpClient
     {
-        public ControlledHttpClient()
+        public TestHttpClient()
         {
             Responses = new Dictionary<string,HttpResponse>(
                 StringComparer.OrdinalIgnoreCase);

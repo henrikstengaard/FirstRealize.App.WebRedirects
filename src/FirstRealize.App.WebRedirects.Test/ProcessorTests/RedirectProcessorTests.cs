@@ -35,7 +35,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
 
             // create redirect processor
             var controlledHttpClient = 
-                new ControlledHttpClient();
+                new TestHttpClient();
             var redirectProcessor = new RedirectProcessor(
                 configuration,
                 controlledHttpClient,
@@ -92,7 +92,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             // create redirect processor
             var redirectProcessor = new RedirectProcessor(
                 TestData.TestData.DefaultConfiguration,
-                new ControlledHttpClient(),
+                new TestHttpClient(),
                 new UrlParser()
             );
 
@@ -124,7 +124,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             };
             var redirectProcessor = new RedirectProcessor(
                 configuration,
-                new ControlledHttpClient(),
+                new TestHttpClient(),
                 new UrlParser());
 
             // parsed redirects
@@ -164,7 +164,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             };
             var redirectProcessor = new RedirectProcessor(
                 configuration,
-                new ControlledHttpClient(),
+                new TestHttpClient(),
                 new UrlParser());
 
             // parsed redirects
@@ -192,7 +192,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         public void DetectUrlResponse()
         {
             // create controlled http client
-            var controlledHttpClient = new ControlledHttpClient();
+            var controlledHttpClient = new TestHttpClient();
 
             // parsed redirects
             var parsedRedirects =
@@ -260,7 +260,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             // create redirect processor
             var redirectProcessor = new RedirectProcessor(
                 configuration,
-                new ControlledHttpClient(),
+                new TestHttpClient(),
                 urlParser);
 
             // add redirects for optimizing
@@ -319,7 +319,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             // create redirect processor
             var redirectProcessor = new RedirectProcessor(
                 configuration,
-                new ControlledHttpClient(),
+                new TestHttpClient(),
                 urlParser);
 
             // add redirects
@@ -376,7 +376,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
 
             // create redirect processor
             var controlledHttpClient =
-                new ControlledHttpClient();
+                new TestHttpClient();
             var redirectProcessor = new RedirectProcessor(
                 configuration,
                 controlledHttpClient,
