@@ -34,11 +34,11 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 urlParser);
 
             // create redirect processor
-            var controlledHttpClient = 
+            var testHttpClient = 
                 new TestHttpClient();
             var redirectProcessor = new RedirectProcessor(
                 configuration,
-                controlledHttpClient,
+                testHttpClient,
                 new UrlParser());
 
             // parse redirects
@@ -191,8 +191,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         [Test]
         public void DetectUrlResponse()
         {
-            // create controlled http client
-            var controlledHttpClient = new TestHttpClient();
+            // create test http client
+            var testHttpClient = new TestHttpClient();
 
             // parsed redirects
             var parsedRedirects =
@@ -201,7 +201,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             // add moved response for parsed redirects
             foreach (var redirect in parsedRedirects)
             {
-                controlledHttpClient.Responses[
+                testHttpClient.Responses[
                     redirect.OldUrl.Parsed.AbsoluteUri] = new HttpResponse
                     {
                         StatusCode = HttpStatusCode.Moved,
@@ -210,7 +210,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             }
 
             // override redirect old url with ok response
-            controlledHttpClient.Responses[
+            testHttpClient.Responses[
                 "http://www.test.local/new-url"] = new HttpResponse
                 {
                     StatusCode = HttpStatusCode.OK
@@ -226,7 +226,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             };
             var redirectProcessor = new RedirectProcessor(
                 configuration,
-                controlledHttpClient,
+                testHttpClient,
                 new UrlParser());
 
             // preload redirects
@@ -375,11 +375,11 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 urlParser);
 
             // create redirect processor
-            var controlledHttpClient =
+            var testHttpClient =
                 new TestHttpClient();
             var redirectProcessor = new RedirectProcessor(
                 configuration,
-                controlledHttpClient,
+                testHttpClient,
                 urlParser);
 
             // create and parse redirects
@@ -411,7 +411,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             // verify controlled http client doesn't have any responses
             Assert.AreEqual(
                 0,
-                controlledHttpClient.Responses.Count);
+                testHttpClient.Responses.Count);
 
             // process redirects and verify responses are cached by overriding responses
             UrlResponseResult urlResponseResult = null;
@@ -429,7 +429,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 // get url response result, if url response result is null and
                 // controlled http client has a response for old url
                 if (urlResponseResult == null &&
-                    controlledHttpClient.Responses.ContainsKey(
+                    testHttpClient.Responses.ContainsKey(
                     parsedRedirect.NewUrl.Parsed.AbsoluteUri))
                 {
                     urlResponseResult = processedRedirect.Results
@@ -439,7 +439,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 else
                 {
                     // override response with forbidden status code
-                    controlledHttpClient.Responses[
+                    testHttpClient.Responses[
                         parsedRedirect.NewUrl.Parsed.AbsoluteUri] =
                         new HttpResponse
                         {
