@@ -17,15 +17,6 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
         public HttpResponse Get(
             string url)
         {
-            if (_configuration.ForceHttp)
-            {
-                url = Regex.Replace(
-                    url,
-                    "^https?://",
-                    "http://",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled);
-            }
-
             var request = (HttpWebRequest)WebRequest.Create(url);
             request.UserAgent = "WebRedirects Crawler";
             request.AllowAutoRedirect = false;

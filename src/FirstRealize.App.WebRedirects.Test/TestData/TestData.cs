@@ -1,5 +1,4 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Configuration;
-using FirstRealize.App.WebRedirects.Core.Models;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Processors;
@@ -32,7 +31,10 @@ namespace FirstRealize.App.WebRedirects.Test.TestData
             {
                 DefaultOldUrl = DefaultHost,
                 DefaultNewUrl = DefaultHost,
-                ForceHttp = true,
+                ForceHttpHostPatterns = new[]
+                {
+                    "www\\.test\\.local"
+                },
                 MaxRedirectCount = 10
             };
 

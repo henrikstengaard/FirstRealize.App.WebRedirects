@@ -14,7 +14,7 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
         public IEnumerable<string> Processors { get; set; }
         public IEnumerable<string> OldUrlExcludePatterns { get; set; }
         public IEnumerable<string> NewUrlExcludePatterns { get; set; }
-        public bool ForceHttp { get; set; }
+        public IEnumerable<string> ForceHttpHostPatterns { get; set; }
         public int MaxRedirectCount { get; set; }
         public int SampleCount { get; set; }
 
@@ -24,6 +24,7 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
             Processors = new List<string>();
             OldUrlExcludePatterns = new List<string>();
             NewUrlExcludePatterns = new List<string>();
+            ForceHttpHostPatterns = new List<string>();
             MaxRedirectCount = 20;
             SampleCount = 0;
         }

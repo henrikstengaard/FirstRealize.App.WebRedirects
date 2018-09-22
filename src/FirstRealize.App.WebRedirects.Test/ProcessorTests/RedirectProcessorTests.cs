@@ -16,6 +16,77 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
     public class RedirectProcessorTests
     {
         [Test]
+        public void HttpsRedirectDoesntReturnCyclicRedirect()
+        {
+            // create redirect processor
+            var configuration = new Configuration
+            {
+                ForceHttpHostPatterns = new[]
+                {
+                    "www\\.test\\.local"
+                }
+            };
+
+            // create url and redirect parser
+            var urlParser = new UrlParser();
+            var redirectParser = new RedirectParser(
+                configuration,
+                urlParser);
+
+            // create redirect processor
+            var controlledHttpClient = 
+                new ControlledHttpClient();
+            var redirectProcessor = new RedirectProcessor(
+                configuration,
+                controlledHttpClient,
+                new UrlParser());
+
+            // parse redirects
+            var redirects = new[] {
+                new Redirect
+                {
+                    OldUrl = "http://www.test.local/url1",
+                    NewUrl = "https://www.test.local/url1"
+                },
+                new Redirect
+                {
+                    OldUrl = "https://www.test.local/url1",
+                    NewUrl = "https://www.test.local/url2"
+                }
+            };
+
+            // parse redirects
+            var parsedRedirects = new List<IParsedRedirect>();
+            foreach(var redirect in redirects)
+            {
+                parsedRedirects.Add(
+                    redirectParser.ParseRedirect(
+                        redirect));
+            }
+
+            // preload parsed redirects
+            redirectProcessor.PreloadParsedRedirects(
+                parsedRedirects);
+
+            // process redirects using redirect processor
+            var processedRedirects = TestData.TestData.GetProcessedRedirects(
+                parsedRedirects,
+                new[] { redirectProcessor });
+
+            // verify cyclic redirect is not detected
+            var cyclicRedirect = processedRedirects
+                .FirstOrDefault(pr => pr.Results.Any(
+                    r => r.Type.Equals(ResultTypes.CyclicRedirect)));
+            Assert.IsNull(cyclicRedirect);
+
+            // verify optimized redirect is detected
+            var optimizedRedirect = processedRedirects
+                .FirstOrDefault(pr => pr.Results.Any(
+                    r => r.Type.Equals(ResultTypes.OptimizedRedirect)));
+            Assert.IsNotNull(optimizedRedirect);
+        }
+
+        [Test]
         public void NoCyclicRedirectsWithoutPreload()
         {
             // create redirect processor
@@ -46,7 +117,10 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             // create redirect processor
             var configuration = new Configuration
             {
-                ForceHttp = true
+                ForceHttpHostPatterns = new[]
+                {
+                    "www\\.test\\.local"
+                }
             };
             var redirectProcessor = new RedirectProcessor(
                 configuration,
@@ -108,7 +182,10 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             // create redirect processor
             var configuration = new Configuration
             {
-                ForceHttp = true
+                ForceHttpHostPatterns = new[]
+                {
+                    "www\\.test\\.local"
+                }
             };
             var redirectProcessor = new RedirectProcessor(
                 configuration,
@@ -188,7 +265,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             Assert.IsNotNull(optimizedRedirect);
             var optimizedRedirectResult = optimizedRedirect.Results
                 .FirstOrDefault(r => r.Type.Equals(ResultTypes.OptimizedRedirect) &&
-                r.Url.Parsed.AbsoluteUri.Equals("http://www.test.local/optimize-url3"));
+                r.Url != null && r.Url.Parsed.AbsoluteUri.Equals("http://www.test.local/optimize-url3"));
             Assert.IsNotNull(optimizedRedirectResult);
         }
 
@@ -231,12 +308,14 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 parsedRedirects,
                 new[] { redirectProcessor });
 
-            // verify processed redirects has optimized redirect result
+            // verify processed redirects has too many redirects result
             var redirectWithTooManyRedirects =
                 processedRedirects
                 .Where(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.TooManyRedirects)))
                 .ToList();
-            Assert.AreEqual(1, redirectWithTooManyRedirects.Count);
+            Assert.AreEqual(
+                1,
+                redirectWithTooManyRedirects.Count);
             var redirectWithTooManyRedirect = redirectWithTooManyRedirects
                 .FirstOrDefault();
             Assert.IsNotNull(redirectWithTooManyRedirect);
@@ -287,6 +366,10 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                     redirectParser.ParseRedirect(
                         redirect));
             }
+
+            // preload parsed redirects
+            redirectProcessor.PreloadParsedRedirects(
+                parsedRedirects);
 
             // verify controlled http client doesn't have any responses
             Assert.AreEqual(

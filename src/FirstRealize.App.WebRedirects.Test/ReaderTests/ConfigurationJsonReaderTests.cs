@@ -25,7 +25,9 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
     newUrlExcludePatterns: [
         ""/newurl-exclude""
     ],
-    forceHttp: ""True"",
+    forceHttpHostPatterns: [
+        ""www\\.oldurl\\.local""
+    ],
     maxRedirectCount: ""50"",
     sampleCount: ""100""
 }";
@@ -81,8 +83,8 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
                 "/newurl-exclude",
                 configuration.NewUrlExcludePatterns.FirstOrDefault());
             Assert.AreEqual(
-                true,
-                configuration.ForceHttp);
+                "www\\.oldurl\\.local",
+                configuration.ForceHttpHostPatterns.FirstOrDefault());
             Assert.AreEqual(
                 50,
                 configuration.MaxRedirectCount);
