@@ -221,25 +221,27 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 _results.Add(urlResponseResult);
             }
 
-            // add optimized redirect result, if redirect count is higher than 1 and less than max redirect count
-            if (redirectCount > 1 && redirectCount < _configuration.MaxRedirectCount)
+            if (isCyclicRedirect)
             {
-                var optimizedRedirectResult = new RedirectResult
+                // add cyclic redirect result
+                var cyclicResult = new RedirectResult
                 {
-                    Type = ResultTypes.OptimizedRedirect,
-                    Message = string.Format(
-                        "Optimized redirect to urls '{0}'",
+                    Type = ResultTypes.CyclicRedirect,
+                    Message =
+                    string.Format(
+                        "Cyclic redirect for urls '{0}'",
                         string.Join(",", urlsVisited)),
                     Url = url,
                     RedirectCount = redirectCount
                 };
                 processedRedirect.Results.Add(
-                    optimizedRedirectResult);
-                _results.Add(
-                    optimizedRedirectResult);
+                    cyclicResult);
+                _results.Add(cyclicResult);
             }
             else if (redirectCount >= _configuration.MaxRedirectCount)
             {
+                // add too many redirects result as redirect count is 
+                // higher then max redirect count
                 var tooManyRedirectsResult = new RedirectResult
                 {
                     Type = ResultTypes.TooManyRedirects,
@@ -255,22 +257,23 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 _results.Add(
                     tooManyRedirectsResult);
             }
-
-            if (isCyclicRedirect)
+            else if (redirectCount > 1 && redirectCount < _configuration.MaxRedirectCount)
             {
-                var cyclicResult = new RedirectResult
+                // add optimized redirect result as redirect count is higher than 1
+                // and less than max redirect count
+                var optimizedRedirectResult = new RedirectResult
                 {
-                    Type = ResultTypes.CyclicRedirect,
-                    Message =
-                    string.Format(
-                        "Cyclic redirect for urls '{0}'",
+                    Type = ResultTypes.OptimizedRedirect,
+                    Message = string.Format(
+                        "Optimized redirect to urls '{0}'",
                         string.Join(",", urlsVisited)),
                     Url = url,
                     RedirectCount = redirectCount
                 };
                 processedRedirect.Results.Add(
-                    cyclicResult);
-                _results.Add(cyclicResult);
+                    optimizedRedirectResult);
+                _results.Add(
+                    optimizedRedirectResult);
             }
         }
 

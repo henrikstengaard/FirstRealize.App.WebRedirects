@@ -87,7 +87,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         }
 
         [Test]
-        public void NoCyclicRedirectsWithoutPreload()
+        public void CyclicRedirectsNotDetectedWithoutPreload()
         {
             // create redirect processor
             var redirectProcessor = new RedirectProcessor(
@@ -152,7 +152,44 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         }
 
         [Test]
-        public void DetectUrlWithResponse()
+        public void DetectOnlyCyclicRedirect()
+        {
+            // create redirect processor
+            var configuration = new Configuration
+            {
+                ForceHttpHostPatterns = new[]
+                {
+                    "www\\.test\\.local"
+                }
+            };
+            var redirectProcessor = new RedirectProcessor(
+                configuration,
+                new ControlledHttpClient(),
+                new UrlParser());
+
+            // parsed redirects
+            var redirects = TestData.TestData.GetParsedRedirects();
+
+            // preload redirects
+            redirectProcessor.PreloadParsedRedirects(
+                redirects);
+
+            // process redirects using redirect processor
+            var processedRedirects = TestData.TestData.GetProcessedRedirects(
+                redirects,
+                new[] { redirectProcessor });
+
+            // verify cyclic redirect is detected
+            var cyclicRedirect = processedRedirects
+                .FirstOrDefault(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.CyclicRedirect)));
+            Assert.IsNotNull(cyclicRedirect);
+            var optimizedRedirect = processedRedirects
+                .FirstOrDefault(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.OptimizedRedirect)));
+            Assert.IsNull(optimizedRedirect);
+        }
+
+        [Test]
+        public void DetectUrlResponse()
         {
             // create controlled http client
             var controlledHttpClient = new ControlledHttpClient();
