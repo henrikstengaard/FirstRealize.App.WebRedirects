@@ -1,11 +1,10 @@
-﻿using FirstRealize.App.WebRedirects.Core.Clients;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 
-namespace FirstRealize.App.WebRedirects.Test.Clients
+namespace FirstRealize.App.WebRedirects.Core.Clients
 {
-    class TestHttpClient : IHttpClient
+    public class TestHttpClient : IHttpClient
     {
         public TestHttpClient()
         {

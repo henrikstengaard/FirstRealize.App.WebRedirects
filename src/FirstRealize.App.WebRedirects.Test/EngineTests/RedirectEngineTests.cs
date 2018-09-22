@@ -3,7 +3,7 @@ using FirstRealize.App.WebRedirects.Core.Engines;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Readers;
-using FirstRealize.App.WebRedirects.Test.Clients;
+using FirstRealize.App.WebRedirects.Core.Clients;
 using NUnit.Framework;
 using System.IO;
 using System.Linq;

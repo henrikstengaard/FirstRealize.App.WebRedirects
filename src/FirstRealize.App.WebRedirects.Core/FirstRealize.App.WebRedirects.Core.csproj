@@ -52,6 +52,7 @@
     <Compile Include="Clients\HttpClient.cs" />
     <Compile Include="Clients\HttpResponse.cs" />
     <Compile Include="Clients\IHttpClient.cs" />
+    <Compile Include="Clients\TestHttpClient.cs" />
     <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="Configuration\IConfiguration.cs" />
     <Compile Include="Engines\IRedirectEngine.cs" />

@@ -4,7 +4,6 @@ using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Processors;
-using FirstRealize.App.WebRedirects.Test.Clients;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;

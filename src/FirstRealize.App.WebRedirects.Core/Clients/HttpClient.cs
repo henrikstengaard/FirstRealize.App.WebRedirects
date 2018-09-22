@@ -1,6 +1,5 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Configuration;
 using System.Net;
-using System.Text.RegularExpressions;
 
 namespace FirstRealize.App.WebRedirects.Core.Clients
 {
