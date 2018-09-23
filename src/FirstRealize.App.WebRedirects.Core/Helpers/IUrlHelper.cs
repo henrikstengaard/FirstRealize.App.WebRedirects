@@ -10,5 +10,8 @@ namespace FirstRealize.App.WebRedirects.Core.Helpers
             IUrl newUrl);
         string FormatUrl(
             Uri parsedUrl);
+        bool AreIdentical(
+            IUrl url1,
+            IUrl url2);
     }
 }

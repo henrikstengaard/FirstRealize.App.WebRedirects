@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 
@@ -6,10 +7,13 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 {
     public class IdenticalProcessor : IProcessor
     {
+        private readonly IUrlHelper _urlHelper;
         private readonly IList<IResult> _results;
 
-        public IdenticalProcessor()
+        public IdenticalProcessor(
+            IUrlHelper urlHelper)
         {
+            _urlHelper = urlHelper;
             _results = new List<IResult>();
         }
 
@@ -25,7 +29,9 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
         public void Process(IProcessedRedirect processedRedirect)
         {
-            if (!processedRedirect.ParsedRedirect.IsIdentical)
+            if (!_urlHelper.AreIdentical(
+                processedRedirect.ParsedRedirect.OldUrl,
+                processedRedirect.ParsedRedirect.NewUrl))
             {
                 return;
             }

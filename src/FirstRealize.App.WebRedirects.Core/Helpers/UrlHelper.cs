@@ -28,12 +28,13 @@ namespace FirstRealize.App.WebRedirects.Core.Helpers
                 return false;
             }
 
-            var oldUrlFormatted = Regex.Replace(
+            var oldUrlHttpsScheme = Regex.Replace(
                 oldUrl.Parsed.AbsoluteUri,
                 "^https?://",
                 "https://",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled).ToLower();
-            return oldUrlFormatted == newUrl.Parsed.AbsoluteUri;
+            return oldUrlHttpsScheme.Equals(
+                newUrl.Parsed.AbsoluteUri);
         }
 
         public string FormatUrl(
@@ -51,6 +52,22 @@ namespace FirstRealize.App.WebRedirects.Core.Helpers
                     "http://",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled)
                 : parsedUrl.AbsoluteUri;
+        }
+
+        public bool AreIdentical(
+            IUrl url1,
+            IUrl url2)
+        {
+            if (url1 == null ||
+                !url1.IsValid || 
+                url2 == null ||
+                !url2.IsValid)
+            {
+                return false;
+            }
+
+            return url1.Parsed.AbsoluteUri.Equals(
+                url2.Parsed.AbsoluteUri);
         }
     }
 }

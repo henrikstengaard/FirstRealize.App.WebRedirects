@@ -57,7 +57,8 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
         public void PreloadParsedRedirects(IEnumerable<IParsedRedirect> parsedRedirects)
         {
             foreach (var parsedRedirect in parsedRedirects
-                .Where(r => r.IsValid && !r.IsIdentical)
+                .Where(r => r.IsValid && !_urlHelper.AreIdentical(
+                    r.OldUrl, r.NewUrl))
                 .ToList())
             {
                 var oldUrl = 
@@ -75,7 +76,9 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
         public void Process(IProcessedRedirect processedRedirect)
         {
             if (!processedRedirect.ParsedRedirect.IsValid ||
-                processedRedirect.ParsedRedirect.IsIdentical)
+                _urlHelper.AreIdentical(
+                    processedRedirect.ParsedRedirect.OldUrl,
+                    processedRedirect.ParsedRedirect.NewUrl))
             {
                 return;
             }

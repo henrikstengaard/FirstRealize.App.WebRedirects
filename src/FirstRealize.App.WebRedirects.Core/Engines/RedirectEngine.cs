@@ -40,7 +40,8 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             Processors = new List<IProcessor>
             {
                 new InvalidProcessor(),
-                new IdenticalProcessor(),
+                new IdenticalProcessor(
+                    _urlHelper),
                 new DuplicateProcessor(),
                 new ExcludeProcessor(
                     _configuration),

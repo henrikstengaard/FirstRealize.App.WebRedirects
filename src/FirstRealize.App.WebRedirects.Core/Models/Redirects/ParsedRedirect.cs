@@ -17,15 +17,6 @@ namespace FirstRealize.App.WebRedirects.Core.Models.Redirects
                     NewUrl.IsValid;
             }
         }
-        public bool IsIdentical
-        {
-            get
-            {
-                return IsValid &&
-                    OldUrl.Parsed.AbsoluteUri.Equals(
-                        NewUrl.Parsed.AbsoluteUri);
-            }
-        }
 
         public int CompareTo(object obj)
         {
