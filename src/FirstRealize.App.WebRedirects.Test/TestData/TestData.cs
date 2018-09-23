@@ -29,8 +29,7 @@ namespace FirstRealize.App.WebRedirects.Test.TestData
         public static IConfiguration DefaultConfiguration =
             new Configuration
             {
-                DefaultOldUrl = DefaultHost,
-                DefaultNewUrl = DefaultHost,
+                DefaultUrl = DefaultHost,
                 ForceHttpHostPatterns = new[]
                 {
                     "www\\.test\\.local"
@@ -69,9 +68,11 @@ namespace FirstRealize.App.WebRedirects.Test.TestData
 
         public static IEnumerable<IParsedRedirect> GetParsedRedirects()
         {
+            var configuration = DefaultConfiguration;
             var redirectParser = new RedirectParser(
-                DefaultConfiguration,
-                new UrlParser());
+                configuration,
+                new UrlParser(
+                    configuration));
 
             var parsedRedirects = new List<IParsedRedirect>();
 

@@ -1,4 +1,5 @@
-﻿using FirstRealize.App.WebRedirects.Core.Models.Redirects;
+﻿using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using System;
 using System.Text.RegularExpressions;
 
@@ -6,6 +7,14 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
 {
     public class UrlParser : IUrlParser
     {
+        private readonly IConfiguration _configuration;
+
+        public UrlParser(
+            IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public IUrl ParseUrl(
             string url,
             Uri host = null,
@@ -76,8 +85,16 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
             Uri uri,
             bool stripFragment = false)
         {
-            UriBuilder builder = new UriBuilder(uri);
+            var builder = new UriBuilder(uri);
 
+            // change scheme, if host match default url
+            if (uri.Host == _configuration.DefaultUrl.Host &&
+                uri.Scheme != _configuration.DefaultUrl.Scheme)
+            {
+                builder.Scheme = _configuration.DefaultUrl.Scheme;
+            }
+
+            // remove tailing slash, if path ends with slash
             if (uri.AbsolutePath.EndsWith("/"))
             {
                 builder.Path = Regex.Replace(

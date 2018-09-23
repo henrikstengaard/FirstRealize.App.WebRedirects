@@ -6,8 +6,7 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
     public interface IConfiguration
     {
         IEnumerable<string> RedirectCsvFiles { get; }
-        Uri DefaultOldUrl { get; }
-        Uri DefaultNewUrl { get; }
+        Uri DefaultUrl { get; }
         IEnumerable<string> Processors { get; }
         IEnumerable<string> OldUrlExcludePatterns { get; }
         IEnumerable<string> NewUrlExcludePatterns { get; }

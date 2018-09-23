@@ -80,7 +80,8 @@ namespace FirstRealize.App.WebRedirects.Console
                     configuration);
             }
 
-            var urlParser = new UrlParser();
+            var urlParser = new UrlParser(
+                configuration);
             var urlHelper = new UrlHelper(
                 configuration);
             var redirectParser = new RedirectParser(

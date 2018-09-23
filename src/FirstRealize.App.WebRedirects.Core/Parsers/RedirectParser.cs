@@ -23,11 +23,11 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
             {
                 OldUrl = _urlParser.ParseUrl(
                     redirect.OldUrl,
-                    _configuration.DefaultOldUrl,
+                    _configuration.DefaultUrl,
                     true),
                 NewUrl = _urlParser.ParseUrl(
                     redirect.NewUrl,
-                    _configuration.DefaultNewUrl,
+                    _configuration.DefaultUrl,
                     false)
             };
         }

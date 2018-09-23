@@ -21,6 +21,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             // create redirect processor
             var configuration = new Configuration
             {
+                DefaultUrl = TestData.TestData.DefaultHost,
                 ForceHttpHostPatterns = new[]
                 {
                     "www\\.test\\.local"
@@ -30,7 +31,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             // create url and redirect parser
             var urlHelper = new UrlHelper(
                 configuration);
-            var urlParser = new UrlParser();
+            var urlParser = new UrlParser(
+                configuration);
             var redirectParser = new RedirectParser(
                 configuration,
                 urlParser);
@@ -42,7 +44,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 configuration,
                 urlHelper,
                 testHttpClient,
-                new UrlParser());
+                new UrlParser(
+                    configuration));
 
             // parse redirects
             var redirects = new[] {
@@ -100,7 +103,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 new UrlHelper(
                     configuration),
                 new TestHttpClient(),
-                new UrlParser()
+                new UrlParser(
+                    configuration)
             );
 
             // process redirects
@@ -134,7 +138,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 new UrlHelper(
                     configuration),
                 new TestHttpClient(),
-                new UrlParser());
+                new UrlParser(
+                    configuration));
 
             // parsed redirects
             var redirects = TestData.TestData.GetParsedRedirects();
@@ -176,7 +181,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 new UrlHelper(
                     configuration),
                 new TestHttpClient(),
-                new UrlParser());
+                new UrlParser(
+                    configuration));
 
             // parsed redirects
             var redirects = TestData.TestData.GetParsedRedirects();
@@ -230,6 +236,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             // create redirect processor
             var configuration = new Configuration
             {
+                DefaultUrl = TestData.TestData.DefaultHost,
                 ForceHttpHostPatterns = new[]
                 {
                     "www\\.test\\.local"
@@ -240,7 +247,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 new UrlHelper(
                     configuration),
                 testHttpClient,
-                new UrlParser());
+                new UrlParser(
+                    configuration));
 
             // preload redirects
             redirectProcessor.PreloadParsedRedirects(
@@ -265,7 +273,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         {
             var configuration =
                 TestData.TestData.DefaultConfiguration;
-            var urlParser = new UrlParser();
+            var urlParser = new UrlParser(
+                configuration);
             var redirectParser = new RedirectParser(
                 configuration,
                 urlParser);
@@ -326,7 +335,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         {
             var configuration =
                 TestData.TestData.DefaultConfiguration;
-            var urlParser = new UrlParser();
+            var urlParser = new UrlParser(
+                configuration);
             var redirectParser = new RedirectParser(
                 configuration,
                 urlParser);
@@ -386,7 +396,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         {
             var configuration =
                 TestData.TestData.DefaultConfiguration;
-            var urlParser = new UrlParser();
+            var urlParser = new UrlParser(
+                configuration);
             var redirectParser = new RedirectParser(
                 configuration,
                 urlParser);

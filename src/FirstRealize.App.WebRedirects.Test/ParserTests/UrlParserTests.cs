@@ -11,7 +11,8 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
 
         public UrlParserTests()
         {
-            _urlParser = new UrlParser();
+            _urlParser = new UrlParser(
+                TestData.TestData.DefaultConfiguration);
         }
 
         [Test]

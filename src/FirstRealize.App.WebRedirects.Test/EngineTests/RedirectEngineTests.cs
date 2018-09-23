@@ -49,7 +49,8 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
             }
 
             // create redirect engine
-            var urlParser = new UrlParser();
+            var urlParser = new UrlParser(
+                configuration);
             return new RedirectEngine(
                 configuration,
                 new UrlHelper(
@@ -108,8 +109,7 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
             var customizedConfiguration = new Configuration
             {
                 RedirectCsvFiles = configuration.RedirectCsvFiles,
-                DefaultOldUrl = configuration.DefaultOldUrl,
-                DefaultNewUrl = configuration.DefaultNewUrl,
+                DefaultUrl = configuration.DefaultUrl,
                 Processors = new[]
                 {
                     testProcessor.Name
@@ -180,8 +180,7 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
             var customizedConfiguration = new Configuration
             {
                 RedirectCsvFiles = configuration.RedirectCsvFiles,
-                DefaultOldUrl = configuration.DefaultOldUrl,
-                DefaultNewUrl = configuration.DefaultNewUrl,
+                DefaultUrl = configuration.DefaultUrl,
                 Processors = new[]
                 {
                     causeErrorProcessor.Name

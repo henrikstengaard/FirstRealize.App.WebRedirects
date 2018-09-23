@@ -8,9 +8,7 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
     {
         public IEnumerable<string> RedirectCsvFiles { get; set; }
         [JsonConverter(typeof(UriJsonConverter))]
-        public Uri DefaultOldUrl { get; set; }
-        [JsonConverter(typeof(UriJsonConverter))]
-        public Uri DefaultNewUrl { get; set; }
+        public Uri DefaultUrl { get; set; }
         public IEnumerable<string> Processors { get; set; }
         public IEnumerable<string> OldUrlExcludePatterns { get; set; }
         public IEnumerable<string> NewUrlExcludePatterns { get; set; }

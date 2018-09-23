@@ -17,8 +17,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
         ""redirects1.csv"",
         ""redirects2.csv""
     ],
-    defaultOldUrl: ""http://www.oldurl.local"",
-    defaultNewUrl: ""http://www.newurl.local"",
+    defaultUrl: ""http://www.oldurl.local"",
     oldUrlExcludePatterns: [
         ""/oldurl-exclude""
     ],
@@ -73,10 +72,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
                 redirectCsvFiles[1]);
             Assert.AreEqual(
                 "http://www.oldurl.local/",
-                configuration.DefaultOldUrl.AbsoluteUri);
-            Assert.AreEqual(
-                "http://www.newurl.local/",
-                configuration.DefaultNewUrl.AbsoluteUri);
+                configuration.DefaultUrl.AbsoluteUri);
             Assert.AreEqual(
                 "/oldurl-exclude",
                 configuration.OldUrlExcludePatterns.FirstOrDefault());

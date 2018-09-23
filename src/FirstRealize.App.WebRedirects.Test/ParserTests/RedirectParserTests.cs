@@ -10,9 +10,12 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
         [Test]
         public void CanParseRedirect()
         {
+            var configuration =
+                TestData.TestData.DefaultConfiguration;
             var redirectParser = new RedirectParser(
-                TestData.TestData.DefaultConfiguration,
-                new UrlParser());
+                configuration,
+                new UrlParser(
+                    configuration));
 
             var redirect = new Redirect
             {
