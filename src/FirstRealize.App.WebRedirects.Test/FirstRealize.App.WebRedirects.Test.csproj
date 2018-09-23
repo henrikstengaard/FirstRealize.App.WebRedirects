@@ -53,6 +53,7 @@
     </Compile>
     <Compile Include="EngineTests\CauseErrorProcessor.cs" />
     <Compile Include="EngineTests\RedirectEngineTests.cs" />
+    <Compile Include="Helpers\UrlHelperTests.cs" />
     <Compile Include="ModelTests\RedirectTests.cs" />
     <Compile Include="ParserTests\ArgumentParserTests.cs" />
     <Compile Include="ParserTests\RedirectParserTests.cs" />
