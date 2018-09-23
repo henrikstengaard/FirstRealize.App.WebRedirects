@@ -1,6 +1,9 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Readers;
+using Newtonsoft.Json;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -9,6 +12,53 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
     [TestFixture]
     public class ConfigurationJsonReaderTests
     {
+        [Test]
+        public void ConvertJsonToUri()
+        {
+            var uriJsonConverter = new UriJsonConverter();
+
+            Assert.AreEqual(
+                true,
+                uriJsonConverter.CanConvert(typeof(Uri)));
+            Assert.AreEqual(
+                false,
+                uriJsonConverter.CanConvert(typeof(DateTime)));
+
+            // read uri from json
+            var resultUris = new List<object>();
+            var json = @"{
+    'Test1': 'http://www.test.local',
+    'Test2': 'not-a-valid'
+}";
+            using (var reader = new JsonTextReader(new StringReader(json)))
+            {
+                while(reader.Read())
+                {
+                    if (reader.TokenType == JsonToken.String &&
+                        reader.Value != null)
+                    {
+                        resultUris.Add(uriJsonConverter.ReadJson(
+                            reader,
+                            typeof(Uri),
+                            reader.Value,
+                            new JsonSerializer()));
+
+                    }
+                }
+            }
+
+            // verify result urls
+            Assert.AreEqual(2, resultUris.Count);
+            var resultUri = resultUris[0] as Uri;
+            Assert.IsNotNull(resultUri);
+            Assert.AreEqual(
+                new Uri("http://www.test.local").AbsoluteUri,
+                resultUri.AbsoluteUri);
+            Assert.AreEqual(
+                null,
+                resultUris[1]);
+        }
+
         [Test]
         public void ReadConfigurationFile()
         {
