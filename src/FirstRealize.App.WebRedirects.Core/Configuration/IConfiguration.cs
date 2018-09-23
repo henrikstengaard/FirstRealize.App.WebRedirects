@@ -11,6 +11,7 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
         IEnumerable<string> Processors { get; }
         IEnumerable<string> OldUrlExcludePatterns { get; }
         IEnumerable<string> NewUrlExcludePatterns { get; }
+        bool UseTestHttpClient { get; }
         IEnumerable<string> ForceHttpHostPatterns { get; }
         int MaxRedirectCount { get; }
         int SampleCount { get; }

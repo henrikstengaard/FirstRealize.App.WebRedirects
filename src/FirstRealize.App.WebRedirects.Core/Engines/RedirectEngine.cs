@@ -1,5 +1,6 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Clients;
 using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Parsers;
@@ -14,6 +15,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
     public class RedirectEngine : IRedirectEngine
     {
         private readonly IConfiguration _configuration;
+        private readonly IUrlHelper _urlHelper;
         private readonly IUrlParser _urlParser;
         private readonly IRedirectParser _redirectParser;
         private readonly IHttpClient _httpClient;
@@ -25,11 +27,13 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
 
         public RedirectEngine(
             IConfiguration configuration,
+            IUrlHelper urlHelper,
             IUrlParser urlParser,
             IRedirectParser redirectParser,
             IHttpClient httpClient)
         {
             _configuration = configuration;
+            _urlHelper = urlHelper;
             _urlParser = urlParser;
             _redirectParser = redirectParser;
             _httpClient = httpClient;
@@ -42,6 +46,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
                     _configuration),
                 new RedirectProcessor(
                     _configuration,
+                    _urlHelper,
                     _httpClient,
                     _urlParser)
             };

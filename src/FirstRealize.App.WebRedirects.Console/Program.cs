@@ -1,6 +1,7 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Clients;
 using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Engines;
+using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Readers;
 using FirstRealize.App.WebRedirects.Core.Reports;
@@ -68,17 +69,29 @@ namespace FirstRealize.App.WebRedirects.Console
             //	SecurityProtocolType.Tls12;
 
             // create redirect engine
+            IHttpClient httpClient;
+            if (configuration.UseTestHttpClient)
+            {
+                httpClient = new TestHttpClient();
+            }
+            else
+            {
+                httpClient = new HttpClient(
+                    configuration);
+            }
+
             var urlParser = new UrlParser();
+            var urlHelper = new UrlHelper(
+                configuration);
             var redirectParser = new RedirectParser(
                 configuration,
                 urlParser);
             var redirectEngine = new RedirectEngine(
                 configuration,
+                urlHelper,
                 urlParser,
                 redirectParser,
-                new HttpClient(
-                    configuration)
-                );
+                httpClient);
 
             // run redirect engine
             var redirectProcessingResult = 

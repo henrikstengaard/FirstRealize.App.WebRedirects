@@ -1,8 +1,8 @@
 ﻿{
   "redirectCsvFiles": [
-    "redirects.csv"
+    "redirects_http.csv"
   ],
   "defaultOldUrl": "http://www.test.local",
   "defaultNewUrl": "http://www.test.local",
-  "useTestHttpClient": "True"
+  "useTestHttpClient": "False"
 }

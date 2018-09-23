@@ -59,6 +59,8 @@
     <Compile Include="Engines\IRedirectProcessingResult.cs" />
     <Compile Include="Engines\RedirectEngine.cs" />
     <Compile Include="Engines\RedirectProcessingResult.cs" />
+    <Compile Include="Helpers\IUrlHelper.cs" />
+    <Compile Include="Helpers\UrlHelper.cs" />
     <Compile Include="Iis.cs" />
     <Compile Include="IisExpress.cs" />
     <Compile Include="Models\Redirects\IParsedRedirect.cs" />

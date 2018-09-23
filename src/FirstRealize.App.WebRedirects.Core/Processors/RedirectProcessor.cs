@@ -1,5 +1,6 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Clients;
 using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Parsers;
@@ -14,6 +15,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
     public class RedirectProcessor : IProcessor, IProcessorPreload
     {
         private readonly IConfiguration _configuration;
+        private readonly IUrlHelper _urlHelper;
         private readonly IHttpClient _httpClient;
         private readonly IUrlParser _urlParser;
         private readonly IDictionary<string, IParsedRedirect> _oldUrlIndex;
@@ -22,10 +24,12 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
         public RedirectProcessor(
             IConfiguration configuration,
+            IUrlHelper urlHelper,
             IHttpClient httpClient,
             IUrlParser urlParser)
         {
             _configuration = configuration;
+            _urlHelper = urlHelper;
             _httpClient = httpClient;
             _urlParser = urlParser;
 
@@ -48,22 +52,6 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             {
                 return _results;
             }
-        }
-
-        private string FormatUrl(Uri parsedUrl)
-        {
-            var forceHttpUrlPatternMatches = 
-                _configuration.ForceHttpHostPatterns.Where(x => Regex.IsMatch(
-                    parsedUrl.DnsSafeHost, 
-                    x, RegexOptions.IgnoreCase | RegexOptions.Compiled));
-
-            return forceHttpUrlPatternMatches.Any()
-                ? Regex.Replace(
-                    parsedUrl.AbsoluteUri, 
-                    "^https?://",
-                    "http://",
-                    RegexOptions.IgnoreCase | RegexOptions.Compiled)
-                : parsedUrl.AbsoluteUri;
         }
 
         public void PreloadParsedRedirects(IEnumerable<IParsedRedirect> parsedRedirects)
@@ -108,7 +96,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 newUrl = null;
 
                 var parsedUrl = url.Parsed.AbsoluteUri;
-                var formattedUrl = FormatUrl(url.Parsed);
+                var formattedUrl = _urlHelper.FormatUrl(url.Parsed);
 
                 redirectCount++;
                 checkRedirect = false;
@@ -192,10 +180,10 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 }
 
                 // cyclic redirect, if url and new url is not https redirect and url exists in url index
-                if (newUrl != null && !IsHttpsRedirect(
+                if (newUrl != null && !_urlHelper.IsHttpsRedirect(
                     url,
                     newUrl) &&
-                    urlsIndex.Contains(FormatUrl(newUrl.Parsed)))
+                    urlsIndex.Contains(_urlHelper.FormatUrl(newUrl.Parsed)))
                 {
                     isCyclicRedirect = true;
                     break;
@@ -275,26 +263,6 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 _results.Add(
                     optimizedRedirectResult);
             }
-        }
-
-        private bool IsHttpsRedirect(
-            IUrl oldUrl,
-            IUrl newUrl)
-        {
-            if (oldUrl == null ||
-                !oldUrl.IsValid ||
-                newUrl == null ||
-                !newUrl.IsValid)
-            {
-                return false;
-            }
-
-            var oldUrlFormatted = Regex.Replace(
-                oldUrl.Parsed.AbsoluteUri,
-                "^https?://",
-                "https://",
-                RegexOptions.IgnoreCase | RegexOptions.Compiled).ToLower();
-            return oldUrlFormatted == newUrl.Parsed.AbsoluteUri;
         }
     }
 }

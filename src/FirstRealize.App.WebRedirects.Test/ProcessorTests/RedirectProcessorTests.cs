@@ -1,5 +1,6 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Clients;
 using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Parsers;
@@ -27,6 +28,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             };
 
             // create url and redirect parser
+            var urlHelper = new UrlHelper(
+                configuration);
             var urlParser = new UrlParser();
             var redirectParser = new RedirectParser(
                 configuration,
@@ -37,6 +40,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 new TestHttpClient();
             var redirectProcessor = new RedirectProcessor(
                 configuration,
+                urlHelper,
                 testHttpClient,
                 new UrlParser());
 
@@ -89,8 +93,12 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         public void CyclicRedirectsNotDetectedWithoutPreload()
         {
             // create redirect processor
+            var configuration = 
+                TestData.TestData.DefaultConfiguration;
             var redirectProcessor = new RedirectProcessor(
-                TestData.TestData.DefaultConfiguration,
+                configuration,
+                new UrlHelper(
+                    configuration),
                 new TestHttpClient(),
                 new UrlParser()
             );
@@ -123,6 +131,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             };
             var redirectProcessor = new RedirectProcessor(
                 configuration,
+                new UrlHelper(
+                    configuration),
                 new TestHttpClient(),
                 new UrlParser());
 
@@ -163,6 +173,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             };
             var redirectProcessor = new RedirectProcessor(
                 configuration,
+                new UrlHelper(
+                    configuration),
                 new TestHttpClient(),
                 new UrlParser());
 
@@ -225,6 +237,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             };
             var redirectProcessor = new RedirectProcessor(
                 configuration,
+                new UrlHelper(
+                    configuration),
                 testHttpClient,
                 new UrlParser());
 
@@ -259,6 +273,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             // create redirect processor
             var redirectProcessor = new RedirectProcessor(
                 configuration,
+                new UrlHelper(
+                    configuration),
                 new TestHttpClient(),
                 urlParser);
 
@@ -318,6 +334,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             // create redirect processor
             var redirectProcessor = new RedirectProcessor(
                 configuration,
+                new UrlHelper(
+                    configuration),
                 new TestHttpClient(),
                 urlParser);
 
@@ -378,6 +396,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 new TestHttpClient();
             var redirectProcessor = new RedirectProcessor(
                 configuration,
+                new UrlHelper(
+                    configuration),
                 testHttpClient,
                 urlParser);
 

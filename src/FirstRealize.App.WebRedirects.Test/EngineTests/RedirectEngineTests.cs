@@ -7,21 +7,28 @@ using FirstRealize.App.WebRedirects.Core.Clients;
 using NUnit.Framework;
 using System.IO;
 using System.Linq;
+using FirstRealize.App.WebRedirects.Core.Helpers;
 
 namespace FirstRealize.App.WebRedirects.Test.EngineTests
 {
     [TestFixture]
     public class RedirectEngineTests
     {
-        private Configuration CreateConfiguration()
+        private Configuration CreateConfiguration(
+            string configurationFile = null)
         {
+            if (string.IsNullOrEmpty(configurationFile))
+            {
+                configurationFile = @"TestData\configuration.json";
+            }
+
             // read configuration file
             IConfiguration configuration;
             using (var configurationJsonReader = new ConfigurationJsonReader())
             {
                 configuration = configurationJsonReader
                     .ReadConfiguationFile(
-                    Path.Combine(TestData.TestData.CurrentDirectory, @"TestData\configuration.json"));
+                    Path.Combine(TestData.TestData.CurrentDirectory, configurationFile));
             }
 
             return configuration as Configuration;
@@ -30,15 +37,28 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
         private IRedirectEngine CreateRedirectEngine(
             IConfiguration configuration)
         {
+            IHttpClient httpClient;
+            if (configuration.UseTestHttpClient)
+            {
+                httpClient = new TestHttpClient();
+            }
+            else
+            {
+                httpClient = new HttpClient(
+                    configuration);
+            }
+
             // create redirect engine
             var urlParser = new UrlParser();
             return new RedirectEngine(
                 configuration,
+                new UrlHelper(
+                    configuration),
                 urlParser,
                 new RedirectParser(
                     configuration,
                     urlParser),
-                new TestHttpClient());
+                httpClient);
         }
 
         [Test]
@@ -189,6 +209,33 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
                 processedRedirects.Count(
                     pr => pr.Results.Count() == 1 && pr.Results.All(
                         r => r.Type.Equals(ResultTypes.UnknownErrorResult))));
+        }
+
+        [Test]
+        public void ConfigureHttpClient()
+        {
+            var configuration = CreateConfiguration(
+                @"TestData\configuration_http.json");
+
+            // create redirect engine
+            var redirectEngine = CreateRedirectEngine(
+                configuration);
+
+            // run redirect engine
+            var redirectProcessingResult =
+                redirectEngine.Run();
+
+            // verify url response result doesn't return 200 with http client
+            var processedRedirect = redirectProcessingResult
+                .ProcessedRedirects
+                .FirstOrDefault();
+            Assert.IsNotNull(processedRedirect);
+            var urlReponseResult = processedRedirect.Results
+                .OfType<UrlResponseResult>()
+                .FirstOrDefault(x => x.Type.Equals(ResultTypes.UrlResponse));
+            Assert.AreNotEqual(
+                200,
+                urlReponseResult.StatusCode);
         }
     }
 }
