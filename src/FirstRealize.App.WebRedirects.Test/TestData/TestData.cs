@@ -26,7 +26,7 @@ namespace FirstRealize.App.WebRedirects.Test.TestData
         public static Uri DefaultHost =
             new Uri("http://www.test.local");
 
-        public static IConfiguration DefaultConfiguration =
+        public static Configuration DefaultConfiguration =
             new Configuration
             {
                 DefaultUrl = DefaultHost,

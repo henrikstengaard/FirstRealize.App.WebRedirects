@@ -78,6 +78,7 @@
     <Compile Include="ParserTests\UrlParserTests.cs" />
     <Compile Include="TestData\UrlReport.cs" />
     <Compile Include="TestData\UrlReportRecord.cs" />
+    <Compile Include="ValidatorTests\ProcessedRedirectValidatorTests.cs" />
     <Compile Include="WriterTests\ReportCsvWriterTests.cs" />
   </ItemGroup>
   <ItemGroup>
