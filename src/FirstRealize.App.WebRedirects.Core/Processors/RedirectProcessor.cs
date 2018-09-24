@@ -21,6 +21,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
         private readonly IDictionary<string, IParsedRedirect> _oldUrlIndex;
         private readonly IDictionary<string, HttpResponse> _responseCache;
         private readonly IList<IResult> _results;
+        private readonly IList<string> _skipResultTypes;
 
         public RedirectProcessor(
             IConfiguration configuration,
@@ -36,6 +37,12 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             _oldUrlIndex = new Dictionary<string, IParsedRedirect>();
             _responseCache = new Dictionary<string, HttpResponse>();
             _results = new List<IResult>();
+            _skipResultTypes = new List<string>
+            {
+                ResultTypes.InvalidResult,
+                ResultTypes.IdenticalResult,
+                ResultTypes.ExcludedRedirect
+            };
         }
 
         public string Name
@@ -91,10 +98,12 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
         public void Process(IProcessedRedirect processedRedirect)
         {
+            // skip processed redirect if it's invalid or contains one or more of skip result types
             if (!processedRedirect.ParsedRedirect.IsValid ||
-                _urlHelper.AreIdentical(
-                    processedRedirect.ParsedRedirect.OldUrl,
-                    processedRedirect.ParsedRedirect.NewUrl))
+                processedRedirect.Results
+                .Select(r => r.Type)
+                .Distinct()
+                .Count(r => _skipResultTypes.Contains(r, StringComparer.OrdinalIgnoreCase)) > 0)
             {
                 return;
             }
