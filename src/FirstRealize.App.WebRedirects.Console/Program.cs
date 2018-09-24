@@ -6,6 +6,7 @@ using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Readers;
 using FirstRealize.App.WebRedirects.Core.Reports;
+using FirstRealize.App.WebRedirects.Core.Validators;
 using System;
 using System.IO;
 using System.Linq;
@@ -288,7 +289,9 @@ namespace FirstRealize.App.WebRedirects.Console
 
             var filteredRedirectReport =
                 new FilteredRedirectReport(
-                    urlHelper);
+                    new ProcessedRedirectValidator(
+                        configuration,
+                        urlHelper));
             filteredRedirectReport.Build(
                 redirectProcessingResult);
             filteredRedirectReport.WriteReportCsvFile(

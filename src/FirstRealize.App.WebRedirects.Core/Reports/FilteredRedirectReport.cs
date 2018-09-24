@@ -1,22 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FirstRealize.App.WebRedirects.Core.Engines;
-using FirstRealize.App.WebRedirects.Core.Helpers;
-using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Reports;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
+using FirstRealize.App.WebRedirects.Core.Validators;
 
 namespace FirstRealize.App.WebRedirects.Core.Reports
 {
     public class FilteredRedirectReport : ReportBase<FilteredRedirectRecord>
     {
-        private readonly IUrlHelper _urlHelper;
+        private readonly IProcessedRedirectValidator _processedRedirectValidator;
         private readonly IList<FilteredRedirectRecord> _records;
 
         public FilteredRedirectReport(
-            IUrlHelper urlHelper)
+            IProcessedRedirectValidator processedRedirectValidator)
         {
-            _urlHelper = urlHelper;
+            _processedRedirectValidator = processedRedirectValidator;
             _records =
                 new List<FilteredRedirectRecord>();
         }
@@ -26,7 +25,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
         {
             foreach(var processedRedirect in redirectProcessingResult.ProcessedRedirects.ToList())
             {
-                if (!IsValid(processedRedirect))
+                if (!_processedRedirectValidator.IsValid(processedRedirect))
                 {
                     continue;
                 }
@@ -47,52 +46,6 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                         NewUrl = newUrl
                     });
             }
-        }
-
-        private bool IsValid(
-            IProcessedRedirect processedRedirect)
-        {
-            if (processedRedirect.Results.Any(
-                r => r.Type.Equals(ResultTypes.UnknownErrorResult)))
-            {
-                return false;
-            }
-            else if (processedRedirect.Results.Any(
-                r => r.Type.Equals(ResultTypes.ExcludedRedirect)))
-            {
-                return false;
-            }
-            else if (processedRedirect.Results.Any(
-                r => r.Type.Equals(ResultTypes.InvalidResult)))
-            {
-                return false;
-            }
-            else if (processedRedirect.Results.Any(
-                r => r.Type.Equals(ResultTypes.CyclicRedirect)))
-            {
-                return false;
-            }
-            else if (processedRedirect.Results.Any(
-                r => r.Type.Equals(ResultTypes.TooManyRedirects)))
-            {
-                return false;
-            }
-            else
-            {
-                var urlResponseResult = processedRedirect
-                .Results
-                .OfType<UrlResponseResult>()
-                .FirstOrDefault(r => r.Type.Equals(ResultTypes.UrlResponse));
-                if (urlResponseResult != null && _urlHelper.AreIdentical(
-                    processedRedirect.ParsedRedirect.NewUrl,
-                    urlResponseResult.Url) &&
-                    urlResponseResult.StatusCode == 200)
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         public override IEnumerable<FilteredRedirectRecord> GetRecords()

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace FirstRealize.App.WebRedirects.Core.Validators
 {
-    public class ProcessedRedirectValidator
+    public class ProcessedRedirectValidator : IProcessedRedirectValidator
     {
         private readonly IConfiguration _configuration;
         private readonly IUrlHelper _urlHelper;

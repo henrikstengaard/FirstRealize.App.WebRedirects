@@ -60,6 +60,7 @@
     <Compile Include="Engines\RedirectEngine.cs" />
     <Compile Include="Engines\RedirectProcessedEventArgs.cs" />
     <Compile Include="Engines\RedirectProcessingResult.cs" />
+    <Compile Include="Validators\IProcessedRedirectValidator.cs" />
     <Compile Include="Validators\ProcessedRedirectValidator.cs" />
     <Compile Include="Helpers\IUrlHelper.cs" />
     <Compile Include="Helpers\UrlHelper.cs" />

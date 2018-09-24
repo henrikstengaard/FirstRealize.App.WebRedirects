@@ -3,6 +3,7 @@ using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Reports;
+using FirstRealize.App.WebRedirects.Core.Validators;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -160,23 +161,33 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
         public void BuildFilteredRedirectReport()
         {
             // create and build filtered redirect report
+            var configuration =
+                TestData.TestData.DefaultConfiguration;
             var urlHelper = new UrlHelper(
-                TestData.TestData.DefaultConfiguration);
+                configuration);
             var filteredRedirectReport = new FilteredRedirectReport(
-                urlHelper);
+                new ProcessedRedirectValidator(
+                    configuration,
+                    urlHelper));
             filteredRedirectReport.Build(_redirectProcessingResult);
 
             // verify filtered redirect records are build
             var records = filteredRedirectReport
                 .GetRecords()
                 .ToList();
-            Assert.AreEqual(1, records.Count);
+            Assert.AreEqual(2, records.Count);
             Assert.AreEqual(
                 "http://www.test2.local/url3",
                 records[0].OldUrl);
             Assert.AreEqual(
                 "http://www.test2.local/url9",
                 records[0].NewUrl);
+            Assert.AreEqual(
+                "http://www.test2.local/url4",
+                records[1].OldUrl);
+            Assert.AreEqual(
+                "http://www.test2.local/url10",
+                records[1].NewUrl);
         }
     }
 }
