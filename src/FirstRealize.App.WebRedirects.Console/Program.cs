@@ -261,7 +261,7 @@ namespace FirstRealize.App.WebRedirects.Console
             System.Console.WriteLine(
                 string.Format(
                     "Building and writing processed redirects report file '{0}'",
-                    newUrlDomainReportCsvFile));
+                    processedRedirectReportCsvFile));
 
             var processedRedirectReport =
                 new ProcessedRedirectReport();
@@ -269,6 +269,29 @@ namespace FirstRealize.App.WebRedirects.Console
                 redirectProcessingResult);
             processedRedirectReport.WriteReportCsvFile(
                 processedRedirectReportCsvFile);
+
+            System.Console.ForegroundColor = ConsoleColor.Green;
+            System.Console.WriteLine("Done");
+            System.Console.WriteLine(string.Empty);
+
+            // create and write filtered redirect report
+            // -----------------------------------------
+            var filteredRedirectReportCsvFile = Path.Combine(
+                outputDir,
+                "filtered_redirects.csv");
+
+            System.Console.ForegroundColor = ConsoleColor.Yellow;
+            System.Console.WriteLine(
+                string.Format(
+                    "Building and writing filtered redirects report file '{0}'",
+                    filteredRedirectReportCsvFile));
+
+            var filteredRedirectReport =
+                new ProcessedRedirectReport();
+            filteredRedirectReport.Build(
+                redirectProcessingResult);
+            filteredRedirectReport.WriteReportCsvFile(
+                filteredRedirectReportCsvFile);
 
             System.Console.ForegroundColor = ConsoleColor.Green;
             System.Console.WriteLine("Done");
