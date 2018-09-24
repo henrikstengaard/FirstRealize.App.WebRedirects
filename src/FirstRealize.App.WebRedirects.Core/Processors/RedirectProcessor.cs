@@ -56,11 +56,27 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
         public void PreloadParsedRedirects(IEnumerable<IParsedRedirect> parsedRedirects)
         {
+            var testHttpClient = _httpClient as TestHttpClient;
+
             foreach (var parsedRedirect in parsedRedirects
                 .Where(r => r.IsValid && !_urlHelper.AreIdentical(
                     r.OldUrl, r.NewUrl))
                 .ToList())
             {
+                // add response for new url with configured status code,
+                // if using test http client and status code is defined
+                if (testHttpClient != null && 
+                    _configuration.TestHttpClientNewUrlStatusCode.HasValue)
+                {
+                    var newUrl = 
+                        parsedRedirect.NewUrl.Parsed.AbsoluteUri;
+                    testHttpClient.Responses[newUrl] = new HttpResponse
+                    {
+                        Location = newUrl,
+                        StatusCode = (HttpStatusCode)_configuration.TestHttpClientNewUrlStatusCode
+                    };
+                }
+
                 var oldUrl = 
                     parsedRedirect.OldUrl.Parsed.AbsoluteUri;
 

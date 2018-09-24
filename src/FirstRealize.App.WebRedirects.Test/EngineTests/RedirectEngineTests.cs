@@ -282,5 +282,36 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
                 200,
                 urlReponseResult.StatusCode);
         }
+
+        [Test]
+        public void UseTestHttpClientWithStatusCodeDefined()
+        {
+            var configuration = CreateConfiguration();
+            configuration.TestHttpClientNewUrlStatusCode = 302;
+
+            // create redirect engine
+            var redirectEngine = CreateRedirectEngine(
+                configuration);
+
+            // run redirect engine
+            var redirectProcessingResult =
+                redirectEngine.Run();
+
+            // verify redirect engine has processed redirects with results
+            var processedRedirects = redirectProcessingResult
+                .ProcessedRedirects
+                .ToList();
+
+            // verify parsed more than 1 redirect and processed only 1 redirect controlled by sample count set to 1
+            Assert.IsTrue(
+                redirectProcessingResult
+                .ParsedRedirects
+                .Count() > 1);
+            Assert.AreEqual(
+                processedRedirects.Count,
+                processedRedirects
+                .Count(pr => pr.Results.OfType<UrlResponseResult>().Any(r => r.Type.Equals(ResultTypes.UrlResponse) && r.StatusCode == 302))
+                );
+        }
     }
 }
