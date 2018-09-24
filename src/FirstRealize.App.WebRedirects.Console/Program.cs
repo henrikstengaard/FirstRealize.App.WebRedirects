@@ -287,7 +287,8 @@ namespace FirstRealize.App.WebRedirects.Console
                     filteredRedirectReportCsvFile));
 
             var filteredRedirectReport =
-                new ProcessedRedirectReport();
+                new FilteredRedirectReport(
+                    urlHelper);
             filteredRedirectReport.Build(
                 redirectProcessingResult);
             filteredRedirectReport.WriteReportCsvFile(
