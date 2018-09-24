@@ -140,6 +140,52 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
         }
 
         [Test]
+        public void HandleProcesseRedirectEvents()
+        {
+            // create and customize configuration
+            var testProcessor = new TestProcessor();
+            var configuration = CreateConfiguration();
+            var customizedConfiguration = new Configuration
+            {
+                RedirectCsvFiles = configuration.RedirectCsvFiles,
+                DefaultUrl = configuration.DefaultUrl,
+                Processors = new[]
+                {
+                    testProcessor.Name
+                }
+            };
+
+            // create redirect engine
+            var redirectEngine = CreateRedirectEngine(
+                customizedConfiguration);
+            redirectEngine.Processors.Add(
+                testProcessor);
+
+            // handle processed redirect event
+            var processedRedirectsEventsCount = 0;
+            redirectEngine.RedirectProcessed += (o, e) =>
+            {
+                if (e.ProcessedRedirect == null)
+                {
+                    return;
+                }
+                processedRedirectsEventsCount++;
+            };
+
+            // run redirect engine
+            var redirectProcessingResult =
+                redirectEngine.Run();
+
+            // verify processed redirect event is handles for processed redirects
+            Assert.AreNotEqual(
+                0,
+                processedRedirectsEventsCount);
+            Assert.AreEqual(
+                redirectProcessingResult.ProcessedRedirects.Count(),
+                processedRedirectsEventsCount);
+        }
+
+        [Test]
         public void SampleProcessedRedirects()
         {
             var configuration = CreateConfiguration();

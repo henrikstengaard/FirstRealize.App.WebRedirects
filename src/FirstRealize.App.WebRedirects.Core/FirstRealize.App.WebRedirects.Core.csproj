@@ -58,6 +58,7 @@
     <Compile Include="Engines\IRedirectEngine.cs" />
     <Compile Include="Engines\IRedirectProcessingResult.cs" />
     <Compile Include="Engines\RedirectEngine.cs" />
+    <Compile Include="Engines\RedirectProcessedEventArgs.cs" />
     <Compile Include="Engines\RedirectProcessingResult.cs" />
     <Compile Include="Helpers\IUrlHelper.cs" />
     <Compile Include="Helpers\UrlHelper.cs" />

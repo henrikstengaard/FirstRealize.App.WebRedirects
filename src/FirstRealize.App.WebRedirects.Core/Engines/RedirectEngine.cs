@@ -58,6 +58,14 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             _activeProcessors = new List<IProcessor>();
         }
 
+        public event EventHandler<RedirectProcessedEventArgs> RedirectProcessed;
+
+        protected virtual void OnRedirectProcessed(
+            RedirectProcessedEventArgs e)
+        {
+            RedirectProcessed?.Invoke(this, e);
+        }
+
         public IList<IProcessor> Processors { get; }
 
         public IRedirectProcessingResult Run()
@@ -167,6 +175,11 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
                                 e.Message)
                         });
                 }
+
+                // raise processed redirect event
+                OnRedirectProcessed(
+                    new RedirectProcessedEventArgs(
+                        processedRedirect));
             }
         }
 
