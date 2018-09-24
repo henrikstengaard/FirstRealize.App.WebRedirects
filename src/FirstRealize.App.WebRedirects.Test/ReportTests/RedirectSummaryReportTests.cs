@@ -1,7 +1,9 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Engines;
+using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Reports;
+using FirstRealize.App.WebRedirects.Core.Validators;
 using NUnit.Framework;
 using System;
 using System.Linq;
@@ -75,7 +77,10 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
             };
 
             // create and build redirect summary report
-            var redirectSummaryReport = new RedirectSummaryReport();
+            var redirectSummaryReport = new RedirectSummaryReport(
+                new ProcessedRedirectValidator(
+                    new UrlHelper(
+                        TestData.TestData.DefaultConfiguration)));
             redirectSummaryReport.Build(redirectProcessingResult);
 
             // verify redirect summary records are build

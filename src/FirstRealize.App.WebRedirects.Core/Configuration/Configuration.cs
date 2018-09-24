@@ -17,7 +17,6 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
         public IEnumerable<string> ForceHttpHostPatterns { get; set; }
         public int MaxRedirectCount { get; set; }
         public int SampleCount { get; set; }
-        public bool IncludeNotMatchingNewUrl { get; set; }
 
         public Configuration()
         {
@@ -28,7 +27,6 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
             ForceHttpHostPatterns = new List<string>();
             MaxRedirectCount = 20;
             SampleCount = 0;
-            IncludeNotMatchingNewUrl = true;
         }
     }
 }

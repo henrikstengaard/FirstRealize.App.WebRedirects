@@ -10,12 +10,16 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
     public class FilteredRedirectReport : ReportBase<FilteredRedirectRecord>
     {
         private readonly IProcessedRedirectValidator _processedRedirectValidator;
+        private readonly bool _includeNotMatchingNewUrl;
         private readonly IList<FilteredRedirectRecord> _records;
 
+
         public FilteredRedirectReport(
-            IProcessedRedirectValidator processedRedirectValidator)
+            IProcessedRedirectValidator processedRedirectValidator,
+            bool includeNotMatchingNewUrl)
         {
             _processedRedirectValidator = processedRedirectValidator;
+            _includeNotMatchingNewUrl = includeNotMatchingNewUrl;
             _records =
                 new List<FilteredRedirectRecord>();
         }
@@ -25,7 +29,9 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
         {
             foreach(var processedRedirect in redirectProcessingResult.ProcessedRedirects.ToList())
             {
-                if (!_processedRedirectValidator.IsValid(processedRedirect))
+                if (!_processedRedirectValidator.IsValid(
+                    processedRedirect,
+                    _includeNotMatchingNewUrl))
                 {
                     continue;
                 }

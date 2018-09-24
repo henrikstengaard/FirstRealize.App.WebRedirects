@@ -5,6 +5,7 @@ namespace FirstRealize.App.WebRedirects.Core.Validators
     public interface IProcessedRedirectValidator
     {
         bool IsValid(
-            IProcessedRedirect processedRedirect);
+            IProcessedRedirect processedRedirect,
+            bool includeNotMatchingNewUrl);
     }
 }

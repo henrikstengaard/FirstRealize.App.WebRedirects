@@ -2,15 +2,19 @@
 using System.Linq;
 using FirstRealize.App.WebRedirects.Core.Engines;
 using FirstRealize.App.WebRedirects.Core.Models.Reports;
+using FirstRealize.App.WebRedirects.Core.Validators;
 
 namespace FirstRealize.App.WebRedirects.Core.Reports
 {
     public class RedirectSummaryReport : ReportBase<RedirectSummaryReportRecord>
     {
+        private readonly IProcessedRedirectValidator _processedRedirectValidator;
         private readonly IList<RedirectSummaryReportRecord> _redirectSummaryReportRecords;
 
-        public RedirectSummaryReport()
+        public RedirectSummaryReport(
+            IProcessedRedirectValidator processedRedirectValidator)
         {
+            _processedRedirectValidator = processedRedirectValidator;
             _redirectSummaryReportRecords = 
                 new List<RedirectSummaryReportRecord>();
         }
@@ -179,6 +183,44 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                             resultType)
                     });
             }
+
+            // get valid processed redirects counts
+            var validProcessedRedirectsCount = 0;
+            var validProcessedRedirectsIncludngNotMatchingCount = 0;
+            foreach (var processedRedirect in redirectProcessingResult.ProcessedRedirects)
+            {
+                if (_processedRedirectValidator.IsValid(processedRedirect, false))
+                {
+                    validProcessedRedirectsCount++;
+                }
+                if (_processedRedirectValidator.IsValid(processedRedirect, true))
+                {
+                    validProcessedRedirectsIncludngNotMatchingCount++;
+                }
+            }
+
+            // valid processed redirects counts
+            _redirectSummaryReportRecords.Add(
+                new RedirectSummaryReportRecord());
+            _redirectSummaryReportRecords.Add(
+                new RedirectSummaryReportRecord
+                {
+                    RedirectSummaryType = "valid processed redirects"
+                });
+            _redirectSummaryReportRecords.Add(
+                new RedirectSummaryReportRecord
+                {
+                    RedirectSummaryCount = 
+                    validProcessedRedirectsCount.ToString(),
+                    RedirectSummaryType = "redirects matching new url"
+                });
+            _redirectSummaryReportRecords.Add(
+                new RedirectSummaryReportRecord
+                {
+                    RedirectSummaryCount =
+                    validProcessedRedirectsIncludngNotMatchingCount.ToString(),
+                    RedirectSummaryType = "redirects not matching new url"
+                });
 
             // start, end and elapsed time
             _redirectSummaryReportRecords.Add(

@@ -1,5 +1,4 @@
-﻿using FirstRealize.App.WebRedirects.Core.Configuration;
-using FirstRealize.App.WebRedirects.Core.Helpers;
+﻿using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using System.Linq;
@@ -8,19 +7,17 @@ namespace FirstRealize.App.WebRedirects.Core.Validators
 {
     public class ProcessedRedirectValidator : IProcessedRedirectValidator
     {
-        private readonly IConfiguration _configuration;
         private readonly IUrlHelper _urlHelper;
 
         public ProcessedRedirectValidator(
-            IConfiguration configuration,
             IUrlHelper urlHelper)
         {
-            _configuration = configuration;
             _urlHelper = urlHelper;
         }
 
         public bool IsValid(
-            IProcessedRedirect processedRedirect)
+            IProcessedRedirect processedRedirect,
+            bool includeNotMatchingNewUrl)
         {
             if (processedRedirect.Results.Any(
                 r => r.Type.Equals(ResultTypes.UnknownErrorResult)))
@@ -58,7 +55,7 @@ namespace FirstRealize.App.WebRedirects.Core.Validators
                     return false;
                 }
 
-                return _configuration.IncludeNotMatchingNewUrl
+                return includeNotMatchingNewUrl
                     ? urlResponseResult.StatusCode == 200
                     : _urlHelper.AreIdentical(
                     processedRedirect.ParsedRedirect.NewUrl,

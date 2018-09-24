@@ -161,11 +161,10 @@ namespace FirstRealize.App.WebRedirects.Test.ValidatorTests
                 configuration);
             var processedRediretValidator =
                 new ProcessedRedirectValidator(
-                    configuration,
                     urlHelper);
 
             var validProcessedRedirects = _processedRedirects
-                .Where(x => processedRediretValidator.IsValid(x))
+                .Where(x => processedRediretValidator.IsValid(x, true))
                 .ToList();
 
             Assert.AreEqual(
@@ -197,20 +196,18 @@ namespace FirstRealize.App.WebRedirects.Test.ValidatorTests
         }
 
         [Test]
-        public void ValidateProcessedRedirectsExclidingNotMatchingNewUrls()
+        public void ValidateProcessedRedirectsExcludingNotMatchingNewUrls()
         {
             var configuration =
                 TestData.TestData.DefaultConfiguration;
-            configuration.IncludeNotMatchingNewUrl = false;
             var urlHelper = new UrlHelper(
                 configuration);
             var processedRediretValidator =
                 new ProcessedRedirectValidator(
-                    configuration,
                     urlHelper);
 
             var validProcessedRedirects = _processedRedirects
-                .Where(x => processedRediretValidator.IsValid(x))
+                .Where(x => processedRediretValidator.IsValid(x, false))
                 .ToList();
 
             Assert.AreEqual(

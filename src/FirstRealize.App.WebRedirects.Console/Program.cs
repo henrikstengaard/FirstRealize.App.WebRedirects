@@ -117,6 +117,11 @@ namespace FirstRealize.App.WebRedirects.Console
                 redirectParser,
                 httpClient);
 
+            // create processed redirect validator
+            var processedRedirectValidator =
+                new ProcessedRedirectValidator(
+                    urlHelper);
+
             // handle processed redirect event to show progress
             redirectEngine.RedirectProcessed += (o, e) =>
             {
@@ -196,7 +201,8 @@ namespace FirstRealize.App.WebRedirects.Console
                     redirectSummaryReportCsvFile));
 
             var redirectSummaryReport =
-                new RedirectSummaryReport();
+                new RedirectSummaryReport(
+                    processedRedirectValidator);
             redirectSummaryReport.Build(
                 redirectProcessingResult);
             redirectSummaryReport.WriteReportCsvFile(
@@ -289,13 +295,37 @@ namespace FirstRealize.App.WebRedirects.Console
 
             var filteredRedirectReport =
                 new FilteredRedirectReport(
-                    new ProcessedRedirectValidator(
-                        configuration,
-                        urlHelper));
+                    processedRedirectValidator,
+                    false);
             filteredRedirectReport.Build(
                 redirectProcessingResult);
             filteredRedirectReport.WriteReportCsvFile(
                 filteredRedirectReportCsvFile);
+
+            System.Console.ForegroundColor = ConsoleColor.Green;
+            System.Console.WriteLine("Done");
+            System.Console.WriteLine(string.Empty);
+
+            // create and write filtered redirect including not matching new url report
+            // ------------------------------------------------------------------------
+            var filteredRedirectIncludingNotMatchingNewUrlReportCsvFile = Path.Combine(
+                outputDir,
+                "filtered_redirects_incl_not_matching_new_url.csv");
+
+            System.Console.ForegroundColor = ConsoleColor.Yellow;
+            System.Console.WriteLine(
+                string.Format(
+                    "Building and writing filtered redirects including not matching new url report file '{0}'",
+                    filteredRedirectReportCsvFile));
+
+            var filteredRedirectIncludingNotMatchingNewUrlReport =
+                new FilteredRedirectReport(
+                    processedRedirectValidator,
+                    true);
+            filteredRedirectIncludingNotMatchingNewUrlReport.Build(
+                redirectProcessingResult);
+            filteredRedirectIncludingNotMatchingNewUrlReport.WriteReportCsvFile(
+                filteredRedirectIncludingNotMatchingNewUrlReportCsvFile);
 
             System.Console.ForegroundColor = ConsoleColor.Green;
             System.Console.WriteLine("Done");

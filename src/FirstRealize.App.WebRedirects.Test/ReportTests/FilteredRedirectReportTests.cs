@@ -167,8 +167,8 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
                 configuration);
             var filteredRedirectReport = new FilteredRedirectReport(
                 new ProcessedRedirectValidator(
-                    configuration,
-                    urlHelper));
+                    urlHelper),
+                true);
             filteredRedirectReport.Build(_redirectProcessingResult);
 
             // verify filtered redirect records are build
