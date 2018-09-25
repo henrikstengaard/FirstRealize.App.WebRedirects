@@ -1,4 +1,6 @@
-﻿using FirstRealize.App.WebRedirects.Core.Models.Redirects;
+﻿using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Helpers;
+using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using System.Collections.Generic;
 
@@ -6,12 +8,18 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 {
     public class DuplicateProcessor : IProcessor
     {
+        private readonly IConfiguration _configuration;
+        private readonly IUrlHelper _urlHelper;
         private readonly IDictionary<string, IProcessedRedirect> _oldUrlDuplicateOfFirstIndex;
         private readonly IDictionary<string, IProcessedRedirect> _oldUrlDuplicateOfLastIndex;
         private readonly IList<IResult> _results;
 
-        public DuplicateProcessor()
+        public DuplicateProcessor(
+            IConfiguration configuration,
+            IUrlHelper urlHelper)
         {
+            _configuration = configuration;
+            _urlHelper = urlHelper;
             _oldUrlDuplicateOfFirstIndex =
                 new Dictionary<string, IProcessedRedirect>();
             _oldUrlDuplicateOfLastIndex =
@@ -42,11 +50,26 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 return;
             }
 
-            // old url
-            var oldUrl = processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri;
+            // old url formatted
+            var oldUrlFormatted = _urlHelper.FormatUrl(
+                processedRedirect.ParsedRedirect.OldUrl.Parsed);
 
-            // detect duplicate of first found old url
-            if (_oldUrlDuplicateOfFirstIndex.ContainsKey(oldUrl))
+            switch (_configuration.DuplicateOldUrlStrategy)
+            {
+                case DuplicateUrlStrategy.KeepFirst:
+                    DetectDuplicateOfFirst(oldUrlFormatted, processedRedirect);
+                    break;
+                case DuplicateUrlStrategy.KeepLast:
+                    DetectDuplicateOfLast(oldUrlFormatted, processedRedirect);
+                    break;
+            }
+        }
+
+        private void DetectDuplicateOfFirst(
+            string oldUrlFormatted,
+            IProcessedRedirect processedRedirect)
+        {
+            if (_oldUrlDuplicateOfFirstIndex.ContainsKey(oldUrlFormatted))
             {
                 var duplicateOfFirstResult = new Result
                 {
@@ -56,7 +79,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                         "Duplicate redirect from old url '{0}'! Redirect to new url '{1}' skipped by first found redirect to new url '{2}'",
                         processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri,
                         processedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri,
-                        _oldUrlDuplicateOfFirstIndex[oldUrl].ParsedRedirect.NewUrl.Parsed.AbsoluteUri),
+                        _oldUrlDuplicateOfFirstIndex[oldUrlFormatted].ParsedRedirect.NewUrl.Parsed.AbsoluteUri),
                     Url = processedRedirect.ParsedRedirect.OldUrl
                 };
                 processedRedirect.Results.Add(
@@ -66,11 +89,16 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             }
             else
             {
-                _oldUrlDuplicateOfFirstIndex.Add(oldUrl, processedRedirect);
+                _oldUrlDuplicateOfFirstIndex.Add(
+                    oldUrlFormatted,
+                    processedRedirect);
             }
-
-            // detect duplicate of last found old url
-            if (_oldUrlDuplicateOfLastIndex.ContainsKey(oldUrl))
+        }
+        private void DetectDuplicateOfLast(
+            string oldUrlFormatted,
+            IProcessedRedirect processedRedirect)
+        {
+            if (_oldUrlDuplicateOfLastIndex.ContainsKey(oldUrlFormatted))
             {
                 var duplicateOfLastResult = new Result
                 {
@@ -79,17 +107,17 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     string.Format(
                         "Duplicate redirect from old url '{0}'! Redirect to new url '{1}' skipped by last found redirect to new url '{2}'",
                         processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri,
-                        _oldUrlDuplicateOfFirstIndex[oldUrl].ParsedRedirect.NewUrl.Parsed.AbsoluteUri,
+                        _oldUrlDuplicateOfLastIndex[oldUrlFormatted].ParsedRedirect.NewUrl.Parsed.AbsoluteUri,
                         processedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri),
                     Url = processedRedirect.ParsedRedirect.OldUrl
                 };
-                _oldUrlDuplicateOfLastIndex[oldUrl].Results.Add(
+                _oldUrlDuplicateOfLastIndex[oldUrlFormatted].Results.Add(
                     duplicateOfLastResult);
                 _results.Add(
                     duplicateOfLastResult);
             }
 
-            _oldUrlDuplicateOfLastIndex[oldUrl] = processedRedirect;
+            _oldUrlDuplicateOfLastIndex[oldUrlFormatted] = processedRedirect;
         }
     }
 }

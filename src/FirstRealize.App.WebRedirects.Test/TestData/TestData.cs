@@ -68,7 +68,13 @@ namespace FirstRealize.App.WebRedirects.Test.TestData
 
         public static IEnumerable<IParsedRedirect> GetParsedRedirects()
         {
-            var configuration = DefaultConfiguration;
+            return GetParsedRedirects(
+                DefaultConfiguration);
+        }
+
+        public static IEnumerable<IParsedRedirect> GetParsedRedirects(
+            IConfiguration configuration)
+        {
             var redirectParser = new RedirectParser(
                 configuration,
                 new UrlParser(
@@ -89,8 +95,20 @@ namespace FirstRealize.App.WebRedirects.Test.TestData
         public static IEnumerable<IProcessedRedirect> GetProcessedRedirects(
             IEnumerable<IProcessor> processors)
         {
+            var configuration = DefaultConfiguration;
             return GetProcessedRedirects(
-                GetParsedRedirects(),
+                GetParsedRedirects(
+                    configuration),
+                processors);
+        }
+
+        public static IEnumerable<IProcessedRedirect> GetProcessedRedirects(
+            IConfiguration configuration,
+            IEnumerable<IProcessor> processors)
+        {
+            return GetProcessedRedirects(
+                GetParsedRedirects(
+                    configuration),
                 processors);
         }
 

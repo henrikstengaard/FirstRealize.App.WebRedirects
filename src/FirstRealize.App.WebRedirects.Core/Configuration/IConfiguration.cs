@@ -10,6 +10,7 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
         IEnumerable<string> Processors { get; }
         IEnumerable<string> OldUrlExcludePatterns { get; }
         IEnumerable<string> NewUrlExcludePatterns { get; }
+        DuplicateUrlStrategy DuplicateOldUrlStrategy { get; }
         bool UseTestHttpClient { get; }
         int? TestHttpClientNewUrlStatusCode { get; }
         IEnumerable<string> ForceHttpHostPatterns { get; }

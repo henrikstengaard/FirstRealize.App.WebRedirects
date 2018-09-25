@@ -42,7 +42,9 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
                 new InvalidProcessor(),
                 new IdenticalProcessor(
                     _urlHelper),
-                new DuplicateProcessor(),
+                new DuplicateProcessor(
+                    _configuration,
+                    _urlHelper),
                 new ExcludeProcessor(
                     _configuration),
                 new RedirectProcessor(

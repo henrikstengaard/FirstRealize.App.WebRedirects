@@ -18,7 +18,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
         private readonly IUrlHelper _urlHelper;
         private readonly IHttpClient _httpClient;
         private readonly IUrlParser _urlParser;
-        private readonly IDictionary<string, IParsedRedirect> _oldUrlIndex;
+        private readonly IDictionary<string, IParsedRedirect> _oldUrlRedirectIndex;
         private readonly IDictionary<string, HttpResponse> _responseCache;
         private readonly IList<IResult> _results;
         private readonly IList<string> _skipResultTypes;
@@ -34,7 +34,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             _httpClient = httpClient;
             _urlParser = urlParser;
 
-            _oldUrlIndex = new Dictionary<string, IParsedRedirect>();
+            _oldUrlRedirectIndex = new Dictionary<string, IParsedRedirect>();
             _responseCache = new Dictionary<string, HttpResponse>();
             _results = new List<IResult>();
             _skipResultTypes = new List<string>
@@ -75,24 +75,28 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 if (testHttpClient != null && 
                     _configuration.TestHttpClientNewUrlStatusCode.HasValue)
                 {
-                    var newUrl = 
-                        parsedRedirect.NewUrl.Parsed.AbsoluteUri;
-                    testHttpClient.Responses[newUrl] = new HttpResponse
+                    var newUrlFormatted = 
+                        _urlHelper.FormatUrl(
+                            parsedRedirect.NewUrl.Parsed);
+                    testHttpClient.Responses[newUrlFormatted] = new HttpResponse
                     {
-                        Location = newUrl,
                         StatusCode = (HttpStatusCode)_configuration.TestHttpClientNewUrlStatusCode
                     };
                 }
 
-                var oldUrl = 
-                    parsedRedirect.OldUrl.Parsed.AbsoluteUri;
+                var oldUrlFormatted = 
+                    _urlHelper.FormatUrl(
+                        parsedRedirect.OldUrl.Parsed);
 
-                if (_oldUrlIndex.ContainsKey(oldUrl))
+                if (_configuration.DuplicateOldUrlStrategy == DuplicateUrlStrategy.KeepFirst)
                 {
-                    continue;
+                    if (_oldUrlRedirectIndex.ContainsKey(oldUrlFormatted))
+                    {
+                        continue;
+                    }
                 }
 
-                _oldUrlIndex.Add(oldUrl, parsedRedirect);
+                _oldUrlRedirectIndex.Add(oldUrlFormatted, parsedRedirect);
             }
         }
 
@@ -123,26 +127,26 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 url = newUrl;
                 newUrl = null;
 
-                var parsedUrl = url.Parsed.AbsoluteUri;
-                var formattedUrl = _urlHelper.FormatUrl(url.Parsed);
+                //var parsedUrl = url.Parsed.AbsoluteUri;
+                var urlFormatted = _urlHelper.FormatUrl(url.Parsed);
 
                 redirectCount++;
                 checkRedirect = false;
 
                 // get response from url
                 HttpResponse response;
-                if (_responseCache.ContainsKey(parsedUrl))
+                if (_responseCache.ContainsKey(urlFormatted))
                 {
                     // get response from cache
-                    response = _responseCache[parsedUrl];
+                    response = _responseCache[urlFormatted];
                 }
                 else
                 {
                     // get response from url
-                    response = _httpClient.Get(formattedUrl);
+                    response = _httpClient.Get(urlFormatted);
 
                     // add response to cache
-                    _responseCache.Add(parsedUrl, response);
+                    _responseCache.Add(urlFormatted, response);
                 }
 
                 // set has redirect and url to response location, 
@@ -192,19 +196,11 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 }
 
                 // check redirect for url
-                if (checkRedirect)
+                if (checkRedirect && 
+                    _oldUrlRedirectIndex.ContainsKey(urlFormatted))
                 {
-                    if (_oldUrlIndex.ContainsKey(parsedUrl))
-                    {
-                        // update redirect with new url from existing redirect
-                        newUrl = _oldUrlIndex[parsedUrl].NewUrl;
-                    }
-                    else
-                    {
-                        // checked url doesn't have a redirect
-                        // stop redirecting
-                        //url = null;
-                    }
+                    // update redirect with new url from existing redirect
+                    newUrl = _oldUrlRedirectIndex[urlFormatted].NewUrl;
                 }
 
                 // cyclic redirect, if url and new url is not https redirect and url exists in url index
@@ -218,13 +214,13 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 }
 
                 // add formatted url to urls index, if it doesn't exist
-                if (!urlsIndex.Contains(formattedUrl))
+                if (!urlsIndex.Contains(urlFormatted))
                 {
-                    urlsIndex.Add(formattedUrl);
+                    urlsIndex.Add(urlFormatted);
                 }
 
-                // add parsed url to urls visited
-                urlsVisited.Add(parsedUrl);
+                // add formatted url to urls visited
+                urlsVisited.Add(urlFormatted);
             } while (newUrl != null &&
                 newUrl.Parsed != null &&
                 redirectCount < 20);
