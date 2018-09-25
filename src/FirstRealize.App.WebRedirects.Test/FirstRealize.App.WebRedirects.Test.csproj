@@ -54,6 +54,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ClientTests\HttpClientTests.cs" />
     <Compile Include="EngineTests\CauseErrorProcessor.cs" />
     <Compile Include="EngineTests\RedirectEngineTests.cs" />
     <Compile Include="Helpers\UrlHelperTests.cs" />
@@ -98,9 +99,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Clients\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>

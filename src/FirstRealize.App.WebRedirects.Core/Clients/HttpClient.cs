@@ -3,7 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -82,26 +85,76 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
             int port,
             string request)
         {
-            using (var socket = new Socket(
-                AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+
+            using (var client = new TcpClient(host, port))
             {
-                socket.Connect(host, port, Timeout);
-                socket.Send(
-                    Encoding.ASCII.GetBytes(request));
-
-                var data = new List<byte>();
-                var buffer = new byte[4096];
-                int result;
-                do
+                using (var sslStream = new SslStream(
+                    client.GetStream(),
+                    false,
+                    new RemoteCertificateValidationCallback(ValidateRemoteCertificate),
+                    null))
                 {
-                    result = socket.Receive(buffer);
-                    data.AddRange(buffer);
+                    try
+                    {
+                        sslStream.AuthenticateAsClient(host);
+                    }
+                    catch (AuthenticationException e)
+                    {
+                        throw new HttpException(
+                            string.Format("Failed to connect: {0}", e.Message),
+                            e);
+                    }
 
-                } while (result == buffer.Length);
+                    sslStream.Write(Encoding.ASCII.GetBytes(request));
+                    sslStream.Flush();
 
-                return Encoding.ASCII.GetString(
-                    data.ToArray());
+                    var data = new List<byte>();
+                    var buffer = new byte[4096];
+                    int result;
+                    do
+                    {
+                        result = sslStream.Read(buffer, 0, buffer.Length);
+                        data.AddRange(buffer);
+                    } while (result == buffer.Length);
+
+                    return Encoding.ASCII.GetString(
+                        data.ToArray());
+                }
             }
+
+            //using (var socket = new Socket(
+            //    AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+            //{
+            //    socket.Connect(host, port, Timeout);
+
+            //    using (var stream = new SslStream(new NetworkStream(socket)))
+            //    {
+            //        stream.Write(Encoding.ASCII.GetBytes(request));
+            //        stream.Flush();
+
+            //        var data = new List<byte>();
+            //        var buffer = new byte[4096];
+            //        int result;
+            //        do
+            //        {
+            //            result = socket.Receive(buffer);
+            //            data.AddRange(buffer);
+
+            //        } while (result == buffer.Length);
+
+            //        return Encoding.ASCII.GetString(
+            //            data.ToArray());
+            //    }
+            //}
+        }
+
+        private static bool ValidateRemoteCertificate(
+          object sender,
+          X509Certificate certificate,
+          X509Chain chain,
+          SslPolicyErrors policyErrors)
+        {
+            return true;
         }
 
         private HttpResponse ParseResponse(
