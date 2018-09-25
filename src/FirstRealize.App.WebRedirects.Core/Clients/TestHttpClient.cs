@@ -21,7 +21,7 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
             {
                 return new HttpResponse
                 {
-                    StatusCode = HttpStatusCode.NotFound
+                    StatusCode = 404
                 };
             }
 

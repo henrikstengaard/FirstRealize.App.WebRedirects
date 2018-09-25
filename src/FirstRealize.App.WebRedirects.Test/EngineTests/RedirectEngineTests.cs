@@ -44,8 +44,7 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
             }
             else
             {
-                httpClient = new HttpClient(
-                    configuration);
+                httpClient = new HttpClient();
             }
 
             // create redirect engine
@@ -249,33 +248,6 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
                 processedRedirects.Count(
                     pr => pr.Results.Count() == 1 && pr.Results.All(
                         r => r.Type.Equals(ResultTypes.UnknownErrorResult))));
-        }
-
-        [Test]
-        public void ConfigureHttpClient()
-        {
-            var configuration = CreateConfiguration(
-                @"TestData\configuration_http.json");
-
-            // create redirect engine
-            var redirectEngine = CreateRedirectEngine(
-                configuration);
-
-            // run redirect engine
-            var redirectProcessingResult =
-                redirectEngine.Run();
-
-            // verify url response result doesn't return 200 with http client
-            var processedRedirect = redirectProcessingResult
-                .ProcessedRedirects
-                .FirstOrDefault();
-            Assert.IsNotNull(processedRedirect);
-            var urlReponseResult = processedRedirect.Results
-                .OfType<UrlResponseResult>()
-                .FirstOrDefault(x => x.Type.Equals(ResultTypes.UrlResponse));
-            Assert.AreNotEqual(
-                200,
-                urlReponseResult.StatusCode);
         }
 
         [Test]

@@ -98,8 +98,7 @@ namespace FirstRealize.App.WebRedirects.Console
             }
             else
             {
-                httpClient = new HttpClient(
-                    configuration);
+                httpClient = new HttpClient();
             }
 
             // create redirect engine

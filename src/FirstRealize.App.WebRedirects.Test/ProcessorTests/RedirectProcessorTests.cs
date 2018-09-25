@@ -221,8 +221,11 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 testHttpClient.Responses[
                     redirect.OldUrl.Parsed.AbsoluteUri] = new HttpResponse
                     {
-                        StatusCode = HttpStatusCode.Moved,
-                        Location = redirect.NewUrl.Parsed.AbsoluteUri
+                        StatusCode = 301,
+                        Headers = new Dictionary<string, string>
+                        {
+                            { "Location", redirect.NewUrl.Parsed.AbsoluteUri }
+                        }
                     };
             }
 
@@ -230,7 +233,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             testHttpClient.Responses[
                 "http://www.test.local/new-url"] = new HttpResponse
                 {
-                    StatusCode = HttpStatusCode.OK
+                    StatusCode = 200
                 };
 
             // create redirect processor
@@ -473,7 +476,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                         parsedRedirect.NewUrl.Parsed.AbsoluteUri] =
                         new HttpResponse
                         {
-                            StatusCode = HttpStatusCode.Forbidden
+                            StatusCode = 401
                         };
                 }
             }

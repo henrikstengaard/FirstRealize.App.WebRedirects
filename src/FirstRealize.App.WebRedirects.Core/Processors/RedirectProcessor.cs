@@ -80,7 +80,9 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                             parsedRedirect.NewUrl.Parsed);
                     testHttpClient.Responses[newUrlFormatted] = new HttpResponse
                     {
-                        StatusCode = (HttpStatusCode)_configuration.TestHttpClientNewUrlStatusCode
+                        StatusCode = _configuration.TestHttpClientNewUrlStatusCode.HasValue
+                        ? _configuration.TestHttpClientNewUrlStatusCode.Value
+                        : 404
                     };
                 }
 
@@ -153,13 +155,15 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 // if url returns 301 and has location
                 if (response != null)
                 {
-                    var statusCode = response.StatusCode.HasValue
-                        ? (int)response.StatusCode
-                        : 0;
+                    var statusCode = response.StatusCode;
+                    var location = response.Headers.ContainsKey("Location")
+                        ? response.Headers["Location"]
+                        : string.Empty;
+
                     var locationUrl = !Regex.IsMatch(
-                        response.Location ?? string.Empty, "https?://", RegexOptions.IgnoreCase | RegexOptions.Compiled)
-                        ? new Uri(url.Parsed, response.Location).AbsoluteUri
-                        : response.Location ?? string.Empty;
+                        location ?? string.Empty, "https?://", RegexOptions.IgnoreCase | RegexOptions.Compiled)
+                        ? string.Format("{0}://{1}{2}", url.Parsed.Scheme, url.Parsed.Host, location)
+                        : location ?? string.Empty;
                     urlResponseResult = new UrlResponseResult
                     {
                         Type = ResultTypes.UrlResponse,
@@ -174,12 +178,12 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
                     switch (response.StatusCode)
                     {
-                        case HttpStatusCode.Moved:
+                        case 301:
                             // url returns 301
                             // update redirect with url from location
                             newUrl = _urlParser.ParseUrl(locationUrl);
                             break;
-                        case HttpStatusCode.NotFound:
+                        case 404:
                             // url returns 404, check if a redirect exists
                             checkRedirect = true;
                             break;

@@ -50,6 +50,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Clients\HttpClient.cs" />
+    <Compile Include="Clients\HttpException.cs" />
     <Compile Include="Clients\HttpResponse.cs" />
     <Compile Include="Clients\IHttpClient.cs" />
     <Compile Include="Clients\TestHttpClient.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="Engines\RedirectEngine.cs" />
     <Compile Include="Engines\RedirectProcessedEventArgs.cs" />
     <Compile Include="Engines\RedirectProcessingResult.cs" />
+    <Compile Include="Extensions\SocketExtensions.cs" />
     <Compile Include="Validators\IProcessedRedirectValidator.cs" />
     <Compile Include="Validators\ProcessedRedirectValidator.cs" />
     <Compile Include="Helpers\IUrlHelper.cs" />

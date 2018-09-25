@@ -1,7 +1,0 @@
-﻿{
-  "redirectCsvFiles": [
-    "redirects_http.csv"
-  ],
-  "defaultUrl": "http://www.test.local",
-  "useTestHttpClient": "False"
-}

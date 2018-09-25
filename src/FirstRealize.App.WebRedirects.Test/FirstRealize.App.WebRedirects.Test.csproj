@@ -91,13 +91,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="TestData\configuration_http.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="TestData\configuration.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="TestData\redirects_http.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="TestData\redirects.csv">
