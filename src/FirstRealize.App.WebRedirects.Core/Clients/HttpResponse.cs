@@ -8,7 +8,6 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
         public int StatusCode { get; set; }
         public string StatusDescription { get; set; }
         public IDictionary<string, string> Headers { get; set; }
-        public string Content { get; set; }
 
         public HttpResponse()
         {

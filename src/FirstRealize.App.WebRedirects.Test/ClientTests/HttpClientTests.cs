@@ -7,11 +7,25 @@ namespace FirstRealize.App.WebRedirects.Test.ClientTests
     public class HttpClientTests
     {
         [Test]
-        public void GetRequest()
+        public void GetGoogleUrlHttps()
         {
             var httpClient = new HttpClient();
 
             var response = httpClient.Get("https://www.google.com");
+
+            Assert.IsNotNull(
+                response);
+            Assert.AreEqual(
+                200,
+                response.StatusCode);
+        }
+
+        [Test]
+        public void GetGoogleUrlHttp()
+        {
+            var httpClient = new HttpClient();
+
+            var response = httpClient.Get("http://www.google.com");
 
             Assert.IsNotNull(
                 response);

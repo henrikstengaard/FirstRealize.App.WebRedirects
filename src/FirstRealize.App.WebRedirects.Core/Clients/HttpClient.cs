@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net.Security;
 using System.Net.Sockets;
@@ -25,8 +26,12 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
             Headers = new Dictionary<string, string>(
                 StringComparer.OrdinalIgnoreCase)
             {
+                { "User-Agent", "WebRedirects/1.0" },
                 { "Accept", "*/*" },
-                { "User-Agent", "WebRedirects Crawler" }
+                { "Connection", "keep-alive" },
+                { "Keep-Alive", "300" },
+                { "Pragma", "no-cache" },
+                { "Cache", "no-cache" }
             };
             _idn = new IdnMapping();
             Protocol = "HTTP/1.1";
@@ -53,6 +58,11 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
                 _idn.GetAscii(urlMatch.Groups[2].Value);
             var pathAndQuery = urlMatch.Groups[4].Value;
 
+            if (!pathAndQuery.StartsWith("/"))
+            {
+                pathAndQuery = string.Concat("/", pathAndQuery);
+            }
+
             int port;
             if (!string.IsNullOrWhiteSpace(urlMatch.Groups[3].Value) &&
                 !int.TryParse(urlMatch.Groups[3].Value, out port))
@@ -69,83 +79,69 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
                     : 80;
             }
 
-            string response = SendRequest(
+            var response = SendRequest(
                 host,
                 port,
+                scheme.ToLower().StartsWith("https"),
                 BuildRequest(
                     "GET",
                     host,
                     pathAndQuery));
-            return ParseResponse(
+            return ParseData(
                 response);
         }
 
-        private string SendRequest(
+        private byte[] SendRequest(
             string host,
             int port,
+            bool ssl,
             string request)
         {
+            var requestBytes = 
+                Encoding.ASCII.GetBytes(request);
 
             using (var client = new TcpClient(host, port))
             {
-                using (var sslStream = new SslStream(
-                    client.GetStream(),
-                    false,
-                    new RemoteCertificateValidationCallback(ValidateRemoteCertificate),
-                    null))
+                if (ssl)
                 {
-                    try
+                    using (var sslStream = new SslStream(
+                        client.GetStream(),
+                        false,
+                        new RemoteCertificateValidationCallback(ValidateRemoteCertificate),
+                        null))
                     {
-                        sslStream.AuthenticateAsClient(host);
+                        try
+                        {
+                            sslStream.AuthenticateAsClient(host);
+                        }
+                        catch (AuthenticationException e)
+                        {
+                            throw new HttpException(
+                                string.Format("Failed to connect: {0}", e.Message),
+                                e);
+                        }
+
+                        sslStream.Write(
+                            requestBytes);
+                        sslStream.Flush();
+
+                        return ReadData(sslStream);
                     }
-                    catch (AuthenticationException e)
+                }
+                else
+                {
+                    using (var stream = client.GetStream())
                     {
-                        throw new HttpException(
-                            string.Format("Failed to connect: {0}", e.Message),
-                            e);
+                        stream.Write(
+                            requestBytes,
+                            0,
+                            requestBytes.Length);
+                        stream.Flush();
+
+                        return ReadData(stream);
                     }
-
-                    sslStream.Write(Encoding.ASCII.GetBytes(request));
-                    sslStream.Flush();
-
-                    var data = new List<byte>();
-                    var buffer = new byte[4096];
-                    int result;
-                    do
-                    {
-                        result = sslStream.Read(buffer, 0, buffer.Length);
-                        data.AddRange(buffer);
-                    } while (result == buffer.Length);
-
-                    return Encoding.ASCII.GetString(
-                        data.ToArray());
                 }
             }
-
-            //using (var socket = new Socket(
-            //    AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
-            //{
-            //    socket.Connect(host, port, Timeout);
-
-            //    using (var stream = new SslStream(new NetworkStream(socket)))
-            //    {
-            //        stream.Write(Encoding.ASCII.GetBytes(request));
-            //        stream.Flush();
-
-            //        var data = new List<byte>();
-            //        var buffer = new byte[4096];
-            //        int result;
-            //        do
-            //        {
-            //            result = socket.Receive(buffer);
-            //            data.AddRange(buffer);
-
-            //        } while (result == buffer.Length);
-
-            //        return Encoding.ASCII.GetString(
-            //            data.ToArray());
-            //    }
-            //}
         }
 
         private static bool ValidateRemoteCertificate(
@@ -157,15 +153,52 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
             return true;
         }
 
-        private HttpResponse ParseResponse(
-            string response)
+        private byte[] ReadData(Stream stream)
         {
-            var responseLines = response
-                .Replace("\r", "")
-                .Split('\n');
+            var data = new List<byte>();
+            var buffer = new byte[4096];
+            int result;
+            do
+            {
+                result = stream.Read(buffer, 0, buffer.Length);
+                data.AddRange(buffer);
+            } while (result == buffer.Length);
+
+            return data.ToArray();
+        }
+
+        private IEnumerable<string> ParseHeaderLines(
+            byte[] data)
+        {
+            var headerLineStart = 0;
+            for (var i = 0; i < data.Length; i++)
+            {
+                if (i > 0 &&
+                    data[i - 1] == 13 &&
+                    data[i] == 10)
+                {
+                    var headerLineBytes = new byte[i - headerLineStart - 1];
+                    Array.Copy(data, headerLineStart, headerLineBytes, 0, headerLineBytes.Length);
+                    headerLineStart = i + 1;
+                    var headerLine =
+                        Encoding.ASCII.GetString(headerLineBytes);
+                    if (string.IsNullOrWhiteSpace(headerLine))
+                    {
+                        break;
+                    }
+                    yield return headerLine;
+                }
+            }
+        }
+
+        private HttpResponse ParseData(
+            byte[] data)
+        {
+            var headerLines = ParseHeaderLines(data)
+                .ToList();
 
             var statusMatch = Regex.Match(
-                responseLines[0], "^(http[^\\s]+)\\s+([0-9]+)\\s+?(.*)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+                headerLines[0], "^(http[^\\s]+)\\s+([0-9]+)\\s+?(.*)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
             if (!statusMatch.Success)
             {
@@ -173,7 +206,7 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
                     string.Format(
                         string.Format(
                             "Invalid header '{0}'",
-                            responseLines[0])));
+                            headerLines[0])));
             }
 
             int statusCode;
@@ -183,20 +216,19 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
             var headers = new Dictionary<string, string>(
                 StringComparer.OrdinalIgnoreCase);
 
-            var headerIndex = 0;
-            string responseLine;
-            do
+            var headerIndex = 1;
+            string headerLine;
+            while(headerIndex < headerLines.Count)
             {
-                headerIndex++;
-                responseLine = (responseLines[headerIndex] ?? string.Empty);
+                headerLine = (headerLines[headerIndex] ?? string.Empty);
 
-                if (string.IsNullOrWhiteSpace(responseLine))
+                if (string.IsNullOrWhiteSpace(headerLine))
                 {
                     break;
                 }
 
                 var headerMatch = Regex.Match(
-                    responseLine,
+                    headerLine,
                     "^([^:]+):\\s+(.*)",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
@@ -206,27 +238,18 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
                         string.Format(
                             string.Format(
                                 "Invalid header '{0}'",
-                                responseLine)));
+                                headerLine)));
                 }
 
                 headers[headerMatch.Groups[1].Value] = headerMatch.Groups[2].Value;
-
-            } while (headerIndex < responseLines.Length);
-
-            var contentLines = new List<string>();
-
-            for (var i = headerIndex + 1; i < responseLines.Length; i++)
-            {
-                contentLines.Add(responseLines[i]);
+                headerIndex++;
             }
 
             return new HttpResponse
             {
                 StatusCode = statusCode,
                 StatusDescription = statusDescription,
-                Headers = headers,
-                Content = string.Join(
-                    "\r\n", contentLines)
+                Headers = headers
             };
         }
 
