@@ -149,6 +149,12 @@ namespace FirstRealize.App.WebRedirects.Console
                     result = "?";
                 }
                 else if (e.ProcessedRedirect.Results.Any(
+                    r => r.Type.Equals(ResultTypes.IdenticalResult)))
+                {
+                    System.Console.ForegroundColor = ConsoleColor.Red;
+                    result = "=";
+                }
+                else if (e.ProcessedRedirect.Results.Any(
                     r => r.Type.Equals(ResultTypes.CyclicRedirect)))
                 {
                     System.Console.ForegroundColor = ConsoleColor.Red;
