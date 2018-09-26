@@ -24,7 +24,8 @@ namespace FirstRealize.App.WebRedirects.Core.Models.Redirects
 
             if (other == null ||
                 other.OldUrl == null ||
-                other.NewUrl == null)
+                other.NewUrl == null ||
+                !other.IsValid)
             {
                 return 1;
             }
