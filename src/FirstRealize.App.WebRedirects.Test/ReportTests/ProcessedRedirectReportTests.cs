@@ -44,31 +44,19 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
                             {
                                 Type = ResultTypes.ExcludedRedirect,
                                 Message = ResultTypes.ExcludedRedirect,
-                                Url = new Url
-                                {
-                                    Raw = newUrlRaw,
-                                    Parsed = newUrlParsed
-                                }
+                                Url = newUrlRaw
                             },
                             new Result
                             {
                                 Type = ResultTypes.DuplicateOfFirst,
                                 Message = ResultTypes.DuplicateOfFirst,
-                                Url = new Url
-                                {
-                                    Raw = newUrlRaw,
-                                    Parsed = newUrlParsed
-                                }
+                                Url = newUrlRaw
                             },
                             new Result
                             {
                                 Type = ResultTypes.DuplicateOfLast,
                                 Message = ResultTypes.DuplicateOfLast,
-                                Url = new Url
-                                {
-                                    Raw = newUrlRaw,
-                                    Parsed = newUrlParsed
-                                }
+                                Url = newUrlRaw
                             }
                         }
                     }

@@ -93,7 +93,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             {
                 Type = ResultTypes.ExcludedRedirect,
                 Message = message.ToString(),
-                Url = url
+                Url = url.Parsed.AbsoluteUri
             };
             processedRedirect.Results.Add(
                 excludedRedirectResult);

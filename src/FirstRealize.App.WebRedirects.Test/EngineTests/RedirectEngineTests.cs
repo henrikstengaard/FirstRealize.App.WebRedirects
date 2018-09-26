@@ -8,6 +8,7 @@ using NUnit.Framework;
 using System.IO;
 using System.Linq;
 using FirstRealize.App.WebRedirects.Core.Helpers;
+using FirstRealize.App.WebRedirects.Core.Formatters;
 
 namespace FirstRealize.App.WebRedirects.Test.EngineTests
 {
@@ -48,12 +49,15 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
             }
 
             // create redirect engine
+			var urlFormatter = new UrlFormatter();
             var urlParser = new UrlParser(
                 configuration);
             return new RedirectEngine(
                 configuration,
                 new UrlHelper(
-                    configuration),
+					configuration,
+					urlParser,
+					urlFormatter),
                 urlParser,
                 new RedirectParser(
                     configuration,

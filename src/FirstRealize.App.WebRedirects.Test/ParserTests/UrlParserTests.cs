@@ -52,22 +52,13 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
         }
 
         [Test]
-        public void ParseUrlWithOnlyHostAndPath()
+        public void ParseUrlReturnsNullUrlWithoutSchemeOrSlash()
         {
             var rawUrl = "example.local/another/path";
             var url = _urlParser.ParseUrl(
                 rawUrl);
 
-            Assert.IsNotNull(url);
-            Assert.AreEqual(
-                "http",
-                url.Parsed.Scheme);
-            Assert.AreEqual(
-                "example.local",
-                url.Parsed.DnsSafeHost);
-            Assert.AreEqual(
-                "/another/path",
-                url.Parsed.AbsolutePath);
+            Assert.IsNull(url);
         }
 
         [Test]

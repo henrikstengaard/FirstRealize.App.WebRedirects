@@ -52,7 +52,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
             // old url formatted
             var oldUrlFormatted = _urlHelper.FormatUrl(
-                processedRedirect.ParsedRedirect.OldUrl.Parsed);
+                processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri);
 
             switch (_configuration.DuplicateOldUrlStrategy)
             {
@@ -80,7 +80,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                         processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri,
                         processedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri,
                         _oldUrlDuplicateOfFirstIndex[oldUrlFormatted].ParsedRedirect.NewUrl.Parsed.AbsoluteUri),
-                    Url = processedRedirect.ParsedRedirect.OldUrl
+                    Url = processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri
                 };
                 processedRedirect.Results.Add(
                     duplicateOfFirstResult);
@@ -109,7 +109,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                         processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri,
                         _oldUrlDuplicateOfLastIndex[oldUrlFormatted].ParsedRedirect.NewUrl.Parsed.AbsoluteUri,
                         processedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri),
-                    Url = processedRedirect.ParsedRedirect.OldUrl
+                    Url = processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri
                 };
                 _oldUrlDuplicateOfLastIndex[oldUrlFormatted].Results.Add(
                     duplicateOfLastResult);

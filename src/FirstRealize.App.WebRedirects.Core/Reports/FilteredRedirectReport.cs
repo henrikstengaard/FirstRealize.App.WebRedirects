@@ -41,8 +41,8 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                 .OfType<UrlResponseResult>()
                 .FirstOrDefault(r => r.Type.Equals(ResultTypes.UrlResponse));
 
-                var newUrl = urlResponseResult != null && urlResponseResult.Url != null
-                    ? urlResponseResult.Url.Parsed.AbsoluteUri
+                var newUrl = urlResponseResult != null && !string.IsNullOrWhiteSpace(urlResponseResult.Url)
+                    ? urlResponseResult.Url
                     : processedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri;
 
                 _records.Add(

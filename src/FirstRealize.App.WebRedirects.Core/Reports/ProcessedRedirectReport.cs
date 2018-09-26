@@ -180,7 +180,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
             processedRedirectRecord.ExcludedRedirect = true;
             processedRedirectRecord.ExcludedRedirectMessage = excludedRedirectResult.Message;
             processedRedirectRecord.ExcludedRedirectUrl =
-                FormatParsedUrl(excludedRedirectResult.Url);
+				excludedRedirectResult.Url;
         }
 
         private void AddDuplicateOfFirstResult(
@@ -200,7 +200,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
             processedRedirectRecord.DuplicateOfFirstMessage =
                 duplicateOfFirstResult.Message;
             processedRedirectRecord.DuplicateOfFirstUrl =
-                FormatParsedUrl(duplicateOfFirstResult.Url);
+				duplicateOfFirstResult.Url;
         }
 
         private void AddDuplicateOfLastResult(
@@ -220,7 +220,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
             processedRedirectRecord.DuplicateOfLastMessage =
                 duplicateOfLastResult.Message;
             processedRedirectRecord.DuplicateOfLastUrl =
-                FormatParsedUrl(duplicateOfLastResult.Url);
+				duplicateOfLastResult.Url;
         }
 
         private void AddUrlResponseResult(
@@ -240,7 +240,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
             processedRedirectRecord.UrlResponseMessage =
                 urlResponseResult.Message;
             processedRedirectRecord.UrlResponseUrl =
-                FormatParsedUrl(urlResponseResult.Url);
+				urlResponseResult.Url;
             processedRedirectRecord.UrlResponseStatusCode =
                 urlResponseResult.StatusCode;
             processedRedirectRecord.UrlResponseLocation =
@@ -264,7 +264,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
             processedRedirectRecord.OptimizedRedirectMessage =
                 optimizedRedirectResult.Message;
             processedRedirectRecord.OptimizedRedirectUrl =
-                FormatParsedUrl(optimizedRedirectResult.Url);
+				optimizedRedirectResult.Url;
             processedRedirectRecord.OptimizedRedirectCount =
                 optimizedRedirectResult.RedirectCount;
         }
@@ -285,7 +285,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
             processedRedirectRecord.CyclicRedirectMessage =
                 cyclicRedirectResult.Message;
             processedRedirectRecord.CyclicRedirectUrl =
-                FormatParsedUrl(cyclicRedirectResult.Url);
+				cyclicRedirectResult.Url;
             processedRedirectRecord.CyclicRedirectCount =
                 cyclicRedirectResult.RedirectCount;
         }
@@ -306,7 +306,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
             processedRedirectRecord.TooManyRedirectsMessage =
                 tooManyRedirectsResult.Message;
             processedRedirectRecord.TooManyRedirectsUrl =
-                FormatParsedUrl(tooManyRedirectsResult.Url);
+				tooManyRedirectsResult.Url;
             processedRedirectRecord.TooManyRedirectsCount =
                 tooManyRedirectsResult.RedirectCount;
         }

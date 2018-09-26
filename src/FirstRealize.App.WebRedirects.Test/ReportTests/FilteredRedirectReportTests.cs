@@ -1,7 +1,9 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Engines;
+using FirstRealize.App.WebRedirects.Core.Formatters;
 using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
+using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Reports;
 using FirstRealize.App.WebRedirects.Core.Validators;
 using NUnit.Framework;
@@ -63,10 +65,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
                             new UrlResponseResult
                             {
                                 Type = ResultTypes.UrlResponse,
-                                Url = new Url
-                                {
-                                    Parsed = new Uri("http://www.test2.local/url9")
-                                },
+                                Url = "http://www.test2.local/url9",
                                 StatusCode = 404
                             }
                         }
@@ -90,10 +89,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
                             new UrlResponseResult
                             {
                                 Type = ResultTypes.UrlResponse,
-                                Url = new Url
-                                {
-                                    Parsed = new Uri("http://www.test2.local/url5")
-                                },
+                                Url = "http://www.test2.local/url5",
                                 StatusCode = 404
                             }
                         }
@@ -117,10 +113,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
                             new UrlResponseResult
                             {
                                 Type = ResultTypes.UrlResponse,
-                                Url = new Url
-                                {
-                                    Parsed = new Uri("http://www.test2.local/url9")
-                                },
+                                Url = "http://www.test2.local/url9",
                                 StatusCode = 200
                             }
                         }
@@ -145,10 +138,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
                             new UrlResponseResult
                             {
                                 Type = ResultTypes.UrlResponse,
-                                Url = new Url
-                                {
-                                    Parsed = new Uri("http://www.test2.local/url10")
-                                },
+                                Url = "http://www.test2.local/url10",
                                 StatusCode = 200
                             }
                         }
@@ -163,8 +153,13 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
             // create and build filtered redirect report
             var configuration =
                 TestData.TestData.DefaultConfiguration;
+			var urlFormatter = new UrlFormatter();
+			var urlParser = new UrlParser(
+				configuration);
             var urlHelper = new UrlHelper(
-                configuration);
+                configuration,
+				urlParser,
+				urlFormatter);
             var filteredRedirectReport = new FilteredRedirectReport(
                 new ProcessedRedirectValidator(
                     urlHelper),

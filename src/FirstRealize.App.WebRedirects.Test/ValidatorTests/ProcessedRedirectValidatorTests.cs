@@ -1,6 +1,8 @@
-﻿using FirstRealize.App.WebRedirects.Core.Helpers;
+﻿using FirstRealize.App.WebRedirects.Core.Formatters;
+using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
+using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Validators;
 using NUnit.Framework;
 using System;
@@ -59,10 +61,7 @@ namespace FirstRealize.App.WebRedirects.Test.ValidatorTests
                         new UrlResponseResult
                         {
                             Type = ResultTypes.UrlResponse,
-                            Url = new Url
-                            {
-                                Parsed = new Uri("http://www.test2.local/url9")
-                            },
+                            Url = "http://www.test2.local/url9",
                             StatusCode = 404
                         }
                     }
@@ -86,10 +85,7 @@ namespace FirstRealize.App.WebRedirects.Test.ValidatorTests
                         new UrlResponseResult
                         {
                             Type = ResultTypes.UrlResponse,
-                            Url = new Url
-                            {
-                                Parsed = new Uri("http://www.test2.local/url5")
-                            },
+                            Url = "http://www.test2.local/url5",
                             StatusCode = 404
                         }
                     }
@@ -113,10 +109,7 @@ namespace FirstRealize.App.WebRedirects.Test.ValidatorTests
                         new UrlResponseResult
                         {
                             Type = ResultTypes.UrlResponse,
-                            Url = new Url
-                            {
-                                Parsed = new Uri("http://www.test2.local/url9")
-                            },
+                            Url = "http://www.test2.local/url9",
                             StatusCode = 200
                         }
                     }
@@ -141,10 +134,7 @@ namespace FirstRealize.App.WebRedirects.Test.ValidatorTests
                         new UrlResponseResult
                         {
                             Type = ResultTypes.UrlResponse,
-                            Url = new Url
-                            {
-                                Parsed = new Uri("http://www.test2.local/url10")
-                            },
+                            Url = "http://www.test2.local/url10",
                             StatusCode = 200
                         }
                     }
@@ -157,8 +147,13 @@ namespace FirstRealize.App.WebRedirects.Test.ValidatorTests
         {
             var configuration =
                 TestData.TestData.DefaultConfiguration;
+			var urlFormatter = new UrlFormatter();
+			var urlParser = new UrlParser(
+				configuration);
             var urlHelper = new UrlHelper(
-                configuration);
+                configuration,
+				urlParser,
+				urlFormatter);
             var processedRediretValidator =
                 new ProcessedRedirectValidator(
                     urlHelper);
@@ -174,25 +169,25 @@ namespace FirstRealize.App.WebRedirects.Test.ValidatorTests
             var urlResponseResult1 = validProcessedRedirects[0]
                 .Results
                 .OfType<UrlResponseResult>()
-                .FirstOrDefault(r => r.Url != null && r.Url.Parsed != null);
+                .FirstOrDefault(r => r.Url != null && r.Url != null);
             Assert.AreEqual(
                 "http://www.test2.local/url3",
                 validProcessedRedirects[0].ParsedRedirect.OldUrl.Parsed.AbsoluteUri);
             Assert.AreEqual(
                 "http://www.test2.local/url9",
-                urlResponseResult1.Url.Parsed.AbsoluteUri);
+                urlResponseResult1.Url);
 
             var urlResponseResult2 = validProcessedRedirects[1]
                 .Results
                 .OfType<UrlResponseResult>()
-                .FirstOrDefault(r => r.Url != null && r.Url.Parsed != null);
+                .FirstOrDefault(r => r.Url != null && r.Url != null);
             Assert.IsNotNull(urlResponseResult2);
             Assert.AreEqual(
                 "http://www.test2.local/url4",
                 validProcessedRedirects[1].ParsedRedirect.OldUrl.Parsed.AbsoluteUri);
             Assert.AreEqual(
                 "http://www.test2.local/url10",
-                urlResponseResult2.Url.Parsed.AbsoluteUri);
+                urlResponseResult2.Url);
         }
 
         [Test]
@@ -200,9 +195,14 @@ namespace FirstRealize.App.WebRedirects.Test.ValidatorTests
         {
             var configuration =
                 TestData.TestData.DefaultConfiguration;
-            var urlHelper = new UrlHelper(
-                configuration);
-            var processedRediretValidator =
+			var urlFormatter = new UrlFormatter();
+			var urlParser = new UrlParser(
+				configuration);
+			var urlHelper = new UrlHelper(
+				configuration,
+				urlParser,
+				urlFormatter);
+			var processedRediretValidator =
                 new ProcessedRedirectValidator(
                     urlHelper);
 
@@ -217,13 +217,13 @@ namespace FirstRealize.App.WebRedirects.Test.ValidatorTests
             var urlResponseResult1 = validProcessedRedirects[0]
                 .Results
                 .OfType<UrlResponseResult>()
-                .FirstOrDefault(r => r.Url != null && r.Url.Parsed != null);
+                .FirstOrDefault(r => r.Url != null && r.Url != null);
             Assert.AreEqual(
                 "http://www.test2.local/url3",
                 validProcessedRedirects[0].ParsedRedirect.OldUrl.Parsed.AbsoluteUri);
             Assert.AreEqual(
                 "http://www.test2.local/url9",
-                urlResponseResult1.Url.Parsed.AbsoluteUri);
+                urlResponseResult1.Url);
         }
     }
 }

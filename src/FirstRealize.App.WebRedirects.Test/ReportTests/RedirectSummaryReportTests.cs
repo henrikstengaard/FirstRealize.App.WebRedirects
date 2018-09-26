@@ -1,7 +1,9 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Engines;
+using FirstRealize.App.WebRedirects.Core.Formatters;
 using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
+using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Reports;
 using FirstRealize.App.WebRedirects.Core.Validators;
 using NUnit.Framework;
@@ -45,42 +47,38 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
                             {
                                 Type = ResultTypes.ExcludedRedirect,
                                 Message = ResultTypes.ExcludedRedirect,
-                                Url = new Url
-                                {
-                                    Raw = newUrlRaw,
-                                    Parsed = newUrlParsed
-                                }
+                                Url = newUrlRaw
                             },
                             new Result
                             {
                                 Type = ResultTypes.DuplicateOfFirst,
                                 Message = ResultTypes.DuplicateOfFirst,
-                                Url = new Url
-                                {
-                                    Raw = newUrlRaw,
-                                    Parsed = newUrlParsed
-                                }
+                                Url = newUrlRaw
                             },
                             new Result
                             {
                                 Type = ResultTypes.DuplicateOfLast,
                                 Message = ResultTypes.DuplicateOfLast,
-                                Url = new Url
-                                {
-                                    Raw = newUrlRaw,
-                                    Parsed = newUrlParsed
-                                }
+                                Url = newUrlRaw
                             }
                         }
                     }
                 }
             };
 
-            // create and build redirect summary report
-            var redirectSummaryReport = new RedirectSummaryReport(
+			// create and build redirect summary report
+			var configuration = 
+				TestData.TestData.DefaultConfiguration;
+			var urlFormatter = new UrlFormatter();
+			var urlParser = new UrlParser(
+				configuration);
+			var urlHelper = new UrlHelper(
+				configuration,
+				urlParser,
+				urlFormatter);
+			var redirectSummaryReport = new RedirectSummaryReport(
                 new ProcessedRedirectValidator(
-                    new UrlHelper(
-                        TestData.TestData.DefaultConfiguration)));
+                    urlHelper));
             redirectSummaryReport.Build(redirectProcessingResult);
 
             // verify redirect summary records are build

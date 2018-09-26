@@ -65,6 +65,10 @@
     <Compile Include="Exporters\IExporter.cs" />
     <Compile Include="Exporters\WebConfigExporter.cs" />
     <Compile Include="Extensions\SocketExtensions.cs" />
+    <Compile Include="Formatters\IUrlFormatter.cs" />
+    <Compile Include="Formatters\UrlFormatter.cs" />
+    <Compile Include="Models\Urls\IParsedUrl.cs" />
+    <Compile Include="Models\Urls\ParsedUrl.cs" />
     <Compile Include="Validators\IProcessedRedirectValidator.cs" />
     <Compile Include="Validators\ProcessedRedirectValidator.cs" />
     <Compile Include="Helpers\IUrlHelper.cs" />

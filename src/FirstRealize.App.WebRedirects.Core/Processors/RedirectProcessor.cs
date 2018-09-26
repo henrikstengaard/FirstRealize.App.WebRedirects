@@ -66,7 +66,8 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
             foreach (var parsedRedirect in parsedRedirects
                 .Where(r => r.IsValid && !_urlHelper.AreIdentical(
-                    r.OldUrl, r.NewUrl))
+                    r.OldUrl.Parsed.AbsoluteUri,
+					r.NewUrl.Parsed.AbsoluteUri))
                 .ToList())
             {
                 // add response for new url with configured status code,
@@ -76,7 +77,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 {
                     var newUrlFormatted =
                         _urlHelper.FormatUrl(
-                            parsedRedirect.NewUrl.Parsed);
+                            parsedRedirect.NewUrl.Parsed.AbsoluteUri);
                     testHttpClient.Responses[newUrlFormatted] = new HttpResponse
                     {
                         StatusCode = _configuration.TestHttpClientNewUrlStatusCode.HasValue
@@ -87,7 +88,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
                 var oldUrlFormatted =
                     _urlHelper.FormatUrl(
-                        parsedRedirect.OldUrl.Parsed);
+                        parsedRedirect.OldUrl.Parsed.AbsoluteUri);
 
                 if (_configuration.DuplicateOldUrlStrategy == DuplicateUrlStrategy.KeepFirst)
                 {
@@ -119,8 +120,9 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             var urlsVisited = new List<string>();
             var urlsIndex = new HashSet<string>();
 
-            IUrl url = null;
-            IUrl newUrl = processedRedirect.ParsedRedirect.OldUrl;
+            string url = null;
+            string newUrl =
+				processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri;
             UrlResponseResult urlResponseResult = null;
 
             do
@@ -128,7 +130,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 url = newUrl;
                 newUrl = null;
 
-                var urlFormatted = _urlHelper.FormatUrl(url.Parsed);
+                var urlFormatted = _urlHelper.FormatUrl(url);
 
                 redirectCount++;
                 checkRedirect = false;
@@ -161,8 +163,8 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                         var location = response.Headers["Location"] ?? string.Empty;
 
                         locationUrl = !Regex.IsMatch(
-                            location ?? string.Empty, "https?://", RegexOptions.IgnoreCase | RegexOptions.Compiled)
-                            ? string.Format("{0}://{1}{2}", url.Parsed.Scheme, url.Parsed.Host, location)
+                            location ?? string.Empty, "^https?://", RegexOptions.IgnoreCase | RegexOptions.Compiled)
+                            ? _urlHelper.Combine(url, location)
                             : location ?? string.Empty;
                     }
                     else
@@ -175,7 +177,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                         Type = ResultTypes.UrlResponse,
                         Message = string.Format(
                             "Url '{0}' returned response with status code '{1}'",
-                            url.Parsed.AbsoluteUri,
+                            url,
                             statusCode),
                         Url = url,
                         StatusCode = statusCode,
@@ -188,7 +190,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                         case 302:
                             // url returns 301 or 302
                             // update redirect with url from location
-                            newUrl = _urlParser.ParseUrl(locationUrl);
+                            newUrl = locationUrl;
                             break;
                         case 404:
                             // url returns 404, check if a redirect exists
@@ -211,14 +213,14 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     _oldUrlRedirectIndex.ContainsKey(urlFormatted))
                 {
                     // update redirect with new url from existing redirect
-                    newUrl = _oldUrlRedirectIndex[urlFormatted].NewUrl;
+                    newUrl = _oldUrlRedirectIndex[urlFormatted].NewUrl.Parsed.AbsoluteUri;
                 }
 
                 // cyclic redirect, if url and new url is not https redirect and url exists in url index
                 if (newUrl != null && !_urlHelper.IsHttpsRedirect(
                     url,
                     newUrl) &&
-                    urlsIndex.Contains(_urlHelper.FormatUrl(newUrl.Parsed)))
+                    urlsIndex.Contains(_urlHelper.FormatUrl(newUrl)))
                 {
                     isCyclicRedirect = true;
                     break;
@@ -232,8 +234,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
                 // add formatted url to urls visited
                 urlsVisited.Add(urlFormatted);
-            } while (newUrl != null &&
-                newUrl.Parsed != null &&
+            } while (!string.IsNullOrWhiteSpace(newUrl) &&
                 redirectCount < 20);
 
             // add url response result, if it's defined
@@ -270,9 +271,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     Type = ResultTypes.TooManyRedirects,
                     Message = string.Format(
                         "Too many redirect at url '{0}' exceeding max redirect count of {1}",
-                        url != null && url.IsValid
-                        ? url.Parsed.AbsoluteUri
-                        : string.Empty,
+                        url,
                         _configuration.MaxRedirectCount),
                     Url = url,
                     RedirectCount = redirectCount

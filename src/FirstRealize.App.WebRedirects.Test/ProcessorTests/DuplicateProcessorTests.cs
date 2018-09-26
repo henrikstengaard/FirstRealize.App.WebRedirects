@@ -1,6 +1,8 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Formatters;
 using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
+using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Processors;
 using NUnit.Framework;
 using System.Linq;
@@ -16,9 +18,14 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             // get processed redirects
             var configuration = TestData.TestData.DefaultConfiguration;
             configuration.DuplicateOldUrlStrategy = DuplicateUrlStrategy.KeepFirst;
-            var urlHelper = new UrlHelper(
-                configuration);
-            var processedRedirects = TestData.TestData.GetProcessedRedirects(
+			var urlFormatter = new UrlFormatter();
+			var urlParser = new UrlParser(
+				configuration);
+			var urlHelper = new UrlHelper(
+				configuration,
+				urlParser,
+				urlFormatter);
+			var processedRedirects = TestData.TestData.GetProcessedRedirects(
                 configuration,
                 new[] { new DuplicateProcessor(
                     TestData.TestData.DefaultConfiguration,
@@ -55,9 +62,14 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             // get processed redirects
             var configuration = TestData.TestData.DefaultConfiguration;
             configuration.DuplicateOldUrlStrategy = DuplicateUrlStrategy.KeepLast;
-            var urlHelper = new UrlHelper(
-                configuration);
-            var processedRedirects = TestData.TestData.GetProcessedRedirects(
+			var urlFormatter = new UrlFormatter();
+			var urlParser = new UrlParser(
+				configuration);
+			var urlHelper = new UrlHelper(
+				configuration,
+				urlParser,
+				urlFormatter);
+			var processedRedirects = TestData.TestData.GetProcessedRedirects(
                 configuration,
                 new[] { new DuplicateProcessor(
                     TestData.TestData.DefaultConfiguration,

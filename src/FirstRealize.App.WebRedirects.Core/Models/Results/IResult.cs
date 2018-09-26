@@ -6,6 +6,6 @@ namespace FirstRealize.App.WebRedirects.Core.Models.Results
     {
         string Type { get; }
         string Message { get; }
-        IUrl Url { get; }
+        string Url { get; }
     }
 }

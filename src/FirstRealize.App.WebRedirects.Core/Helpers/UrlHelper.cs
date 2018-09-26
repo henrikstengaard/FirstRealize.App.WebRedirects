@@ -1,78 +1,145 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Configuration;
-using FirstRealize.App.WebRedirects.Core.Models.Redirects;
+using FirstRealize.App.WebRedirects.Core.Formatters;
+using FirstRealize.App.WebRedirects.Core.Models.Urls;
+using FirstRealize.App.WebRedirects.Core.Parsers;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace FirstRealize.App.WebRedirects.Core.Helpers
 {
-    public class UrlHelper : IUrlHelper
+	public class UrlHelper : IUrlHelper
     {
         private readonly IConfiguration _configuration;
+		private readonly IUrlParser _urlParser;
+		private readonly IUrlFormatter _urlFormatter;
 
         public UrlHelper(
-            IConfiguration configuration)
+            IConfiguration configuration,
+			IUrlParser urlParser,
+			IUrlFormatter urlFormatter)
         {
             _configuration = configuration;
+			_urlParser = urlParser;
+			_urlFormatter = urlFormatter;
         }
 
-        public bool IsHttpsRedirect(
-            IUrl oldUrl,
-            IUrl newUrl)
+		public string Combine(
+			string url1,
+			string url2)
+		{
+			var url1Parsed = _urlParser.Parse(url1);
+
+			if (!url1Parsed.IsValid)
+			{
+				throw new UriFormatException(
+					string.Format(
+						"Url '{0}' format is not valid",
+						url1));
+			}
+
+			var url2Parsed = _urlParser.Parse(url2);
+
+			if (!url2Parsed.IsValid)
+			{
+				throw new UriFormatException(
+					string.Format(
+						"Url '{0}' format is not valid",
+						url2));
+			}
+
+			return _urlFormatter.Format(
+				new ParsedUrl
+				{
+					Scheme = url1Parsed.Scheme,
+					Host = url1Parsed.Host,
+					Port = url1Parsed.Port,
+					PathAndQuery = url2Parsed.PathAndQuery
+				});
+		}
+
+		public bool IsHttpsRedirect(
+            string oldUrl,
+            string newUrl)
         {
-            if (oldUrl == null ||
-                !oldUrl.IsValid ||
-                newUrl == null ||
-                !newUrl.IsValid)
+            if (string.IsNullOrWhiteSpace(oldUrl) ||
+                string.IsNullOrWhiteSpace(newUrl))
             {
                 return false;
             }
 
             var oldUrlHttpsScheme = Regex.Replace(
-                oldUrl.Parsed.AbsoluteUri,
+                oldUrl,
                 "^https?://",
                 "https://",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled).ToLower();
             return oldUrlHttpsScheme.Equals(
-                newUrl.Parsed.AbsoluteUri);
+                newUrl);
         }
 
         public string FormatUrl(
-            Uri parsedUrl)
+            string url)
         {
-            var forceHttpUrlPatternMatches =
-                _configuration.ForceHttpHostPatterns.Where(x => Regex.IsMatch(
-                    parsedUrl.DnsSafeHost,
-                    x, RegexOptions.IgnoreCase | RegexOptions.Compiled));
+			if (string.IsNullOrWhiteSpace(url) ||
+				!Regex.IsMatch(
+					url,
+					"^https?://",
+					RegexOptions.IgnoreCase | RegexOptions.Compiled))
+			{
+				return url;
+			}
 
-            return forceHttpUrlPatternMatches.Any()
+			var uri = new Uri(url);
+
+            var forceHttpUrlPatternMatch =
+				uri != null &&
+                _configuration.ForceHttpHostPatterns.Any(x => Regex.IsMatch(
+					uri.DnsSafeHost,
+                    x, RegexOptions.IgnoreCase | RegexOptions.Compiled) || Regex.IsMatch(
+					uri.Host,
+					x, RegexOptions.IgnoreCase | RegexOptions.Compiled));
+
+            return forceHttpUrlPatternMatch
                 ? Regex.Replace(
-                    parsedUrl.AbsoluteUri,
+                    url,
                     "^https?://",
                     "http://",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled)
-                : parsedUrl.AbsoluteUri;
+                : url;
         }
 
-        public bool AreIdentical(
-            IUrl url1,
-            IUrl url2)
-        {
-            if (url1 == null ||
-                !url1.IsValid ||
-                url2 == null ||
-                !url2.IsValid)
-            {
-                return false;
-            }
+   //     public bool AreIdentical(
+   //         IUrl url1,
+   //         IUrl url2)
+   //     {
+   //         if (url1 == null ||
+   //             !url1.IsValid ||
+   //             url2 == null ||
+   //             !url2.IsValid)
+   //         {
+   //             return false;
+   //         }
 
-            var url1Formatted = FormatUrl(
-                url1.Parsed);
-            var url2Formatted = FormatUrl(
-                url2.Parsed);
+			//return AreIdentical(
+			//	url1.Parsed.AbsoluteUri,
+			//	url2.Parsed.AbsoluteUri);
+   //     }
 
-            return url1Formatted.Equals(
-                url2Formatted);
-        }
-    }
+		public bool AreIdentical(
+			string url1,
+			string url2)
+		{
+			if (string.IsNullOrWhiteSpace(url1) ||
+				string.IsNullOrWhiteSpace(url2))
+			{
+				return false;
+			}
+
+			var url1Formatted = FormatUrl(url1);
+			var url2Formatted = FormatUrl(url2);
+
+			return url1Formatted.Equals(
+				url2Formatted);
+		}
+	}
 }

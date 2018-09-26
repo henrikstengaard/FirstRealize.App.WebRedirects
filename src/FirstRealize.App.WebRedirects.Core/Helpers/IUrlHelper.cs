@@ -1,17 +1,17 @@
-﻿using FirstRealize.App.WebRedirects.Core.Models.Redirects;
-using System;
-
-namespace FirstRealize.App.WebRedirects.Core.Helpers
+﻿namespace FirstRealize.App.WebRedirects.Core.Helpers
 {
-    public interface IUrlHelper
+	public interface IUrlHelper
     {
+		string Combine(
+			string url1,
+			string url2);
         bool IsHttpsRedirect(
-            IUrl oldUrl,
-            IUrl newUrl);
+            string oldUrl,
+            string newUrl);
         string FormatUrl(
-            Uri parsedUrl);
-        bool AreIdentical(
-            IUrl url1,
-            IUrl url2);
-    }
+            string url);
+		bool AreIdentical(
+            string url1,
+            string url2);
+	}
 }

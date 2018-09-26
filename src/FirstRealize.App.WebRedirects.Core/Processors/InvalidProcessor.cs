@@ -32,20 +32,23 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
             var oldUrlInvalid = false;
             var messageBuilder = new StringBuilder("Invalid ");
+			string invalidUrl = string.Empty;
             if (processedRedirect.ParsedRedirect.OldUrl != null && !processedRedirect.ParsedRedirect.OldUrl.IsValid)
             {
-                oldUrlInvalid = true;
-                messageBuilder.Append(string.Format(
+				oldUrlInvalid = true;
+				invalidUrl = processedRedirect.ParsedRedirect.OldUrl.Raw;
+				messageBuilder.Append(string.Format(
                     "old url '{0}'",
-                    processedRedirect.ParsedRedirect.OldUrl.Raw));
+					processedRedirect.ParsedRedirect.OldUrl.Raw));
             }
             if (processedRedirect.ParsedRedirect.NewUrl != null && !processedRedirect.ParsedRedirect.NewUrl.IsValid)
             {
                 if (oldUrlInvalid)
                 {
                     messageBuilder.Append(" and ");
-                }
-                messageBuilder.Append(string.Format(
+					invalidUrl = processedRedirect.ParsedRedirect.NewUrl.Raw;
+				}
+				messageBuilder.Append(string.Format(
                     "new url '{0}'",
                     processedRedirect.ParsedRedirect.NewUrl.Raw));
             }
@@ -54,8 +57,8 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             {
                 Type = ResultTypes.InvalidResult,
                 Message = messageBuilder.ToString(),
-                Url = processedRedirect.ParsedRedirect.OldUrl
-            };
+                Url = invalidUrl
+			};
             processedRedirect.Results.Add(
                 invalidResult);
             _results.Add(

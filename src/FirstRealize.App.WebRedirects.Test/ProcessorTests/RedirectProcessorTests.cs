@@ -1,5 +1,6 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Clients;
 using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Formatters;
 using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
@@ -8,11 +9,10 @@ using FirstRealize.App.WebRedirects.Core.Processors;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 
 namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
 {
-    [TestFixture]
+	[TestFixture]
     public class RedirectProcessorTests
     {
         [Test]
@@ -28,11 +28,14 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 }
             };
 
-            // create url and redirect parser
-            var urlHelper = new UrlHelper(
-                configuration);
-            var urlParser = new UrlParser(
-                configuration);
+			// create url and redirect parser
+			var urlFormatter = new UrlFormatter();
+			var urlParser = new UrlParser(
+				configuration);
+			var urlHelper = new UrlHelper(
+                configuration,
+				urlParser,
+				urlFormatter);
             var redirectParser = new RedirectParser(
                 configuration,
                 urlParser);
@@ -98,10 +101,15 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             // create redirect processor
             var configuration = 
                 TestData.TestData.DefaultConfiguration;
-            var redirectProcessor = new RedirectProcessor(
+			var urlParser = new UrlParser(
+				configuration);
+			var urlFormatter = new UrlFormatter();
+			var redirectProcessor = new RedirectProcessor(
                 configuration,
                 new UrlHelper(
-                    configuration),
+                    configuration,
+					urlParser,
+					urlFormatter),
                 new TestHttpClient(),
                 new UrlParser(
                     configuration)
@@ -133,10 +141,15 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                     "www\\.test\\.local"
                 }
             };
-            var redirectProcessor = new RedirectProcessor(
+			var urlParser = new UrlParser(
+				configuration);
+			var urlFormatter = new UrlFormatter();
+			var redirectProcessor = new RedirectProcessor(
                 configuration,
                 new UrlHelper(
-                    configuration),
+                    configuration,
+					urlParser,
+					urlFormatter),
                 new TestHttpClient(),
                 new UrlParser(
                     configuration));
@@ -176,10 +189,15 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                     "www\\.test\\.local"
                 }
             };
-            var redirectProcessor = new RedirectProcessor(
+			var urlParser = new UrlParser(
+				configuration);
+			var urlFormatter = new UrlFormatter();
+			var redirectProcessor = new RedirectProcessor(
                 configuration,
                 new UrlHelper(
-                    configuration),
+                    configuration,
+					urlParser,
+					urlFormatter),
                 new TestHttpClient(),
                 new UrlParser(
                     configuration));
@@ -245,10 +263,15 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                     "www\\.test\\.local"
                 }
             };
-            var redirectProcessor = new RedirectProcessor(
+			var urlParser = new UrlParser(
+				configuration);
+			var urlFormatter = new UrlFormatter();
+			var redirectProcessor = new RedirectProcessor(
                 configuration,
                 new UrlHelper(
-                    configuration),
+                    configuration,
+					urlParser,
+					urlFormatter),
                 testHttpClient,
                 new UrlParser(
                     configuration));
@@ -268,7 +291,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             Assert.IsNotNull(urlResponse);
             Assert.AreEqual(
                 "http://www.test.local/new-url",
-                urlResponse.Url.Parsed.AbsoluteUri);
+                urlResponse.Url);
         }
 
         [Test]
@@ -283,10 +306,13 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 urlParser);
 
             // create redirect processor
+			var urlFormatter = new UrlFormatter();
             var redirectProcessor = new RedirectProcessor(
                 configuration,
                 new UrlHelper(
-                    configuration),
+                    configuration,
+					urlParser,
+					urlFormatter),
                 new TestHttpClient(),
                 urlParser);
 
@@ -329,7 +355,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             Assert.IsNotNull(optimizedRedirect);
             var optimizedRedirectResult = optimizedRedirect.Results
                 .FirstOrDefault(r => r.Type.Equals(ResultTypes.OptimizedRedirect) &&
-                r.Url != null && r.Url.Parsed.AbsoluteUri.Equals("http://www.test.local/optimize-url3"));
+                r.Url != null && r.Url.Equals("http://www.test.local/optimize-url3"));
             Assert.IsNotNull(optimizedRedirectResult);
         }
 
@@ -344,11 +370,14 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 configuration,
                 urlParser);
 
-            // create redirect processor
-            var redirectProcessor = new RedirectProcessor(
+			// create redirect processor
+			var urlFormatter = new UrlFormatter();
+			var redirectProcessor = new RedirectProcessor(
                 configuration,
                 new UrlHelper(
-                    configuration),
+                    configuration,
+					urlParser,
+					urlFormatter),
                 new TestHttpClient(),
                 urlParser);
 
@@ -405,13 +434,16 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 configuration,
                 urlParser);
 
-            // create redirect processor
-            var testHttpClient =
+			// create redirect processor
+			var urlFormatter = new UrlFormatter();
+			var testHttpClient =
                 new TestHttpClient();
             var redirectProcessor = new RedirectProcessor(
                 configuration,
                 new UrlHelper(
-                    configuration),
+                    configuration,
+					urlParser,
+					urlFormatter),
                 testHttpClient,
                 urlParser);
 
@@ -485,8 +517,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             Assert.IsNotNull(
                 urlResponseResult);
             Assert.AreEqual(
-                "/url3",
-                urlResponseResult.Url.Raw);
+                "http://www.test.local/url3",
+                urlResponseResult.Url);
             Assert.AreEqual(
                 404,
                 urlResponseResult.StatusCode

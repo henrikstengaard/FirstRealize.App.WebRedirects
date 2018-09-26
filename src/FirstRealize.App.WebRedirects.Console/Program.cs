@@ -1,6 +1,7 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Clients;
 using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Engines;
+using FirstRealize.App.WebRedirects.Core.Formatters;
 using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Parsers;
@@ -104,8 +105,11 @@ namespace FirstRealize.App.WebRedirects.Console
             // create redirect engine
             var urlParser = new UrlParser(
                 configuration);
+			var urlFormatter = new UrlFormatter();
             var urlHelper = new UrlHelper(
-                configuration);
+                configuration,
+				urlParser,
+				urlFormatter);
             var redirectParser = new RedirectParser(
                 configuration,
                 urlParser);
@@ -164,7 +168,7 @@ namespace FirstRealize.App.WebRedirects.Console
                     .OfType<UrlResponseResult>()
                     .FirstOrDefault(r => r.Type.Equals(ResultTypes.UrlResponse));
                     if (urlResponseResult != null && !urlHelper.AreIdentical(
-                        e.ProcessedRedirect.ParsedRedirect.NewUrl,
+                        e.ProcessedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri,
                         urlResponseResult.Url))
                     {
                         System.Console.ForegroundColor = ConsoleColor.Yellow;

@@ -1,6 +1,9 @@
-﻿using FirstRealize.App.WebRedirects.Core.Helpers;
+﻿using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Formatters;
+using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
+using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Processors;
 using NUnit.Framework;
 using System;
@@ -15,8 +18,15 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
 
         public IdenticalProcessorTests()
         {
-            _urlHelper = new UrlHelper(
-                TestData.TestData.DefaultConfiguration);
+			var configuration =
+				TestData.TestData.DefaultConfiguration;
+			var urlFormatter = new UrlFormatter();
+			var urlParser = new UrlParser(
+				configuration);
+			_urlHelper = new UrlHelper(
+                configuration,
+				urlParser,
+				urlFormatter);
         }
 
         [Test]
@@ -46,8 +56,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             Assert.AreEqual(
                 true,
                 _urlHelper.AreIdentical(
-                    parsedRedirects[0].OldUrl,
-                    parsedRedirects[0].NewUrl));
+                    parsedRedirects[0].OldUrl.Parsed.AbsoluteUri,
+                    parsedRedirects[0].NewUrl.Parsed.AbsoluteUri));
 
             // processed redirects
             var processedRedirects = TestData.TestData.GetProcessedRedirects(
