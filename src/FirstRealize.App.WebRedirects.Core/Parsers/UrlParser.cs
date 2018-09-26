@@ -17,152 +17,156 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
             _configuration = configuration;
         }
 
-		public IParsedUrl Parse(
-			string url,
-			IParsedUrl defaultUrl = null,
-			bool stripFragment = false)
-		{
-			if (url == null)
-			{
-				throw new ArgumentNullException(nameof(url));
-			}
+        public IParsedUrl Parse(
+            string url,
+            IParsedUrl defaultUrl = null,
+            bool stripFragment = false)
+        {
+            if (url == null)
+            {
+                throw new ArgumentNullException(nameof(url));
+            }
 
-			// remove whitespaces fro murl
-			var urlFormatted = Regex.Replace(
-				url,
-				"\\s+", "",
-				RegexOptions.Compiled);
+            // remove whitespaces fro murl
+            var urlFormatted = Regex.Replace(
+                url,
+                "\\s+", "",
+                RegexOptions.Compiled);
 
-			// match url scheme
-			var urlSchemeMatch = Regex.Match(
-				urlFormatted,
-				"^(http|https)://([^/]+):?([^/]*)(.*)",
-				RegexOptions.IgnoreCase | RegexOptions.Compiled);
-			
-			// return parsed url, if url matches http or https scheme
-			if (urlSchemeMatch.Success)
-			{
-				var scheme = urlSchemeMatch.Groups[1].Value.ToLower();
+            // match url scheme
+            var urlSchemeMatch = Regex.Match(
+                urlFormatted,
+                "^(http|https)://([^/]+):?([^/]*)(.*)",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-				var port = ParsePort(
-					urlSchemeMatch.Groups[3].Value);
+            // return parsed url, if url matches http or https scheme
+            if (urlSchemeMatch.Success)
+            {
+                var scheme = urlSchemeMatch.Groups[1].Value.ToLower();
 
-				if (port == 0)
-				{
-					port = scheme.ToLower().StartsWith("https")
-						? 443
-						: 80;
-				}
+                var port = ParsePort(
+                    urlSchemeMatch.Groups[3].Value);
 
-				return new ParsedUrl
-				{
-					Scheme = scheme,
-					Host = defaultUrl != null && !string.IsNullOrWhiteSpace(defaultUrl.Host)
-						? defaultUrl.Host
-						: urlSchemeMatch.Groups[2].Value,
-					Port = port,
-					PathAndQuery = FormatPathAndQuery(
-						urlSchemeMatch.Groups[4].Value),
-					OriginalUrl = urlFormatted
-				};
-			}
+                if (port == 0)
+                {
+                    port = scheme.ToLower().StartsWith("https")
+                        ? 443
+                        : 80;
+                }
 
-			// return parsed url with default url, if it starts with '/'
-			if (urlFormatted.StartsWith("/"))
-			{
-				return new ParsedUrl
-				{
-					Scheme = defaultUrl != null && defaultUrl.IsValid
-						? defaultUrl.Scheme
-						: _configuration.DefaultUrl.Scheme,
-					Port = defaultUrl != null && defaultUrl.IsValid 
-						? defaultUrl.Port
-						: _configuration.DefaultUrl.Port,
-					Host = defaultUrl != null && defaultUrl.IsValid
-						? defaultUrl.Host
-						: _configuration.DefaultUrl.Host,
-					PathAndQuery = FormatPathAndQuery(
-						urlFormatted,
-						stripFragment),
-					OriginalUrl = urlFormatted
-				};
-			}
+                return new ParsedUrl
+                {
+                    Scheme = scheme,
+                    Host = defaultUrl != null && !string.IsNullOrWhiteSpace(defaultUrl.Host)
+                        ? defaultUrl.Host
+                        : urlSchemeMatch.Groups[2].Value,
+                    Port = port,
+                    PathAndQuery = FormatPathAndQuery(
+                        urlSchemeMatch.Groups[4].Value),
+                    OriginalUrl = urlFormatted
+                };
+            }
 
-			// match url domain
-			var urlDomainMatch = Regex.Match(
-				urlFormatted,
-				"^([^\\./]+\\.[^\\./]+|[^\\./]+\\.[^\\./]+\\.[^\\./]+)(.*)",
-				RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            // return parsed url with default url, if it starts with '/'
+            if (urlFormatted.StartsWith("/"))
+            {
+                return new ParsedUrl
+                {
+                    Scheme = defaultUrl != null && defaultUrl.IsValid
+                        ? defaultUrl.Scheme
+                        : _configuration.DefaultUrl.Scheme,
+                    Port = defaultUrl != null && defaultUrl.IsValid
+                        ? defaultUrl.Port
+                        : _configuration.DefaultUrl.Port,
+                    Host = defaultUrl != null && defaultUrl.IsValid
+                        ? defaultUrl.Host
+                        : _configuration.DefaultUrl.Host,
+                    PathAndQuery = FormatPathAndQuery(
+                        urlFormatted,
+                        stripFragment),
+                    OriginalUrl = urlFormatted
+                };
+            }
 
-			// return parsed url, if url matches domain
-			if (urlDomainMatch.Success)
-			{
-				return new ParsedUrl
-				{
-					Scheme = defaultUrl != null && defaultUrl.IsValid
-						? defaultUrl.Scheme
-						: _configuration.DefaultUrl.Scheme,
-					Port = defaultUrl != null && defaultUrl.IsValid
-						? defaultUrl.Port
-						: _configuration.DefaultUrl.Port,
-					Host = urlDomainMatch.Groups[1].Value,
-					PathAndQuery = FormatPathAndQuery(
-						urlSchemeMatch.Groups[2].Value),
-					OriginalUrl = urlFormatted
-				};
-			}
+            // match url domain
+            var urlDomainMatch = Regex.Match(
+                urlFormatted,
+                "^([^\\./]+\\.[^\\./]+|[^\\./]+\\.[^\\./]+\\.[^\\./]+)(.*)",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-			return null;
-		}
+            // return parsed url, if url matches domain
+            if (urlDomainMatch.Success)
+            {
+                return new ParsedUrl
+                {
+                    Scheme = defaultUrl != null && defaultUrl.IsValid
+                        ? defaultUrl.Scheme
+                        : _configuration.DefaultUrl.Scheme,
+                    Port = defaultUrl != null && defaultUrl.IsValid
+                        ? defaultUrl.Port
+                        : _configuration.DefaultUrl.Port,
+                    Host = urlDomainMatch.Groups[1].Value,
+                    PathAndQuery = FormatPathAndQuery(
+                        urlSchemeMatch.Groups[2].Value),
+                    OriginalUrl = urlFormatted
+                };
+            }
 
-		private int ParsePort(
-			string value)
-		{
-			if (string.IsNullOrWhiteSpace(value))
-			{
-				return 0;
-			}
+            return null;
+        }
 
-			int port;
-			if (!int.TryParse(value, out port))
-			{
-				throw new HttpException(
-					string.Format(
-						"Invalid port '{0}'",
-						value));
-			}
+        private int ParsePort(
+            string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return 0;
+            }
 
-			return port;
-		}
+            int port;
+            if (!int.TryParse(value, out port))
+            {
+                throw new HttpException(
+                    string.Format(
+                        "Invalid port '{0}'",
+                        value));
+            }
 
-		private string FormatPathAndQuery(
-			string pathAndQuery,
-			bool stripFragment = false)
-		{
-			pathAndQuery = !pathAndQuery.StartsWith("/")
-				? string.Concat("/", pathAndQuery)
-				: pathAndQuery;
+            return port;
+        }
 
-			if (stripFragment)
-			{
-				pathAndQuery = Regex.Replace(
-					pathAndQuery,
-					"#[^#\\?]*",
-					string.Empty,
-					RegexOptions.IgnoreCase | RegexOptions.Compiled);
-			}
+        private string FormatPathAndQuery(
+            string pathAndQuery,
+            bool stripFragment = false)
+        {
+            pathAndQuery = !pathAndQuery.StartsWith("/")
+                ? string.Concat("/", pathAndQuery)
+                : pathAndQuery;
 
-			return pathAndQuery;
-		}
+            if (stripFragment)
+            {
+                pathAndQuery = Regex.Replace(
+                    pathAndQuery,
+                    "#[^#\\?]*",
+                    string.Empty,
+                    RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            }
 
-		public IUrl ParseUrl(
+            return pathAndQuery;
+        }
+
+        public IUrl ParseUrl(
             string url,
             Uri host = null,
             bool stripFragment = false)
         {
+            // return url with only raw url, if url is not defined
             if (string.IsNullOrWhiteSpace(url))
             {
-                return null;
+                return new Url
+                {
+                    Raw = url
+                };
             }
 
             // remove whitespaces
@@ -199,8 +203,11 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
                 };
             }
 
-            // return null as url is not a valid
-            return null;
+            // return url with only raw url
+            return new Url
+            {
+                Raw = url
+            };
         }
 
         private Uri FormatUri(

@@ -36,7 +36,7 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
         {
             var rawUrl = "/a/path";
             var url = _urlParser.ParseUrl(
-                rawUrl, 
+                rawUrl,
                 new Uri("http://www.defaulthost.local"));
 
             Assert.IsNotNull(url);
@@ -52,23 +52,17 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
         }
 
         [Test]
-        public void ParseUrlReturnsNullUrlWithoutSchemeOrSlash()
+        public void ParseUrlReturnsNullForUrlWithoutSchemeOrSlash()
         {
             var rawUrl = "example.local/another/path";
             var url = _urlParser.ParseUrl(
                 rawUrl);
 
-            Assert.IsNull(url);
-        }
-
-        [Test]
-        public void ParseUrlWithoutHostReturnsNull()
-        {
-            var rawUrl = "another/path";
-            var url = _urlParser.ParseUrl(
-                rawUrl);
-
-            Assert.IsNull(url);
+            Assert.IsNotNull(url);
+            Assert.IsNull(url.Parsed);
+            Assert.AreEqual(
+                "example.local/another/path",
+                url.Raw);
         }
 
         [Test]
@@ -80,7 +74,7 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
                 TestData.TestData.DefaultHost);
 
             Assert.AreEqual(
-                "http://www.test.local/another/path", 
+                "http://www.test.local/another/path",
                 url.Parsed.AbsoluteUri);
         }
 
