@@ -2,6 +2,7 @@
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace FirstRealize.App.WebRedirects.Test.Helpers
 {
@@ -89,6 +90,12 @@ namespace FirstRealize.App.WebRedirects.Test.Helpers
         [Test]
         public void UrlsWithDifferentSchemeAreNotIdentical()
         {
+            // create configuration without force http host patterns
+            var configuration = TestData.TestData.DefaultConfiguration;
+            configuration.ForceHttpHostPatterns = new List<string>();
+            var urlHelper = new UrlHelper(
+                configuration);
+
             // create urls
             var rawUrl1 = "http://www.test.local/url1";
             var rawUrl2 = "https://www.test.local/url1";
@@ -106,7 +113,7 @@ namespace FirstRealize.App.WebRedirects.Test.Helpers
             // verify urls are identical using force http host pattern and one url has https scheme
             Assert.AreEqual(
                 false,
-                _urlHelper.AreIdentical(url1, url2));
+                urlHelper.AreIdentical(url1, url2));
         }
     }
 }

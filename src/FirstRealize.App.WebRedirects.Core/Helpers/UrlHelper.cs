@@ -59,15 +59,20 @@ namespace FirstRealize.App.WebRedirects.Core.Helpers
             IUrl url2)
         {
             if (url1 == null ||
-                !url1.IsValid || 
+                !url1.IsValid ||
                 url2 == null ||
                 !url2.IsValid)
             {
                 return false;
             }
 
-            return url1.Parsed.AbsoluteUri.Equals(
-                url2.Parsed.AbsoluteUri);
+            var url1Formatted = FormatUrl(
+                url1.Parsed);
+            var url2Formatted = FormatUrl(
+                url2.Parsed);
+
+            return url1Formatted.Equals(
+                url2Formatted);
         }
     }
 }
