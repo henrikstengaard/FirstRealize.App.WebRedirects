@@ -243,7 +243,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
             {
                 rewriteRules.Add(string.Format(
                     _rewriteRuleTemplate,
-                    rewrite.Name,
+                    XmlEncode(rewrite.Name),
                     rewrite.MatchUrl,
                     string.Join(Environment.NewLine, BuildConditions(rewrite)),
                     rewrite.RedirectUrl));
