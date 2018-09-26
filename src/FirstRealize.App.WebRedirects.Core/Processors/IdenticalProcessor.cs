@@ -29,6 +29,11 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
         public void Process(IProcessedRedirect processedRedirect)
         {
+            if (!processedRedirect.ParsedRedirect.IsValid)
+            {
+                return;
+            }
+
             if (!_urlHelper.AreIdentical(
                 processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri,
                 processedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri))
