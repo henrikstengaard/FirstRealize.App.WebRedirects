@@ -3,7 +3,9 @@
     public class ProcessedRedirectRecord
     {
         public string OldUrlRaw { get; set; }
+        public bool OldUrlHasHost { get; set; }
         public string NewUrlRaw { get; set; }
+        public bool NewUrlHasHost { get; set; }
         public string OldUrlParsed { get; set; }
         public string NewUrlParsed { get; set; }
 

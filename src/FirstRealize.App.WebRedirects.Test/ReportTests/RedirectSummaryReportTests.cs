@@ -66,18 +66,19 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
                 }
             };
 
-			// create and build redirect summary report
-			var configuration = 
-				TestData.TestData.DefaultConfiguration;
-			var urlFormatter = new UrlFormatter();
-			var urlParser = new UrlParser(
-				configuration);
-			var urlHelper = new UrlHelper(
-				configuration,
-				urlParser,
-				urlFormatter);
-			var redirectSummaryReport = new RedirectSummaryReport(
+            // create and build redirect summary report
+            var configuration =
+                TestData.TestData.DefaultConfiguration;
+            var urlFormatter = new UrlFormatter();
+            var urlParser = new UrlParser(
+                configuration);
+            var urlHelper = new UrlHelper(
+                configuration,
+                urlParser,
+                urlFormatter);
+            var redirectSummaryReport = new RedirectSummaryReport(
                 new ProcessedRedirectValidator(
+                    configuration,
                     urlHelper));
             redirectSummaryReport.Build(redirectProcessingResult);
 

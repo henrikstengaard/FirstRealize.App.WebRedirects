@@ -147,15 +147,16 @@ namespace FirstRealize.App.WebRedirects.Test.ValidatorTests
         {
             var configuration =
                 TestData.TestData.DefaultConfiguration;
-			var urlFormatter = new UrlFormatter();
-			var urlParser = new UrlParser(
-				configuration);
+            var urlFormatter = new UrlFormatter();
+            var urlParser = new UrlParser(
+                configuration);
             var urlHelper = new UrlHelper(
                 configuration,
-				urlParser,
-				urlFormatter);
+                urlParser,
+                urlFormatter);
             var processedRediretValidator =
                 new ProcessedRedirectValidator(
+                    configuration,
                     urlHelper);
 
             var validProcessedRedirects = _processedRedirects
@@ -195,15 +196,16 @@ namespace FirstRealize.App.WebRedirects.Test.ValidatorTests
         {
             var configuration =
                 TestData.TestData.DefaultConfiguration;
-			var urlFormatter = new UrlFormatter();
-			var urlParser = new UrlParser(
-				configuration);
-			var urlHelper = new UrlHelper(
-				configuration,
-				urlParser,
-				urlFormatter);
-			var processedRediretValidator =
+            var urlFormatter = new UrlFormatter();
+            var urlParser = new UrlParser(
+                configuration);
+            var urlHelper = new UrlHelper(
+                configuration,
+                urlParser,
+                urlFormatter);
+            var processedRediretValidator =
                 new ProcessedRedirectValidator(
+                    configuration,
                     urlHelper);
 
             var validProcessedRedirects = _processedRedirects

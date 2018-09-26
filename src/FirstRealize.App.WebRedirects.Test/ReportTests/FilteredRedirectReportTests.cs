@@ -153,15 +153,16 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
             // create and build filtered redirect report
             var configuration =
                 TestData.TestData.DefaultConfiguration;
-			var urlFormatter = new UrlFormatter();
-			var urlParser = new UrlParser(
-				configuration);
+            var urlFormatter = new UrlFormatter();
+            var urlParser = new UrlParser(
+                configuration);
             var urlHelper = new UrlHelper(
                 configuration,
-				urlParser,
-				urlFormatter);
+                urlParser,
+                urlFormatter);
             var filteredRedirectReport = new FilteredRedirectReport(
                 new ProcessedRedirectValidator(
+                    configuration,
                     urlHelper),
                 true);
             filteredRedirectReport.Build(_redirectProcessingResult);
@@ -173,16 +174,16 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
             Assert.AreEqual(2, records.Count);
             Assert.AreEqual(
                 "http://www.test2.local/url3",
-                records[0].OldUrl);
+                records[0].OldUrlResult);
             Assert.AreEqual(
                 "http://www.test2.local/url9",
-                records[0].NewUrl);
+                records[0].NewUrlResult);
             Assert.AreEqual(
                 "http://www.test2.local/url4",
-                records[1].OldUrl);
+                records[1].OldUrlResult);
             Assert.AreEqual(
                 "http://www.test2.local/url10",
-                records[1].NewUrl);
+                records[1].NewUrlResult);
         }
     }
 }

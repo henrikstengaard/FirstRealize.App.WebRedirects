@@ -2,6 +2,7 @@
 using System.Linq;
 using FirstRealize.App.WebRedirects.Core.Engines;
 using FirstRealize.App.WebRedirects.Core.Models.Reports;
+using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Validators;
 
 namespace FirstRealize.App.WebRedirects.Core.Reports
@@ -15,7 +16,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
             IProcessedRedirectValidator processedRedirectValidator)
         {
             _processedRedirectValidator = processedRedirectValidator;
-            _redirectSummaryReportRecords = 
+            _redirectSummaryReportRecords =
                 new List<RedirectSummaryReportRecord>();
         }
 
@@ -80,7 +81,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
             _redirectSummaryReportRecords.Add(
                 new RedirectSummaryReportRecord
                 {
-                    RedirectSummaryCount = 
+                    RedirectSummaryCount =
                     oldUrlDomains.Count.ToString(),
                     RedirectSummaryType = "domains in parsed and valid old urls"
                 });
@@ -184,6 +185,47 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                     });
             }
 
+            // url response results
+            var urlResponseResults = redirectProcessingResult
+                .ProcessedRedirects
+                .SelectMany(
+                        pr => pr.Results.OfType<UrlResponseResult>().Where(
+                            r => r.Type.Equals(ResultTypes.UrlResponse)))
+                            .ToList();
+
+            // url response result status codes
+            var statusCodes = urlResponseResults
+                .Select(r => r.StatusCode)
+                .Distinct()
+                .OrderBy(s => s)
+                .ToList();
+
+            // url response results summary
+            _redirectSummaryReportRecords.Add(
+                new RedirectSummaryReportRecord());
+            _redirectSummaryReportRecords.Add(
+                new RedirectSummaryReportRecord
+                {
+                    RedirectSummaryCount = statusCodes
+                    .Count()
+                    .ToString(),
+                    RedirectSummaryType = "status codes in url response results"
+                });
+
+            // url response results has status code
+            foreach (var statusCode in statusCodes)
+            {
+                _redirectSummaryReportRecords.Add(
+                    new RedirectSummaryReportRecord
+                    {
+                        RedirectSummaryCount = urlResponseResults
+                        .Count(r => r.StatusCode == statusCode).ToString(),
+                        RedirectSummaryType = string.Format(
+                            "url response results has status code '{0}'",
+                            statusCode)
+                    });
+            }
+
             // get valid processed redirects counts
             var validProcessedRedirectsCount = 0;
             var validProcessedRedirectsIncludngNotMatchingCount = 0;
@@ -205,12 +247,14 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
             _redirectSummaryReportRecords.Add(
                 new RedirectSummaryReportRecord
                 {
-                    RedirectSummaryType = "valid processed redirects"
+                    RedirectSummaryType = string.Format(
+                        "valid processed redirects, which have url response result with status code 200 and doesn't have result types '{0}'",
+                        string.Join(",", _processedRedirectValidator.InvalidResultTypes))
                 });
             _redirectSummaryReportRecords.Add(
                 new RedirectSummaryReportRecord
                 {
-                    RedirectSummaryCount = 
+                    RedirectSummaryCount =
                     validProcessedRedirectsCount.ToString(),
                     RedirectSummaryType = "redirects matching new url"
                 });

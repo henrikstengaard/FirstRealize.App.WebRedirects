@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FirstRealize.App.WebRedirects.Core.Engines;
+using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Reports;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Validators;
@@ -27,7 +28,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
         public override void Build(
             IRedirectProcessingResult redirectProcessingResult)
         {
-            foreach(var processedRedirect in redirectProcessingResult.ProcessedRedirects.ToList())
+            foreach (var processedRedirect in redirectProcessingResult.ProcessedRedirects.ToList())
             {
                 if (!_processedRedirectValidator.IsValid(
                     processedRedirect,
@@ -45,13 +46,51 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                     ? urlResponseResult.Url
                     : processedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri;
 
-                _records.Add(
-                    new FilteredRedirectRecord
+                var record = new FilteredRedirectRecord
+                {
+                    OldUrlResult = processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri,
+                    NewUrlResult = newUrl
+                };
+
+                if (processedRedirect.ParsedRedirect != null)
+                {
+                    if (processedRedirect.ParsedRedirect.OldUrl != null)
                     {
-                        OldUrl = processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri,
-                        NewUrl = newUrl
-                    });
+                        record.OldUrlRaw =
+                            FormatRawUrl(processedRedirect.ParsedRedirect.OldUrl);
+                        record.OldUrlHasHost =
+                            processedRedirect.ParsedRedirect.OldUrl.HasHost;
+                        record.OldUrlParsed =
+                            FormatParsedUrl(processedRedirect.ParsedRedirect.OldUrl);
+                    }
+
+                    if (processedRedirect.ParsedRedirect.NewUrl != null)
+                    {
+                        record.NewUrlRaw =
+                            FormatRawUrl(processedRedirect.ParsedRedirect.NewUrl);
+                        record.NewUrlHasHost =
+                            processedRedirect.ParsedRedirect.NewUrl.HasHost;
+                        record.NewUrlParsed =
+                            FormatParsedUrl(processedRedirect.ParsedRedirect.NewUrl);
+                    }
+                }
+
+                _records.Add(record);
             }
+        }
+
+        private string FormatRawUrl(IUrl url)
+        {
+            return url != null && url.Raw != null
+                ? url.Raw ?? string.Empty
+                : string.Empty;
+        }
+
+        private string FormatParsedUrl(IUrl url)
+        {
+            return url != null && url.Parsed != null
+                ? url.Parsed.AbsoluteUri
+                : string.Empty;
         }
 
         public override IEnumerable<FilteredRedirectRecord> GetRecords()

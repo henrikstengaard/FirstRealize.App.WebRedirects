@@ -123,6 +123,7 @@ namespace FirstRealize.App.WebRedirects.Console
             // create processed redirect validator
             var processedRedirectValidator =
                 new ProcessedRedirectValidator(
+                    configuration,
                     urlHelper);
 
             // handle processed redirect event to show progress
