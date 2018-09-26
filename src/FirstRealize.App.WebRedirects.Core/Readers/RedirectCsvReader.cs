@@ -17,7 +17,8 @@ namespace FirstRealize.App.WebRedirects.Core.Readers
                 new StreamReader(path), new CsvHelper.Configuration.Configuration
                 {
                     Delimiter = ";",
-                    PrepareHeaderForMatch = header => header.ToLower()
+                    PrepareHeaderForMatch = header => header.ToLower(),
+                    MissingFieldFound = null
                 }, false);
             _disposed = false;
         }
@@ -49,12 +50,19 @@ namespace FirstRealize.App.WebRedirects.Core.Readers
             {
                 _csvReader.ReadHeader();
             }
+
             while (_csvReader.Read())
             {
                 yield return new Redirect
                 {
-                    OldUrl = _csvReader["oldurl"],
-                    NewUrl = _csvReader["newurl"]
+                    OldUrl = _csvReader.GetField<string>("oldurl"),
+                    NewUrl = _csvReader.GetField<string>("newurl"),
+                    OldUrlHasHost = _csvReader.GetField<bool>("oldurlhashost"),
+                    NewUrlHasHost = _csvReader.GetField<bool>("newurlhashost"),
+                    OldUrlParsed = _csvReader.GetField<string>("oldurlparsed"),
+                    NewUrlParsed = _csvReader.GetField<string>("newurlparsed"),
+                    OldUrlRefined = _csvReader.GetField<string>("oldurlrefined"),
+                    NewUrlRefined = _csvReader.GetField<string>("newurlrefined"),
                 };
             }
         }

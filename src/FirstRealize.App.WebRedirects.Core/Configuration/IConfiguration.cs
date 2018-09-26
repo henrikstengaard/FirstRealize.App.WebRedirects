@@ -16,5 +16,6 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
         IEnumerable<string> ForceHttpHostPatterns { get; }
         int MaxRedirectCount { get; }
         int SampleCount { get; }
+        bool Export { get; }
     }
 }

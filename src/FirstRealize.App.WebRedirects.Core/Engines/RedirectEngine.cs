@@ -74,12 +74,16 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
         {
             var startTime = DateTime.UtcNow;
 
-            ActiveProcessors();
             LoadRedirectsFromCsvFiles();
             ParseRedirects();
-            PreloadParsedRedirects();
-            ProcessParsedRedirects();
-            CollectResults();
+
+            if (!_configuration.Export)
+            {
+                ActiveProcessors();
+                PreloadParsedRedirects();
+                ProcessParsedRedirects();
+                CollectResults();
+            }
 
             var endTime = DateTime.UtcNow;
 

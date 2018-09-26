@@ -1,6 +1,7 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Clients;
 using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Engines;
+using FirstRealize.App.WebRedirects.Core.Exporters;
 using FirstRealize.App.WebRedirects.Core.Formatters;
 using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
@@ -198,6 +199,32 @@ namespace FirstRealize.App.WebRedirects.Console
             System.Console.WriteLine("Done");
             System.Console.WriteLine(string.Empty);
 
+            if (configuration.Export)
+            {
+                var webConfigExporter = new WebConfigExporter(
+                    urlParser,
+                    urlFormatter);
+
+                webConfigExporter.Export(
+                    redirectProcessingResult.Redirects,
+                    outputDir);
+            }
+            else
+            {
+                Reports(
+                    outputDir,
+                    redirectProcessingResult,
+                    processedRedirectValidator);
+            }
+
+            return 0;
+        }
+
+        static void Reports(
+            string outputDir,
+            IRedirectProcessingResult redirectProcessingResult,
+            IProcessedRedirectValidator processedRedirectValidator)
+        {
             // create and write redirect summary report
             // ----------------------------------------
             var redirectSummaryReportCsvFile = Path.Combine(
@@ -340,8 +367,6 @@ namespace FirstRealize.App.WebRedirects.Console
             System.Console.ForegroundColor = ConsoleColor.Green;
             System.Console.WriteLine("Done");
             System.Console.ForegroundColor = ConsoleColor.Gray;
-
-            return 0;
         }
 
         static void Usage()

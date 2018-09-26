@@ -81,7 +81,8 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
         ""www\\.oldurl\\.local""
     ],
     maxRedirectCount: ""50"",
-    sampleCount: ""100""
+    sampleCount: ""100"",
+    export: ""True""
 }";
             // write configuration file
             var configurationFile =
@@ -149,6 +150,9 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
             Assert.AreEqual(
                 100,
                 configuration.SampleCount);
+            Assert.AreEqual(
+                true,
+                configuration.Export);
         }
     }
 }
