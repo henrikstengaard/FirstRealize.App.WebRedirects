@@ -71,10 +71,10 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             {
                 // add response for new url with configured status code,
                 // if using test http client and status code is defined
-                if (testHttpClient != null && 
+                if (testHttpClient != null &&
                     _configuration.TestHttpClientNewUrlStatusCode.HasValue)
                 {
-                    var newUrlFormatted = 
+                    var newUrlFormatted =
                         _urlHelper.FormatUrl(
                             parsedRedirect.NewUrl.Parsed);
                     testHttpClient.Responses[newUrlFormatted] = new HttpResponse
@@ -85,7 +85,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     };
                 }
 
-                var oldUrlFormatted = 
+                var oldUrlFormatted =
                     _urlHelper.FormatUrl(
                         parsedRedirect.OldUrl.Parsed);
 
@@ -128,7 +128,6 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 url = newUrl;
                 newUrl = null;
 
-                //var parsedUrl = url.Parsed.AbsoluteUri;
                 var urlFormatted = _urlHelper.FormatUrl(url.Parsed);
 
                 redirectCount++;
@@ -155,14 +154,22 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 if (response != null)
                 {
                     var statusCode = response.StatusCode;
-                    var location = response.Headers.ContainsKey("Location")
-                        ? response.Headers["Location"]
-                        : string.Empty;
 
-                    var locationUrl = !Regex.IsMatch(
-                        location ?? string.Empty, "https?://", RegexOptions.IgnoreCase | RegexOptions.Compiled)
-                        ? string.Format("{0}://{1}{2}", url.Parsed.Scheme, url.Parsed.Host, location)
-                        : location ?? string.Empty;
+                    string locationUrl;
+                    if (response.Headers.ContainsKey("Location"))
+                    {
+                        var location = response.Headers["Location"] ?? string.Empty;
+
+                        locationUrl = !Regex.IsMatch(
+                            location ?? string.Empty, "https?://", RegexOptions.IgnoreCase | RegexOptions.Compiled)
+                            ? string.Format("{0}://{1}{2}", url.Parsed.Scheme, url.Parsed.Host, location)
+                            : location ?? string.Empty;
+                    }
+                    else
+                    {
+                        locationUrl = string.Empty;
+                    }
+
                     urlResponseResult = new UrlResponseResult
                     {
                         Type = ResultTypes.UrlResponse,
@@ -178,7 +185,8 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     switch (response.StatusCode)
                     {
                         case 301:
-                            // url returns 301
+                        case 302:
+                            // url returns 301 or 302
                             // update redirect with url from location
                             newUrl = _urlParser.ParseUrl(locationUrl);
                             break;
@@ -199,7 +207,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 }
 
                 // check redirect for url
-                if (checkRedirect && 
+                if (checkRedirect &&
                     _oldUrlRedirectIndex.ContainsKey(urlFormatted))
                 {
                     // update redirect with new url from existing redirect
@@ -261,8 +269,10 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 {
                     Type = ResultTypes.TooManyRedirects,
                     Message = string.Format(
-                        "Too many redirect from url '{0}' exceeding max redirect count of {1}",
-                        url,
+                        "Too many redirect at url '{0}' exceeding max redirect count of {1}",
+                        url != null && url.IsValid
+                        ? url.Parsed.AbsoluteUri
+                        : string.Empty,
                         _configuration.MaxRedirectCount),
                     Url = url,
                     RedirectCount = redirectCount
