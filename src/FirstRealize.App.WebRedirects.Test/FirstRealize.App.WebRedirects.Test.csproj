@@ -57,6 +57,7 @@
     <Compile Include="ClientTests\HttpClientTests.cs" />
     <Compile Include="EngineTests\CauseErrorProcessor.cs" />
     <Compile Include="EngineTests\RedirectEngineTests.cs" />
+    <Compile Include="ExportTests\WebConfigExporterTests.cs" />
     <Compile Include="FormatterTests\UrlFormatterTests.cs" />
     <Compile Include="Helpers\UrlHelperTests.cs" />
     <Compile Include="ModelTests\RedirectTests.cs" />

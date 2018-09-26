@@ -116,5 +116,24 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
                 true,
                 url.HasHost);
         }
+
+        [Test]
+        public void ParseUrlWithQueryString()
+        {
+            var rawUrl = "/path?parameter=value";
+            var url = _urlParser.Parse(
+                rawUrl);
+
+            Assert.IsNotNull(url);
+            Assert.AreEqual(
+                "/path?parameter=value",
+                url.PathAndQuery);
+            Assert.AreEqual(
+                "/path",
+                url.Path);
+            Assert.AreEqual(
+                "parameter=value",
+                url.Query);
+        }
     }
 }

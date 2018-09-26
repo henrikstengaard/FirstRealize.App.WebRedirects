@@ -63,8 +63,11 @@
     <Compile Include="Engines\RedirectProcessedEventArgs.cs" />
     <Compile Include="Engines\RedirectProcessingResult.cs" />
     <Compile Include="Exporters\IExporter.cs" />
+    <Compile Include="Exporters\Rewrite.cs" />
     <Compile Include="Exporters\WebConfigExporter.cs" />
+    <Compile Include="Extensions\ByteArrayExtensions.cs" />
     <Compile Include="Extensions\SocketExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Formatters\IUrlFormatter.cs" />
     <Compile Include="Formatters\UrlFormatter.cs" />
     <Compile Include="Models\Urls\IParsedUrl.cs" />

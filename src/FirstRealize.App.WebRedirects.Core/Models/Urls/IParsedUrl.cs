@@ -6,7 +6,9 @@
 		string Host { get; }
 		int Port { get; }
 		string PathAndQuery { get; }
-		string OriginalUrl { get; }
+        string Path { get; }
+        string Query { get; }
+        string OriginalUrl { get; }
 		bool IsValid { get; }
 	}
 }

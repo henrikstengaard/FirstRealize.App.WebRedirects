@@ -54,6 +54,12 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
                         : 80;
                 }
 
+                var pathAndQuery = FormatPathAndQuery(
+                        urlSchemeMatch.Groups[4].Value,
+                        stripFragment);
+
+                var pathAndQueryParts = pathAndQuery.Split(new[] { '?' });
+
                 return new ParsedUrl
                 {
                     Scheme = scheme,
@@ -61,8 +67,13 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
                         ? defaultUrl.Host
                         : urlSchemeMatch.Groups[2].Value,
                     Port = port,
-                    PathAndQuery = FormatPathAndQuery(
-                        urlSchemeMatch.Groups[4].Value),
+                    PathAndQuery = pathAndQuery,
+                    Path = pathAndQueryParts.Length > 0
+                        ? pathAndQueryParts[0]
+                        : pathAndQuery,
+                    Query = pathAndQueryParts.Length > 1
+                        ? pathAndQueryParts[1]
+                        : string.Empty,
                     OriginalUrl = urlFormatted
                 };
             }
@@ -70,6 +81,12 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
             // return parsed url with default url, if it starts with '/'
             if (urlFormatted.StartsWith("/"))
             {
+                var pathAndQuery = FormatPathAndQuery(
+                        urlFormatted,
+                        stripFragment);
+
+                var pathAndQueryParts = pathAndQuery.Split(new[] { '?' });
+
                 return new ParsedUrl
                 {
                     Scheme = defaultUrl != null && defaultUrl.IsValid
@@ -81,38 +98,21 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
                     Host = defaultUrl != null && defaultUrl.IsValid
                         ? defaultUrl.Host
                         : _configuration.DefaultUrl.Host,
-                    PathAndQuery = FormatPathAndQuery(
-                        urlFormatted,
-                        stripFragment),
+                    PathAndQuery = pathAndQuery,
+                    Path = pathAndQueryParts.Length > 0
+                        ? pathAndQueryParts[0]
+                        : pathAndQuery,
+                    Query = pathAndQueryParts.Length > 1
+                        ? pathAndQueryParts[1]
+                        : string.Empty,
                     OriginalUrl = urlFormatted
                 };
             }
 
-            // match url domain
-            var urlDomainMatch = Regex.Match(
-                urlFormatted,
-                "^([^\\./]+\\.[^\\./]+|[^\\./]+\\.[^\\./]+\\.[^\\./]+)(.*)",
-                RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-            // return parsed url, if url matches domain
-            if (urlDomainMatch.Success)
+            return new ParsedUrl
             {
-                return new ParsedUrl
-                {
-                    Scheme = defaultUrl != null && defaultUrl.IsValid
-                        ? defaultUrl.Scheme
-                        : _configuration.DefaultUrl.Scheme,
-                    Port = defaultUrl != null && defaultUrl.IsValid
-                        ? defaultUrl.Port
-                        : _configuration.DefaultUrl.Port,
-                    Host = urlDomainMatch.Groups[1].Value,
-                    PathAndQuery = FormatPathAndQuery(
-                        urlSchemeMatch.Groups[2].Value),
-                    OriginalUrl = urlFormatted
-                };
-            }
-
-            return null;
+                OriginalUrl = urlFormatted
+            };
         }
 
         private int ParsePort(
