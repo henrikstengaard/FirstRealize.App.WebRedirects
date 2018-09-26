@@ -62,6 +62,8 @@
     <Compile Include="Engines\RedirectEngine.cs" />
     <Compile Include="Engines\RedirectProcessedEventArgs.cs" />
     <Compile Include="Engines\RedirectProcessingResult.cs" />
+    <Compile Include="Exporters\IExporter.cs" />
+    <Compile Include="Exporters\WebConfigExporter.cs" />
     <Compile Include="Extensions\SocketExtensions.cs" />
     <Compile Include="Validators\IProcessedRedirectValidator.cs" />
     <Compile Include="Validators\ProcessedRedirectValidator.cs" />
