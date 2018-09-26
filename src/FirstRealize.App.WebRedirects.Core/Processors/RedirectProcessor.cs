@@ -7,7 +7,6 @@ using FirstRealize.App.WebRedirects.Core.Parsers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text.RegularExpressions;
 
 namespace FirstRealize.App.WebRedirects.Core.Processors
