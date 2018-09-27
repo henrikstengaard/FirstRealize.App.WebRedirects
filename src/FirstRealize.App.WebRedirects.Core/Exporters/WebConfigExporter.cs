@@ -35,15 +35,21 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
 
         private readonly string _rewriteRuleTemplate = @"<rule name=""{0}"" stopProcessing=""true"">
     <match url=""{1}"" />
-    <conditions>
 {2}
-    </conditions>
     <action type=""Redirect"" url=""{3}"" redirectType=""Permanent"" appendQueryString=""False"" />
 </rule>";
+
+        private readonly string _rewriteRuleConditionsTemplate = @"<conditions>
+{0}
+</conditions>
+";
 
         private readonly string _rewriteMapTemplate = @"<rewriteMap name=""{0}"" defaultValue="""">
 {1}
 </rewriteMap>";
+
+        // TODO: Refactor to configuration
+        private bool _skipRootRedirects = true;
 
         public WebConfigExporter(
             IUrlParser urlParser,
@@ -78,6 +84,12 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
 
                 var isRootRedirect = oldUrlRefined.Path.Equals("/");
 
+                // skip root redirects
+                if (_skipRootRedirects && isRootRedirect)
+                {
+                    continue;
+                }
+
                 if (isRootRedirect)
                 {
                     name.Append("root url ");
@@ -102,7 +114,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
                 }
                 key.Append(
                     string.Format("|NewUrlHost={0}", redirect.NewUrlHasHost));
-        
+
                 if (redirect.NewUrlHasHost)
                 {
                     name.Append(
@@ -129,7 +141,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
                 {
                     matchUrl = "^/?$";
                 }
-                else if(string.IsNullOrWhiteSpace(oldUrlRefined.Query))
+                else if (string.IsNullOrWhiteSpace(oldUrlRefined.Query))
                 {
                     useRewriteMap = true;
                     matchUrl = "^(.+?)/?$";
@@ -186,7 +198,9 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
 
                 // add rewrite to rewrite rules index
                 var oldPath = FormatOldPath(oldUrlRefined.Path);
-                var newPath = FormatNewPathAndQuery(newUrlRefined.Path, newUrlRefined.Query);
+                var newPath = FormatNewPathAndQuery(
+                    newUrlRefined.Path,
+                    newUrlRefined.Query);
 
                 rewritesIndex[id].RewriteMap[oldPath] = newPath;
             }
@@ -209,19 +223,19 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
 
             // build rewrite maps
             var rewriteMaps = new List<string>();
-            foreach(var id in rewritesIndex.Keys
+            foreach (var id in rewritesIndex.Keys
                 .Where(id => rewritesIndex[id].RewriteMap.Keys.Count > 1)
                 .OrderBy(x => x))
             {
                 rewriteMaps.Add(
                     string.Format(
                         _rewriteMapTemplate,
-                        id, 
-                        string.Join(Environment.NewLine,rewritesIndex[id].RewriteMap.Keys.OrderByDescending(x => x).Select(x => string.Format(
-                            "<add key=\"{0}\" value=\"{1}\" />",
-                            XmlEncode(x),
-                            XmlEncode(rewritesIndex[id].RewriteMap[x])
-                            )))));
+                        id,
+                        string.Join(Environment.NewLine, rewritesIndex[id].RewriteMap.Keys.OrderByDescending(x => x).Select(x => string.Format(
+                             "<add key=\"{0}\" value=\"{1}\" />",
+                             XmlEncode(x),
+                             XmlEncode(rewritesIndex[id].RewriteMap[x])
+                             )))));
             }
 
             // sort rewrite index for building rewrite rules
@@ -241,11 +255,19 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
 
             foreach (var rewrite in rewriteIdsSorted.Select(x => rewritesIndex[x]))
             {
+                var conditions = BuildConditions(rewrite);
+
+                var conditionsFormatted = conditions.Any()
+                    ? string.Format(
+                        _rewriteRuleConditionsTemplate,
+                        string.Join(Environment.NewLine, conditions))
+                    : string.Empty;
+
                 rewriteRules.Add(string.Format(
                     _rewriteRuleTemplate,
                     XmlEncode(rewrite.Name),
                     rewrite.MatchUrl,
-                    string.Join(Environment.NewLine, BuildConditions(rewrite)),
+                    conditionsFormatted,
                     rewrite.RedirectUrl));
             }
 
