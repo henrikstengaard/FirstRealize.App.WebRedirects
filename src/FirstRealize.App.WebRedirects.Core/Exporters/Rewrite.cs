@@ -1,5 +1,4 @@
-﻿using FirstRealize.App.WebRedirects.Core.Models.Redirects;
-using FirstRealize.App.WebRedirects.Core.Models.Urls;
+﻿using FirstRealize.App.WebRedirects.Core.Models.Urls;
 using System.Collections.Generic;
 
 namespace FirstRealize.App.WebRedirects.Core.Exporters
@@ -8,16 +7,16 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public IRedirect Redirect { get; set; }
+        public bool HasOldUrlRootPath { get; set; }
+        public bool HasOldUrlHost { get; set; }
+        public bool HasNewUrlHost { get; set; }
         public IParsedUrl OldUrl { get; set; }
         public IParsedUrl NewUrl { get; set; }
-        public string MatchUrl { get; set; }
-        public string RedirectUrl { get; set; }
-        public IDictionary<string, string> RewriteMap { get; set; }
+        public IList<Rewrite> RelatedRewrites { get; set; }
 
         public Rewrite()
         {
-            RewriteMap = new Dictionary<string, string>();
+            RelatedRewrites = new List<Rewrite>();
         }
     }
 }
