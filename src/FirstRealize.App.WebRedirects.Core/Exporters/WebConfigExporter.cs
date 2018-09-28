@@ -1,4 +1,5 @@
-﻿using FirstRealize.App.WebRedirects.Core.Extensions;
+﻿using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Extensions;
 using FirstRealize.App.WebRedirects.Core.Formatters;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Parsers;
@@ -12,6 +13,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
 {
     public class WebConfigExporter : IExporter
     {
+        private readonly IConfiguration _configuration;
         private readonly IUrlParser _urlParser;
         private readonly IUrlFormatter _urlFormatter;
 
@@ -45,13 +47,12 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
 {1}
 </rewriteMap>";
 
-        // TODO: Refactor to configuration
-        private bool _skipRootRedirects = true;
-
         public WebConfigExporter(
+            IConfiguration configuration,
             IUrlParser urlParser,
             IUrlFormatter urlFormatter)
         {
+            _configuration = configuration;
             _urlParser = urlParser;
             _urlFormatter = urlFormatter;
         }
@@ -159,8 +160,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
 
                 var hasOldUrlRootPath = oldUrlRefined.Path.Equals("/");
 
-                // skip root redirects
-                if (_skipRootRedirects && hasOldUrlRootPath)
+                if (_configuration.ExcludeOldUrlRootRedirects && hasOldUrlRootPath)
                 {
                     continue;
                 }

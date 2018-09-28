@@ -202,6 +202,7 @@ namespace FirstRealize.App.WebRedirects.Console
             if (configuration.Export)
             {
                 var webConfigExporter = new WebConfigExporter(
+                    configuration,
                     urlParser,
                     urlFormatter);
 

@@ -75,6 +75,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
         ""/newurl-exclude""
     ],
     duplicateOldUrlStrategy: ""KeepLast"",
+    excludeOldUrlRootRedirects: ""True"",
     useTestHttpClient: ""True"",
     testHttpClientNewUrlStatusCode: ""200"",
     forceHttpHostPatterns: [
@@ -135,6 +136,9 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
             Assert.AreEqual(
                 DuplicateUrlStrategy.KeepLast,
                 configuration.DuplicateOldUrlStrategy);
+            Assert.AreEqual(
+                true,
+                configuration.ExcludeOldUrlRootRedirects);
             Assert.AreEqual(
                 true,
                 configuration.UseTestHttpClient);

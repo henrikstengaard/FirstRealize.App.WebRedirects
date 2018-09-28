@@ -18,6 +18,7 @@ namespace FirstRealize.App.WebRedirects.Test.ExportTests
             var urlParser = new UrlParser(
                 configuration);
             var webConfigExporter = new WebConfigExporter(
+                configuration,
                 urlParser,
                 new UrlFormatter());
 
