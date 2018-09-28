@@ -32,30 +32,30 @@ namespace FirstRealize.App.WebRedirects.Test.ExportTests
                     NewUrlHasHost = true,
                     OldUrlParsed = "http://www.domain1.local/url1",
                     NewUrlParsed = "http://www.domain2.local/url2",
-                    OldUrlRefined = "http://www.domain1.local/url1",
-                    NewUrlRefined = "http://www.domain2.local/url2",
+                    OldUrlOriginal = "http://www.domain1.local/url1",
+                    NewUrlOriginal = "http://www.domain2.local/url2",
                 },
                 new Redirect
                 {
-                    OldUrl = "/url1",
-                    NewUrl = "/url2",
+                    OldUrl = "http://www.test.local/url1",
+                    NewUrl = "http://www.test.local/url2",
                     OldUrlHasHost = false,
                     NewUrlHasHost = false,
                     OldUrlParsed = "http://www.test.local/url1",
                     NewUrlParsed = "http://www.test.local/url2",
-                    OldUrlRefined = "http://www.test.local/url1",
-                    NewUrlRefined = "http://www.test.local/url2",
+                    OldUrlOriginal = "/url1",
+                    NewUrlOriginal = "/url2",
                 },
                 new Redirect
                 {
-                    OldUrl = "/url2",
-                    NewUrl = "/url3",
+                    OldUrl = "http://www.test.local/url2",
+                    NewUrl = "http://www.test.local/url3",
                     OldUrlHasHost = false,
                     NewUrlHasHost = false,
                     OldUrlParsed = "http://www.test.local/url2",
                     NewUrlParsed = "http://www.test.local/url3",
-                    OldUrlRefined = "http://www.test.local/url2",
-                    NewUrlRefined = "http://www.test.local/url3",
+                    OldUrlOriginal = "/url2",
+                    NewUrlOriginal = "/url3",
                 }
             };
 

@@ -8,7 +8,7 @@
         bool NewUrlHasHost { get; set; }
         string OldUrlParsed { get; set; }
         string NewUrlParsed { get; set; }
-        string OldUrlRefined { get; set; }
-        string NewUrlRefined { get; set; }
+        string OldUrlOriginal { get; set; }
+        string NewUrlOriginal { get; set; }
     }
 }

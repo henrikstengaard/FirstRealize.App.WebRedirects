@@ -8,17 +8,16 @@ using FirstRealize.App.WebRedirects.Core.Reports;
 using FirstRealize.App.WebRedirects.Core.Validators;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace FirstRealize.App.WebRedirects.Test.ReportTests
 {
     [TestFixture]
-    public class FilteredRedirectReportTests
+    public class OutputRedirectReportTests
     {
         private readonly IRedirectProcessingResult _redirectProcessingResult;
 
-        public FilteredRedirectReportTests()
+        public OutputRedirectReportTests()
         {
             _redirectProcessingResult = new RedirectProcessingResult
             {
@@ -160,30 +159,30 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
                 configuration,
                 urlParser,
                 urlFormatter);
-            var filteredRedirectReport = new FilteredRedirectReport(
+            var outputRedirectReport = new OutputRedirectReport(
                 new ProcessedRedirectValidator(
                     configuration,
                     urlHelper),
                 true);
-            filteredRedirectReport.Build(_redirectProcessingResult);
+            outputRedirectReport.Build(_redirectProcessingResult);
 
             // verify filtered redirect records are build
-            var records = filteredRedirectReport
+            var records = outputRedirectReport
                 .GetRecords()
                 .ToList();
             Assert.AreEqual(2, records.Count);
             Assert.AreEqual(
                 "http://www.test2.local/url3",
-                records[0].OldUrlResult);
+                records[0].OldUrl);
             Assert.AreEqual(
                 "http://www.test2.local/url9",
-                records[0].NewUrlResult);
+                records[0].NewUrl);
             Assert.AreEqual(
                 "http://www.test2.local/url4",
-                records[1].OldUrlResult);
+                records[1].OldUrl);
             Assert.AreEqual(
                 "http://www.test2.local/url10",
-                records[1].NewUrlResult);
+                records[1].NewUrl);
         }
     }
 }

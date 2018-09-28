@@ -72,7 +72,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReaderTests\ConfigurationJsonReaderTests.cs" />
     <Compile Include="ReaderTests\RedirectCsvReaderTests.cs" />
-    <Compile Include="ReportTests\FilteredRedirectReportTests.cs" />
+    <Compile Include="ReportTests\OutputRedirectReportTests.cs" />
     <Compile Include="ReportTests\NewUrlDomainReportTests.cs" />
     <Compile Include="ReportTests\OldUrlDomainReportTests.cs" />
     <Compile Include="ReportTests\ProcessedRedirectReportTests.cs" />

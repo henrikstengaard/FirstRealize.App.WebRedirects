@@ -154,9 +154,9 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
             foreach (var redirect in redirects.ToList())
             {
                 var oldUrlRefined = _urlParser.Parse(
-                    redirect.OldUrlRefined);
+                    redirect.OldUrl);
                 var newUrlRefined = _urlParser.Parse(
-                    redirect.NewUrlRefined);
+                    redirect.NewUrl);
 
                 var hasOldUrlRootPath = oldUrlRefined.Path.Equals("/");
 

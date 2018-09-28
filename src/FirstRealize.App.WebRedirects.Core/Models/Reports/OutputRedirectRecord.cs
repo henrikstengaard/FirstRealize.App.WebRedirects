@@ -1,6 +1,6 @@
-﻿namespace FirstRealize.App.WebRedirects.Core.Models.Redirects
+﻿namespace FirstRealize.App.WebRedirects.Core.Models.Reports
 {
-    public class Redirect : IRedirect
+    public class OutputRedirectRecord
     {
         public string OldUrl { get; set; }
         public string NewUrl { get; set; }

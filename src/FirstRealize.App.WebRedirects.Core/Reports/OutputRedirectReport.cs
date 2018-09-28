@@ -8,21 +8,21 @@ using FirstRealize.App.WebRedirects.Core.Validators;
 
 namespace FirstRealize.App.WebRedirects.Core.Reports
 {
-    public class FilteredRedirectReport : ReportBase<FilteredRedirectRecord>
+    public class OutputRedirectReport : ReportBase<OutputRedirectRecord>
     {
         private readonly IProcessedRedirectValidator _processedRedirectValidator;
         private readonly bool _includeNotMatchingNewUrl;
-        private readonly IList<FilteredRedirectRecord> _records;
+        private readonly IList<OutputRedirectRecord> _records;
 
 
-        public FilteredRedirectReport(
+        public OutputRedirectReport(
             IProcessedRedirectValidator processedRedirectValidator,
             bool includeNotMatchingNewUrl)
         {
             _processedRedirectValidator = processedRedirectValidator;
             _includeNotMatchingNewUrl = includeNotMatchingNewUrl;
             _records =
-                new List<FilteredRedirectRecord>();
+                new List<OutputRedirectRecord>();
         }
 
         public override void Build(
@@ -46,17 +46,17 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                     ? urlResponseResult.Url
                     : processedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri;
 
-                var record = new FilteredRedirectRecord
+                var record = new OutputRedirectRecord
                 {
-                    OldUrlResult = processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri,
-                    NewUrlResult = newUrl
+                    OldUrl = processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri,
+                    NewUrl = newUrl
                 };
 
                 if (processedRedirect.ParsedRedirect != null)
                 {
                     if (processedRedirect.ParsedRedirect.OldUrl != null)
                     {
-                        record.OldUrlRaw =
+                        record.OldUrlOriginal =
                             FormatRawUrl(processedRedirect.ParsedRedirect.OldUrl);
                         record.OldUrlHasHost =
                             processedRedirect.ParsedRedirect.OldUrl.HasHost;
@@ -66,7 +66,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
 
                     if (processedRedirect.ParsedRedirect.NewUrl != null)
                     {
-                        record.NewUrlRaw =
+                        record.NewUrlOriginal =
                             FormatRawUrl(processedRedirect.ParsedRedirect.NewUrl);
                         record.NewUrlHasHost =
                             processedRedirect.ParsedRedirect.NewUrl.HasHost;
@@ -93,7 +93,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                 : string.Empty;
         }
 
-        public override IEnumerable<FilteredRedirectRecord> GetRecords()
+        public override IEnumerable<OutputRedirectRecord> GetRecords()
         {
             return _records;
         }

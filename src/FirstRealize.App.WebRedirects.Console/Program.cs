@@ -319,51 +319,51 @@ namespace FirstRealize.App.WebRedirects.Console
             System.Console.WriteLine("Done");
             System.Console.WriteLine(string.Empty);
 
-            // create and write filtered redirect report
-            // -----------------------------------------
-            var filteredRedirectReportCsvFile = Path.Combine(
+            // create and write output redirect report
+            // ---------------------------------------
+            var outputRedirectReportCsvFile = Path.Combine(
                 outputDir,
-                "filtered_redirects.csv");
+                "output_redirects.csv");
 
             System.Console.ForegroundColor = ConsoleColor.Yellow;
             System.Console.WriteLine(
                 string.Format(
-                    "Building and writing filtered redirects report file '{0}'",
-                    filteredRedirectReportCsvFile));
+                    "Building and writing output redirects report file '{0}'",
+                    outputRedirectReportCsvFile));
 
-            var filteredRedirectReport =
-                new FilteredRedirectReport(
+            var outputRedirectReport =
+                new OutputRedirectReport(
                     processedRedirectValidator,
                     false);
-            filteredRedirectReport.Build(
+            outputRedirectReport.Build(
                 redirectProcessingResult);
-            filteredRedirectReport.WriteReportCsvFile(
-                filteredRedirectReportCsvFile);
+            outputRedirectReport.WriteReportCsvFile(
+                outputRedirectReportCsvFile);
 
             System.Console.ForegroundColor = ConsoleColor.Green;
             System.Console.WriteLine("Done");
             System.Console.WriteLine(string.Empty);
 
-            // create and write filtered redirect including not matching new url report
-            // ------------------------------------------------------------------------
-            var filteredRedirectIncludingNotMatchingNewUrlReportCsvFile = Path.Combine(
+            // create and write output redirect including not matching new url report
+            // ----------------------------------------------------------------------
+            var outputRedirectIncludingNotMatchingNewUrlReportCsvFile = Path.Combine(
                 outputDir,
-                "filtered_redirects_incl_not_matching_new_url.csv");
+                "output_redirects_incl_not_matching.csv");
 
             System.Console.ForegroundColor = ConsoleColor.Yellow;
             System.Console.WriteLine(
                 string.Format(
-                    "Building and writing filtered redirects including not matching new url report file '{0}'",
-                    filteredRedirectReportCsvFile));
+                    "Building and writing output redirects including not matching new url report file '{0}'",
+                    outputRedirectReportCsvFile));
 
-            var filteredRedirectIncludingNotMatchingNewUrlReport =
-                new FilteredRedirectReport(
+            var outputRedirectIncludingNotMatchingNewUrlReport =
+                new OutputRedirectReport(
                     processedRedirectValidator,
                     true);
-            filteredRedirectIncludingNotMatchingNewUrlReport.Build(
+            outputRedirectIncludingNotMatchingNewUrlReport.Build(
                 redirectProcessingResult);
-            filteredRedirectIncludingNotMatchingNewUrlReport.WriteReportCsvFile(
-                filteredRedirectIncludingNotMatchingNewUrlReportCsvFile);
+            outputRedirectIncludingNotMatchingNewUrlReport.WriteReportCsvFile(
+                outputRedirectIncludingNotMatchingNewUrlReportCsvFile);
 
             System.Console.ForegroundColor = ConsoleColor.Green;
             System.Console.WriteLine("Done");
