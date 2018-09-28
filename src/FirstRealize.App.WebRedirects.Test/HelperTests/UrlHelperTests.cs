@@ -6,7 +6,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
-namespace FirstRealize.App.WebRedirects.Test.Helpers
+namespace FirstRealize.App.WebRedirects.Test.HelperTests
 {
     [TestFixture]
     public class UrlHelperTests
