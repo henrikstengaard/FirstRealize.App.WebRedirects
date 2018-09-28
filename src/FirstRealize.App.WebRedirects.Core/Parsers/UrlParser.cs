@@ -1,5 +1,4 @@
-﻿using FirstRealize.App.WebRedirects.Core.Clients;
-using FirstRealize.App.WebRedirects.Core.Configuration;
+﻿using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Urls;
 using System;
@@ -36,7 +35,7 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
             // match url scheme
             var urlSchemeMatch = Regex.Match(
                 urlFormatted,
-                "^(http|https)://([^/]+):?([^/]*)(.*)",
+                "^(http|https)://([^:/]+):?([^:/]*)(.*)",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
             // return parsed url, if url matches http or https scheme
@@ -109,10 +108,10 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
                 };
             }
 
-            return new ParsedUrl
-            {
-                OriginalUrl = urlFormatted
-            };
+            throw new UriFormatException(
+                string.Format(
+                    "Invalid url '{0}'",
+                    url));
         }
 
         private int ParsePort(
@@ -126,7 +125,7 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
             int port;
             if (!int.TryParse(value, out port))
             {
-                throw new HttpException(
+                throw new UriFormatException(
                     string.Format(
                         "Invalid port '{0}'",
                         value));
