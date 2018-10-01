@@ -35,8 +35,8 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             }
 
             if (!_urlHelper.AreIdentical(
-                processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri,
-                processedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri))
+                processedRedirect.ParsedRedirect.OldUrl.Formatted,
+                processedRedirect.ParsedRedirect.NewUrl.Formatted))
             {
                 return;
             }
@@ -47,8 +47,8 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 Message =
                 string.Format(
                     "Identical redirect of from and to url '{0}'",
-                    processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri),
-                Url = processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri
+                    processedRedirect.ParsedRedirect.OldUrl.Formatted),
+                Url = processedRedirect.ParsedRedirect.OldUrl.Formatted
             };
             processedRedirect.Results.Add(
                 identicalResult);

@@ -11,7 +11,10 @@ namespace FirstRealize.App.WebRedirects.Core.Models.Urls
         public string Path { get; set; }
         public string Query { get; set; }
         public string OriginalUrl { get; set; }
-		public bool IsValid
+        public bool OriginalUrlHasHost { get; set; }
+
+
+        public bool IsValid
 		{
 			get
 			{
@@ -20,5 +23,48 @@ namespace FirstRealize.App.WebRedirects.Core.Models.Urls
 					Port > 0;
 			}
 		}
-	}
+
+        public int CompareTo(object obj)
+        {
+            var other = obj as IParsedUrl;
+
+            if (other == null ||
+                !other.IsValid)
+            {
+                return 1;
+            }
+
+            if (!IsValid)
+            {
+                return -1;
+            }
+
+            var schemeCompared = Scheme.CompareTo(
+                other.Scheme);
+
+            if (schemeCompared != 0)
+            {
+                return schemeCompared;
+            }
+
+            var hostCompared = Host.CompareTo(
+                other.Host);
+
+            if (hostCompared != 0)
+            {
+                return hostCompared;
+            }
+
+            var portCompared = Port.CompareTo(
+                other.Port);
+
+            if (portCompared != 0)
+            {
+                return portCompared;
+            }
+
+            return (PathAndQuery ?? string.Empty).CompareTo(
+                other.PathAndQuery ?? string.Empty);
+        }
+    }
 }

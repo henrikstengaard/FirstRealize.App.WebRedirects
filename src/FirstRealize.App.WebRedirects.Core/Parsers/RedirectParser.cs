@@ -1,4 +1,5 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Formatters;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 
 namespace FirstRealize.App.WebRedirects.Core.Parsers
@@ -7,28 +8,46 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
     {
         private readonly IConfiguration _configuration;
         private readonly IUrlParser _urlParser;
+        private readonly IUrlFormatter _urlFormatter;
 
         public RedirectParser(
             IConfiguration configuration,
-            IUrlParser urlParser)
+            IUrlParser urlParser,
+            IUrlFormatter urlFormatter)
         {
             _configuration = configuration;
             _urlParser = urlParser;
+            _urlFormatter = urlFormatter;
         }
 
         public IParsedRedirect ParseRedirect(
             IRedirect redirect)
         {
-            return new ParsedRedirect
-            {
-                OldUrl = _urlParser.ParseUrl(
+            var oldUrlParsed = _urlParser.Parse(
                     redirect.OldUrl,
                     _configuration.DefaultUrl,
-                    true),
-                NewUrl = _urlParser.ParseUrl(
+                    true);
+            var newUrlParsed = _urlParser.Parse(
                     redirect.NewUrl,
                     _configuration.DefaultUrl,
-                    false)
+                    false);
+
+            return new ParsedRedirect
+            {
+                OldUrl = new Url
+                {
+                    Raw = redirect.OldUrl,
+                    Parsed = oldUrlParsed,
+                    Formatted = _urlFormatter.Format(
+                        oldUrlParsed)
+                },
+                NewUrl = new Url
+                {
+                    Raw = redirect.NewUrl,
+                    Parsed = newUrlParsed,
+                    Formatted = _urlFormatter.Format(
+                        newUrlParsed)
+                }
             };
         }
     }

@@ -27,7 +27,7 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
                 {
                     Type = Name,
                     Message = Name,
-                    Url = processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri
+                    Url = processedRedirect.ParsedRedirect.OldUrl.Formatted
                 });
         }
     }

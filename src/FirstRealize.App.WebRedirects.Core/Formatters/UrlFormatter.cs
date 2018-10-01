@@ -14,8 +14,7 @@ namespace FirstRealize.App.WebRedirects.Core.Formatters
 
 			if (!parsedUrl.IsValid)
 			{
-				throw new UriFormatException(
-					"Url format is not valid");
+				return null;
 			}
 
 			return string.Format(

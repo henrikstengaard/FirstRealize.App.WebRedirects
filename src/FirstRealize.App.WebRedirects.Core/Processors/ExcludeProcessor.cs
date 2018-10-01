@@ -44,12 +44,12 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             }
 
             var oldUrlPatternMatches = GetMatchingUrlPatterns(
-                processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri,
+                processedRedirect.ParsedRedirect.OldUrl.Formatted,
                 _configuration.OldUrlExcludePatterns)
                 .ToList();
 
             var newUrlPatternMatches = GetMatchingUrlPatterns(
-                processedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri,
+                processedRedirect.ParsedRedirect.NewUrl.Formatted,
                 _configuration.NewUrlExcludePatterns)
                 .ToList();
 
@@ -93,7 +93,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             {
                 Type = ResultTypes.ExcludedRedirect,
                 Message = message.ToString(),
-                Url = url.Parsed.AbsoluteUri
+                Url = url.Formatted
             };
             processedRedirect.Results.Add(
                 excludedRedirectResult);

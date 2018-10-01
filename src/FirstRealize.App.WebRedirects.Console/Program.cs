@@ -104,8 +104,7 @@ namespace FirstRealize.App.WebRedirects.Console
             }
 
             // create redirect engine
-            var urlParser = new UrlParser(
-                configuration);
+            var urlParser = new UrlParser();
 			var urlFormatter = new UrlFormatter();
             var urlHelper = new UrlHelper(
                 configuration,
@@ -113,7 +112,8 @@ namespace FirstRealize.App.WebRedirects.Console
 				urlFormatter);
             var redirectParser = new RedirectParser(
                 configuration,
-                urlParser);
+                urlParser,
+                urlFormatter);
             var redirectEngine = new RedirectEngine(
                 configuration,
                 urlHelper,
@@ -176,7 +176,7 @@ namespace FirstRealize.App.WebRedirects.Console
                     .OfType<UrlResponseResult>()
                     .FirstOrDefault(r => r.Type.Equals(ResultTypes.UrlResponse));
                     if (urlResponseResult != null && !urlHelper.AreIdentical(
-                        e.ProcessedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri,
+                        e.ProcessedRedirect.ParsedRedirect.NewUrl.Formatted,
                         urlResponseResult.Url))
                     {
                         System.Console.ForegroundColor = ConsoleColor.Yellow;

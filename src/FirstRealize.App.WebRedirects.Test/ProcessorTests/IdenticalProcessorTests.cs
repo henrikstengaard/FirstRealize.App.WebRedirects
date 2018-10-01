@@ -14,6 +14,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
     [TestFixture]
     public class IdenticalProcessorTests
     {
+        private readonly IUrlParser _urlParser;
         private readonly IUrlHelper _urlHelper;
 
         public IdenticalProcessorTests()
@@ -21,11 +22,10 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
 			var configuration =
 				TestData.TestData.DefaultConfiguration;
 			var urlFormatter = new UrlFormatter();
-			var urlParser = new UrlParser(
-				configuration);
+			_urlParser = new UrlParser();
 			_urlHelper = new UrlHelper(
                 configuration,
-				urlParser,
+				_urlParser,
 				urlFormatter);
         }
 
@@ -33,31 +33,22 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         public void DetectIdenticalRedirects()
         {
             // identical redirect
-            var rawUrl = "http://www.test.local";
-            var parsedUrl = new Uri(rawUrl);
-            var parsedRedirects = new[]
-            {
-                new ParsedRedirect
+            var parsedRedirects = TestData.TestData.GetParsedRedirects(
+                new[]
                 {
-                    OldUrl = new Url
-                    {
-                        Raw = rawUrl,
-                        Parsed = parsedUrl
-                    },
-                    NewUrl = new Url
-                    {
-                        Raw = rawUrl,
-                        Parsed = parsedUrl
+                    new Redirect{
+                        OldUrl = "http://www.test.local",
+                        NewUrl = "http://www.test.local"
                     }
-                }
-            };
+                })
+                .ToList();
 
             // verify parsed redirect is identical
             Assert.AreEqual(
                 true,
                 _urlHelper.AreIdentical(
-                    parsedRedirects[0].OldUrl.Parsed.AbsoluteUri,
-                    parsedRedirects[0].NewUrl.Parsed.AbsoluteUri));
+                    parsedRedirects[0].OldUrl.Formatted,
+                    parsedRedirects[0].NewUrl.Formatted));
 
             // processed redirects
             var processedRedirects = TestData.TestData.GetProcessedRedirects(

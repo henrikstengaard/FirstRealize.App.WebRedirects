@@ -1,5 +1,7 @@
-﻿using FirstRealize.App.WebRedirects.Core.Models.Redirects;
+﻿using FirstRealize.App.WebRedirects.Core.Formatters;
+using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
+using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Processors;
 using NUnit.Framework;
 using System;
@@ -14,23 +16,15 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         public void DetectInvalidRedirects()
         {
             // invalid redirect
-            var rawUrl = "http://www.test.local";
-            var parsedUrl = new Uri(rawUrl);
-            var parsedRedirects = new[]
-            {
-                new ParsedRedirect
+            var parsedRedirects = TestData.TestData.GetParsedRedirects(
+                new[]
                 {
-                    OldUrl = new Url
-                    {
-                        Raw = rawUrl,
-                        Parsed = parsedUrl
-                    },
-                    NewUrl = new Url
-                    {
-                        Raw = ""
+                    new Redirect{
+                        OldUrl = "http://www.test.local",
+                        NewUrl = string.Empty
                     }
-                }
-            };
+                })
+                .ToList();
 
             // verify parsed redirect is invalid
             Assert.AreEqual(

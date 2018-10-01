@@ -66,8 +66,8 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
             foreach (var parsedRedirect in parsedRedirects
                 .Where(r => r.IsValid && !_urlHelper.AreIdentical(
-                    r.OldUrl.Parsed.AbsoluteUri,
-					r.NewUrl.Parsed.AbsoluteUri))
+                    r.OldUrl.Formatted,
+					r.NewUrl.Formatted))
                 .ToList())
             {
                 // add response for new url with configured status code,
@@ -77,7 +77,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 {
                     var newUrlFormatted =
                         _urlHelper.FormatUrl(
-                            parsedRedirect.NewUrl.Parsed.AbsoluteUri);
+                            parsedRedirect.NewUrl.Formatted);
                     testHttpClient.Responses[newUrlFormatted] = new HttpResponse
                     {
                         StatusCode = _configuration.TestHttpClientNewUrlStatusCode.HasValue
@@ -88,7 +88,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
                 var oldUrlFormatted =
                     _urlHelper.FormatUrl(
-                        parsedRedirect.OldUrl.Parsed.AbsoluteUri);
+                        parsedRedirect.OldUrl.Formatted);
 
                 if (_configuration.DuplicateOldUrlStrategy == DuplicateUrlStrategy.KeepFirst)
                 {
@@ -122,7 +122,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
             string url = null;
             string newUrl =
-				processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri;
+				processedRedirect.ParsedRedirect.OldUrl.Formatted;
             UrlResponseResult urlResponseResult = null;
 
             do
@@ -213,7 +213,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     _oldUrlRedirectIndex.ContainsKey(urlFormatted))
                 {
                     // update redirect with new url from existing redirect
-                    newUrl = _oldUrlRedirectIndex[urlFormatted].NewUrl.Parsed.AbsoluteUri;
+                    newUrl = _oldUrlRedirectIndex[urlFormatted].NewUrl.Formatted;
                 }
 
                 // cyclic redirect, if url and new url is not https redirect and url exists in url index

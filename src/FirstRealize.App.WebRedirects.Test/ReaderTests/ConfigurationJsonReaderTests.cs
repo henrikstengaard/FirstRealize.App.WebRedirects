@@ -1,4 +1,6 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Formatters;
+using FirstRealize.App.WebRedirects.Core.Models.Urls;
 using FirstRealize.App.WebRedirects.Core.Readers;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -19,13 +21,13 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
 
             Assert.AreEqual(
                 true,
-                uriJsonConverter.CanConvert(typeof(Uri)));
+                uriJsonConverter.CanConvert(typeof(ParsedUrl)));
             Assert.AreEqual(
                 false,
                 uriJsonConverter.CanConvert(typeof(DateTime)));
 
             // read uri from json
-            var resultUris = new List<object>();
+            var parsedUrls = new List<object>();
             var json = @"{
     'Test1': 'http://www.test.local',
     'Test2': 'not-a-valid'
@@ -37,9 +39,9 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
                     if (reader.TokenType == JsonToken.String &&
                         reader.Value != null)
                     {
-                        resultUris.Add(uriJsonConverter.ReadJson(
+                        parsedUrls.Add(uriJsonConverter.ReadJson(
                             reader,
-                            typeof(Uri),
+                            typeof(ParsedUrl),
                             reader.Value,
                             new JsonSerializer()));
 
@@ -47,16 +49,26 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
                 }
             }
 
-            // verify result urls
-            Assert.AreEqual(2, resultUris.Count);
-            var resultUri = resultUris[0] as Uri;
-            Assert.IsNotNull(resultUri);
+            // verify parsed urls
+            Assert.AreEqual(2, parsedUrls.Count);
+            var parsedUrl1 = parsedUrls[0] as IParsedUrl;
+            Assert.IsNotNull(parsedUrl1);
             Assert.AreEqual(
-                new Uri("http://www.test.local").AbsoluteUri,
-                resultUri.AbsoluteUri);
+                "http",
+                parsedUrl1.Scheme);
             Assert.AreEqual(
+                "www.test.local",
+                parsedUrl1.Host);
+            Assert.AreEqual(
+                80,
+                parsedUrl1.Port);
+            var parsedUrl2 = parsedUrls[1] as IParsedUrl;
+            Assert.AreNotEqual(
                 null,
-                resultUris[1]);
+                parsedUrl2);
+            Assert.AreEqual(
+                false,
+                parsedUrl2.IsValid);
         }
 
         [Test]
@@ -113,6 +125,8 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
                     .ReadConfiguationFile(configurationFile);
             }
 
+            var urlFormatter = new UrlFormatter();
+
             Assert.IsNotNull(configuration);
             var redirectCsvFiles = configuration.RedirectCsvFiles.ToList();
             Assert.AreEqual(2, redirectCsvFiles.Count);
@@ -126,7 +140,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
                 redirectCsvFiles[1]);
             Assert.AreEqual(
                 "http://www.oldurl.local/",
-                configuration.DefaultUrl.AbsoluteUri);
+                urlFormatter.Format(configuration.DefaultUrl));
             Assert.AreEqual(
                 "/oldurl-exclude",
                 configuration.OldUrlExcludePatterns.FirstOrDefault());

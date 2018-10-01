@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FirstRealize.App.WebRedirects.Core.Models.Urls;
+using System;
 using System.Collections.Generic;
 
 namespace FirstRealize.App.WebRedirects.Core.Configuration
@@ -6,7 +7,7 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
     public interface IConfiguration
     {
         IEnumerable<string> RedirectCsvFiles { get; }
-        Uri DefaultUrl { get; }
+        IParsedUrl DefaultUrl { get; }
         IEnumerable<string> Processors { get; }
         IEnumerable<string> OldUrlExcludePatterns { get; }
         IEnumerable<string> NewUrlExcludePatterns { get; }

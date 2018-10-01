@@ -51,8 +51,8 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             }
 
             // old url formatted
-            var oldUrlFormatted = _urlHelper.FormatUrl(
-                processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri);
+            var oldUrlFormatted =
+                processedRedirect.ParsedRedirect.OldUrl.Formatted;
 
             switch (_configuration.DuplicateOldUrlStrategy)
             {
@@ -77,10 +77,10 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     Message =
                     string.Format(
                         "Duplicate redirect from old url '{0}'! Redirect to new url '{1}' skipped by first found redirect to new url '{2}'",
-                        processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri,
-                        processedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri,
-                        _oldUrlDuplicateOfFirstIndex[oldUrlFormatted].ParsedRedirect.NewUrl.Parsed.AbsoluteUri),
-                    Url = processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri
+                        processedRedirect.ParsedRedirect.OldUrl.Formatted,
+                        processedRedirect.ParsedRedirect.NewUrl.Formatted,
+                        _oldUrlDuplicateOfFirstIndex[oldUrlFormatted].ParsedRedirect.NewUrl.Formatted),
+                    Url = processedRedirect.ParsedRedirect.OldUrl.Formatted
                 };
                 processedRedirect.Results.Add(
                     duplicateOfFirstResult);
@@ -106,10 +106,10 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     Message =
                     string.Format(
                         "Duplicate redirect from old url '{0}'! Redirect to new url '{1}' skipped by last found redirect to new url '{2}'",
-                        processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri,
-                        _oldUrlDuplicateOfLastIndex[oldUrlFormatted].ParsedRedirect.NewUrl.Parsed.AbsoluteUri,
-                        processedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri),
-                    Url = processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri
+                        processedRedirect.ParsedRedirect.OldUrl.Formatted,
+                        _oldUrlDuplicateOfLastIndex[oldUrlFormatted].ParsedRedirect.NewUrl.Formatted,
+                        processedRedirect.ParsedRedirect.NewUrl.Formatted),
+                    Url = processedRedirect.ParsedRedirect.OldUrl.Formatted
                 };
                 _oldUrlDuplicateOfLastIndex[oldUrlFormatted].Results.Add(
                     duplicateOfLastResult);

@@ -1,6 +1,7 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Engines;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Reports;
+using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Reports;
 using NUnit.Framework;
 using System;
@@ -16,42 +17,25 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
         {
             var redirectProcessingResult = new RedirectProcessingResult
             {
-                ParsedRedirects = new[]
+                ParsedRedirects = TestData.TestData.GetParsedRedirects(
+                new[]
                 {
-                    new ParsedRedirect
+                    new Redirect
                     {
-                        OldUrl = new Url
-                        {
-                            Parsed = new Uri("http://www.test1.local/url1")
-                        },
-                        NewUrl = new Url
-                        {
-                            Parsed = new Uri("http://www.test3.local")
-                        }
+                        OldUrl = "http://www.test1.local/url1",
+                        NewUrl = "http://www.test3.local"
                     },
-                    new ParsedRedirect
+                    new Redirect
                     {
-                        OldUrl = new Url
-                        {
-                            Parsed = new Uri("http://www.test1.local/url2")
-                        },
-                        NewUrl = new Url
-                        {
-                            Parsed = new Uri("http://www.test3.local")
-                        }
+                        OldUrl = "http://www.test1.local/url2",
+                        NewUrl = "http://www.test3.local"
                     },
-                    new ParsedRedirect
+                    new Redirect
                     {
-                        OldUrl = new Url
-                        {
-                            Parsed = new Uri("http://www.test2.local/url3")
-                        },
-                        NewUrl = new Url
-                        {
-                            Parsed = new Uri("http://www.test3.local")
-                        }
+                        OldUrl = "http://www.test2.local/url3",
+                        NewUrl = "http://www.test3.local"
                     }
-                }
+                })
             };
 
             // create and build old url domain report

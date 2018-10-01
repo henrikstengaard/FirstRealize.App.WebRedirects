@@ -22,25 +22,24 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
             var oldUrlParsed = new Uri(oldUrlRaw);
             var newUrlParsed = new Uri(newUrlRaw);
 
+            var parsedRedirect = TestData.TestData.GetParsedRedirects(
+                new[]
+                {
+                    new Redirect
+                    {
+                        OldUrl = "http://www.test.local/old",
+                        NewUrl = "http://www.test.local/new"
+                    }
+                })
+                .FirstOrDefault();
+
             var redirectProcessingResult = new RedirectProcessingResult
             {
                 ProcessedRedirects = new[]
                 {
                     new ProcessedRedirect
                     {
-                        ParsedRedirect = new ParsedRedirect
-                        {
-                            OldUrl = new Url
-                            {
-                                Raw = oldUrlRaw,
-                                Parsed = oldUrlParsed
-                            },
-                            NewUrl = new Url
-                            {
-                                Raw = newUrlRaw,
-                                Parsed = newUrlParsed
-                            }
-                        },
+                        ParsedRedirect = parsedRedirect,
                         Results = new []
                         {
                             new Result
@@ -70,8 +69,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
             var configuration =
                 TestData.TestData.DefaultConfiguration;
             var urlFormatter = new UrlFormatter();
-            var urlParser = new UrlParser(
-                configuration);
+            var urlParser = new UrlParser();
             var urlHelper = new UrlHelper(
                 configuration,
                 urlParser,

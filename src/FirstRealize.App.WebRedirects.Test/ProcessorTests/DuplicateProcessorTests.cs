@@ -19,8 +19,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             var configuration = TestData.TestData.DefaultConfiguration;
             configuration.DuplicateOldUrlStrategy = DuplicateUrlStrategy.KeepFirst;
 			var urlFormatter = new UrlFormatter();
-			var urlParser = new UrlParser(
-				configuration);
+			var urlParser = new UrlParser();
 			var urlHelper = new UrlHelper(
 				configuration,
 				urlParser,
@@ -44,7 +43,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             Assert.IsNotNull(duplicateOfFirstRedirect);
             Assert.AreEqual(
                 "http://www.test.local/redirect/somwhere/else",
-                duplicateOfFirstRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri);
+                duplicateOfFirstRedirect.ParsedRedirect.NewUrl.Formatted);
 
             // verify no duplicate of last redirects are detected
             var duplicateOfLastRedirects = processedRedirects
@@ -63,8 +62,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             var configuration = TestData.TestData.DefaultConfiguration;
             configuration.DuplicateOldUrlStrategy = DuplicateUrlStrategy.KeepLast;
 			var urlFormatter = new UrlFormatter();
-			var urlParser = new UrlParser(
-				configuration);
+			var urlParser = new UrlParser();
 			var urlHelper = new UrlHelper(
 				configuration,
 				urlParser,
@@ -88,7 +86,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             Assert.IsNotNull(duplicateOfLastRedirect);
             Assert.AreEqual(
                 "http://www.test.local/another/path",
-                duplicateOfLastRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri);
+                duplicateOfLastRedirect.ParsedRedirect.NewUrl.Formatted);
 
             // verify no duplicate of first redirects are detected
             var duplicateOfFirstRedirects = processedRedirects

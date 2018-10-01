@@ -27,19 +27,19 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
 
             var excludedRedirectsMatchingOldUrl = processedRedirects
                 .Where(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.ExcludedRedirect)) &&
-                pr.ParsedRedirect.OldUrl.Parsed.AbsoluteUri.Contains("new-url"))
+                pr.ParsedRedirect.OldUrl.Formatted.Contains("new-url"))
                 .ToList();
             Assert.AreEqual(2, excludedRedirectsMatchingOldUrl.Count);
             foreach(var excludedRedirect in excludedRedirectsMatchingOldUrl)
             {
                 Assert.AreEqual(
                     "http://www.test.local/new-url",
-                    excludedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri);
+                    excludedRedirect.ParsedRedirect.OldUrl.Formatted);
             }
 
             var excludedRedirectsMatchingNewUrl = processedRedirects
                 .Where(pr => pr.Results.Any(r => r.Type.Equals(ResultTypes.ExcludedRedirect)) &&
-                pr.ParsedRedirect.NewUrl.Parsed.AbsoluteUri.Contains("/redirect/somwhere/else"))
+                pr.ParsedRedirect.NewUrl.Formatted.Contains("/redirect/somwhere/else"))
                 .ToList();
             var excludedRedirectMatchingNewUrl = excludedRedirectsMatchingNewUrl
                 .FirstOrDefault();
@@ -47,7 +47,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
             Assert.IsNotNull(excludedRedirectMatchingNewUrl);
             Assert.AreEqual(
                 "http://www.test.local/redirect/somwhere/else",
-                excludedRedirectMatchingNewUrl.ParsedRedirect.NewUrl.Parsed.AbsoluteUri);
+                excludedRedirectMatchingNewUrl.ParsedRedirect.NewUrl.Formatted);
         }
     }
 }

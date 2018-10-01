@@ -1,4 +1,5 @@
-﻿using FirstRealize.App.WebRedirects.Core.Models.Redirects;
+﻿using FirstRealize.App.WebRedirects.Core.Formatters;
+using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using NUnit.Framework;
 
@@ -14,8 +15,8 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
                 TestData.TestData.DefaultConfiguration;
             var redirectParser = new RedirectParser(
                 configuration,
-                new UrlParser(
-                    configuration));
+                new UrlParser(),
+                new UrlFormatter());
 
             var redirect = new Redirect
             {
@@ -29,11 +30,11 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
 
             Assert.IsNotNull(redirect);
             Assert.AreEqual(
-                "http://www.test.local/old-url",
-                parsedRedirect.OldUrl.Parsed.AbsoluteUri);
+                "http://www.test.local/old-url/",
+                parsedRedirect.OldUrl.Formatted);
             Assert.AreEqual(
-                "http://www.test.local/new-url#anchor",
-                parsedRedirect.NewUrl.Parsed.AbsoluteUri);
+                "http://www.test.local/new-url/#anchor",
+                parsedRedirect.NewUrl.Formatted);
         }
     }
 }

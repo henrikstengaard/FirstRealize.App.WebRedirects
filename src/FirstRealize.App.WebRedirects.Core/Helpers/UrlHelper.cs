@@ -41,7 +41,9 @@ namespace FirstRealize.App.WebRedirects.Core.Helpers
             string url1,
             string url2)
         {
-            var url1Parsed = _urlParser.Parse(url1);
+            var url1Parsed = _urlParser.Parse(
+                url1,
+                _configuration.DefaultUrl);
 
             if (!url1Parsed.IsValid)
             {
@@ -51,7 +53,9 @@ namespace FirstRealize.App.WebRedirects.Core.Helpers
                         url1));
             }
 
-            var url2Parsed = _urlParser.Parse(url2);
+            var url2Parsed = _urlParser.Parse(
+                url2,
+                _configuration.DefaultUrl);
 
             if (!url2Parsed.IsValid)
             {

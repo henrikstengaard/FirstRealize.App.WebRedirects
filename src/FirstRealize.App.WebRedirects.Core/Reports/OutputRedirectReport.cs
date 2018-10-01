@@ -44,11 +44,11 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
 
                 var newUrl = urlResponseResult != null && !string.IsNullOrWhiteSpace(urlResponseResult.Url)
                     ? urlResponseResult.Url
-                    : processedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri;
+                    : processedRedirect.ParsedRedirect.NewUrl.Formatted;
 
                 var record = new OutputRedirectRecord
                 {
-                    OldUrl = processedRedirect.ParsedRedirect.OldUrl.Parsed.AbsoluteUri,
+                    OldUrl = processedRedirect.ParsedRedirect.OldUrl.Formatted,
                     NewUrl = newUrl
                 };
 
@@ -59,7 +59,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                         record.OldUrlOriginal =
                             FormatRawUrl(processedRedirect.ParsedRedirect.OldUrl);
                         record.OldUrlHasHost =
-                            processedRedirect.ParsedRedirect.OldUrl.HasHost;
+                            processedRedirect.ParsedRedirect.OldUrl.Parsed.OriginalUrlHasHost;
                         record.OldUrlParsed =
                             FormatParsedUrl(processedRedirect.ParsedRedirect.OldUrl);
                     }
@@ -69,7 +69,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                         record.NewUrlOriginal =
                             FormatRawUrl(processedRedirect.ParsedRedirect.NewUrl);
                         record.NewUrlHasHost =
-                            processedRedirect.ParsedRedirect.NewUrl.HasHost;
+                            processedRedirect.ParsedRedirect.NewUrl.Parsed.OriginalUrlHasHost;
                         record.NewUrlParsed =
                             FormatParsedUrl(processedRedirect.ParsedRedirect.NewUrl);
                     }
@@ -89,7 +89,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
         private string FormatParsedUrl(IUrl url)
         {
             return url != null && url.Parsed != null
-                ? url.Parsed.AbsoluteUri
+                ? url.Formatted
                 : string.Empty;
         }
 

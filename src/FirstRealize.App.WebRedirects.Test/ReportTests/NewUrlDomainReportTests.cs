@@ -16,42 +16,25 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
         {
             var redirectProcessingResult = new RedirectProcessingResult
             {
-                ParsedRedirects = new[]
+                ParsedRedirects = TestData.TestData.GetParsedRedirects(
+                new[]
                 {
-                    new ParsedRedirect
+                    new Redirect
                     {
-                        OldUrl = new Url
-                        {
-                            Parsed = new Uri("http://www.test1.local/url1")
-                        },
-                        NewUrl = new Url
-                        {
-                            Parsed = new Uri("http://www.test3.local/url8")
-                        }
+                        OldUrl = "http://www.test1.local/url1",
+                        NewUrl = "http://www.test3.local/url8"
                     },
-                    new ParsedRedirect
+                    new Redirect
                     {
-                        OldUrl = new Url
-                        {
-                            Parsed = new Uri("http://www.test1.local/url2")
-                        },
-                        NewUrl = new Url
-                        {
-                            Parsed = new Uri("http://www.test2.local/url5")
-                        }
+                        OldUrl = "http://www.test1.local/url2",
+                        NewUrl = "http://www.test2.local/url5"
                     },
-                    new ParsedRedirect
+                    new Redirect
                     {
-                        OldUrl = new Url
-                        {
-                            Parsed = new Uri("http://www.test2.local/url3")
-                        },
-                        NewUrl = new Url
-                        {
-                            Parsed = new Uri("http://www.test2.local/url9")
-                        }
+                        OldUrl = "http://www.test2.local/url3",
+                        NewUrl = "http://www.test2.local/url9"
                     }
-                }
+                })
             };
 
             // create and build new url domain report

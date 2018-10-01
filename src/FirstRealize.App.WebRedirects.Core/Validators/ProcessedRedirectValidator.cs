@@ -72,7 +72,7 @@ namespace FirstRealize.App.WebRedirects.Core.Validators
                 return includeNotMatchingNewUrl
                     ? urlResponseResult.StatusCode == 200
                     : _urlHelper.AreIdentical(
-                    processedRedirect.ParsedRedirect.NewUrl.Parsed.AbsoluteUri,
+                    processedRedirect.ParsedRedirect.NewUrl.Formatted,
                     urlResponseResult.Url) &&
                     urlResponseResult.StatusCode == 200;
             }

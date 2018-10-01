@@ -1,14 +1,27 @@
-﻿using Newtonsoft.Json;
+﻿using FirstRealize.App.WebRedirects.Core.Formatters;
+using FirstRealize.App.WebRedirects.Core.Models.Urls;
+using FirstRealize.App.WebRedirects.Core.Parsers;
+using Newtonsoft.Json;
 using System;
 
 namespace FirstRealize.App.WebRedirects.Core.Configuration
 {
     public class UriJsonConverter : JsonConverter
     {
+        private readonly IUrlParser _urlParser;
+        private readonly IUrlFormatter _urlFormatter;
+
+        public UriJsonConverter()
+        {
+            _urlParser = new UrlParser();
+            _urlFormatter = new UrlFormatter();
+        }
+
         public override bool CanConvert(
             Type objectType)
         {
-            return (objectType == typeof(Uri));
+
+            return (objectType != null && typeof(IParsedUrl).IsAssignableFrom(objectType));
         }
 
         public override object ReadJson(
@@ -17,13 +30,12 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
             object existingValue,
             JsonSerializer serializer)
         {
-            Uri uri;
-            if (!Uri.TryCreate(reader.Value != null ? reader.Value.ToString() : string.Empty, UriKind.Absolute, out uri))
+            if (reader.Value == null)
             {
                 return null;
             }
 
-            return uri;
+            return _urlParser.Parse(reader.Value.ToString());
         }
 
         public override void WriteJson(
@@ -31,8 +43,8 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
             object value,
             JsonSerializer serializer)
         {
-            Uri uri = (Uri)value;
-            writer.WriteValue(uri.AbsoluteUri);
+            IParsedUrl parsedUrl = (IParsedUrl)value;
+            writer.WriteValue(_urlFormatter.Format(parsedUrl));
         }
     }
 }

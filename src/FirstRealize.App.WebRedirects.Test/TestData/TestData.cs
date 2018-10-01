@@ -1,5 +1,7 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Formatters;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
+using FirstRealize.App.WebRedirects.Core.Models.Urls;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Processors;
 using System;
@@ -23,8 +25,13 @@ namespace FirstRealize.App.WebRedirects.Test.TestData
             }
         }
 
-        public static Uri DefaultHost =
-            new Uri("http://www.test.local");
+        public static ParsedUrl DefaultHost =
+            new ParsedUrl
+            {
+                Scheme = "http",
+                Host = "www.test.local",
+                Port = 80
+            };
 
         public static Configuration DefaultConfiguration =
             new Configuration
@@ -75,14 +82,31 @@ namespace FirstRealize.App.WebRedirects.Test.TestData
         public static IEnumerable<IParsedRedirect> GetParsedRedirects(
             IConfiguration configuration)
         {
+            return GetParsedRedirects(
+                configuration,
+                GetRedirects());
+        }
+
+        public static IEnumerable<IParsedRedirect> GetParsedRedirects(
+            IEnumerable<IRedirect> redirects)
+        {
+            return GetParsedRedirects(
+                DefaultConfiguration,
+                redirects);
+        }
+
+        public static IEnumerable<IParsedRedirect> GetParsedRedirects(
+            IConfiguration configuration,
+            IEnumerable<IRedirect> redirects)
+        {
             var redirectParser = new RedirectParser(
                 configuration,
-                new UrlParser(
-                    configuration));
+                new UrlParser(),
+                new UrlFormatter());
 
             var parsedRedirects = new List<IParsedRedirect>();
 
-            foreach (var redirect in GetRedirects())
+            foreach (var redirect in redirects.ToList())
             {
                 parsedRedirects.Add(
                     redirectParser.ParseRedirect(

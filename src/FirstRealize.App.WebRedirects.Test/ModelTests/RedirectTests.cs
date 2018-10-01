@@ -19,31 +19,31 @@ namespace FirstRealize.App.WebRedirects.Test.ModelTests
 
             Assert.AreEqual(
                 "http://www.test.local/another/path",
-                parsedRedirects[0].OldUrl.Parsed.AbsoluteUri);
+                parsedRedirects[0].OldUrl.Formatted);
             Assert.AreEqual(
                 "http://www.test.local/example/path",
-                parsedRedirects[0].NewUrl.Parsed.AbsoluteUri);
+                parsedRedirects[0].NewUrl.Formatted);
 
             Assert.AreEqual(
                 "http://www.test.local/example/path",
-                parsedRedirects[1].OldUrl.Parsed.AbsoluteUri);
+                parsedRedirects[1].OldUrl.Formatted);
             Assert.AreEqual(
                 "http://www.test.local/new-url",
-                parsedRedirects[1].NewUrl.Parsed.AbsoluteUri);
+                parsedRedirects[1].NewUrl.Formatted);
 
             Assert.AreEqual(
                 "http://www.test.local/new-url",
-                parsedRedirects[2].OldUrl.Parsed.AbsoluteUri);
+                parsedRedirects[2].OldUrl.Formatted);
             Assert.AreEqual(
                 "http://www.test.local/another/path",
-                parsedRedirects[2].NewUrl.Parsed.AbsoluteUri);
+                parsedRedirects[2].NewUrl.Formatted);
 
             Assert.AreEqual(
                 "http://www.test.local/new-url",
-                parsedRedirects[3].OldUrl.Parsed.AbsoluteUri);
+                parsedRedirects[3].OldUrl.Formatted);
             Assert.AreEqual(
                 "http://www.test.local/redirect/somwhere/else",
-                parsedRedirects[3].NewUrl.Parsed.AbsoluteUri);
+                parsedRedirects[3].NewUrl.Formatted);
         }
     }
 }

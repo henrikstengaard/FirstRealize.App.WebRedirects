@@ -50,8 +50,7 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
 
             // create redirect engine
 			var urlFormatter = new UrlFormatter();
-            var urlParser = new UrlParser(
-                configuration);
+            var urlParser = new UrlParser();
             return new RedirectEngine(
                 configuration,
                 new UrlHelper(
@@ -61,7 +60,8 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
                 urlParser,
                 new RedirectParser(
                     configuration,
-                    urlParser),
+                    urlParser,
+                    urlFormatter),
                 httpClient);
         }
 

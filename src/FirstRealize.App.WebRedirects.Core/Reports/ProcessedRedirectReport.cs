@@ -27,7 +27,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
         private string FormatParsedUrl(IUrl url)
         {
             return url != null && url.Parsed != null
-                ? url.Parsed.AbsoluteUri
+                ? url.Formatted
                 : string.Empty;
         }
 
@@ -50,7 +50,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                         processedRedirectRecord.OldUrlRaw =
                             FormatRawUrl(processedRedirect.ParsedRedirect.OldUrl);
                         processedRedirectRecord.OldUrlHasHost =
-                            processedRedirect.ParsedRedirect.OldUrl.HasHost;
+                            processedRedirect.ParsedRedirect.OldUrl.Parsed.OriginalUrlHasHost;
                         processedRedirectRecord.OldUrlParsed =
                             FormatParsedUrl(processedRedirect.ParsedRedirect.OldUrl);
                     }
@@ -60,7 +60,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                         processedRedirectRecord.NewUrlRaw =
                             FormatRawUrl(processedRedirect.ParsedRedirect.NewUrl);
                         processedRedirectRecord.NewUrlHasHost =
-                            processedRedirect.ParsedRedirect.NewUrl.HasHost;
+                            processedRedirect.ParsedRedirect.NewUrl.Parsed.OriginalUrlHasHost;
                         processedRedirectRecord.NewUrlParsed =
                             FormatParsedUrl(processedRedirect.ParsedRedirect.NewUrl);
                     }

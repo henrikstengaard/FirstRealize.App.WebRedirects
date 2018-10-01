@@ -15,8 +15,7 @@ namespace FirstRealize.App.WebRedirects.Test.ExportTests
         public void BuildWebConfig()
         {
             var configuration = TestData.TestData.DefaultConfiguration;
-            var urlParser = new UrlParser(
-                configuration);
+            var urlParser = new UrlParser();
             var webConfigExporter = new WebConfigExporter(
                 configuration,
                 urlParser,

@@ -1,4 +1,5 @@
-﻿using FirstRealize.App.WebRedirects.Core.Parsers;
+﻿using FirstRealize.App.WebRedirects.Core.Models.Urls;
+using FirstRealize.App.WebRedirects.Core.Parsers;
 using NUnit.Framework;
 using System;
 
@@ -11,110 +12,69 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
 
         public UrlParserTests()
         {
-            _urlParser = new UrlParser(
-                TestData.TestData.DefaultConfiguration);
+            _urlParser = new UrlParser();
         }
 
         [Test]
         public void ParseUrlWithAbsoluteUri()
         {
             var rawUrl = "http://www.example.local";
-            var url = _urlParser.ParseUrl(
-                rawUrl);
+            var url = _urlParser.Parse(rawUrl);
 
             Assert.IsNotNull(url);
             Assert.AreEqual(
                 "http",
-                url.Parsed.Scheme);
+                url.Scheme);
             Assert.AreEqual(
                 "www.example.local",
-                url.Parsed.DnsSafeHost);
+                url.Host);
         }
 
         [Test]
         public void ParseUrlWithOnlyPathUsingHost()
         {
             var rawUrl = "/a/path";
-            var url = _urlParser.ParseUrl(
-                rawUrl,
-                new Uri("http://www.defaulthost.local"));
+            var url = _urlParser.Parse(rawUrl,
+                new ParsedUrl
+                {
+                    Scheme = "http",
+                    Host = "www.defaulthost.local",
+                    Port = 80
+                });
 
             Assert.IsNotNull(url);
             Assert.AreEqual(
                 "http",
-                url.Parsed.Scheme);
+                url.Scheme);
             Assert.AreEqual(
                 "www.defaulthost.local",
-                url.Parsed.DnsSafeHost);
+                url.Host);
             Assert.AreEqual(
                 "/a/path",
-                url.Parsed.AbsolutePath);
-        }
-
-        [Test]
-        public void ParseUrlReturnsNullForUrlWithoutSchemeOrSlash()
-        {
-            var rawUrl = "example.local/another/path";
-            var url = _urlParser.ParseUrl(
-                rawUrl);
-
-            Assert.IsNotNull(url);
-            Assert.IsNull(url.Parsed);
-            Assert.AreEqual(
-                "example.local/another/path",
-                url.Raw);
-        }
-
-        [Test]
-        public void ParseUrlRemovesTailingSlash()
-        {
-            var rawUrl = "/another/path/";
-            var url = _urlParser.ParseUrl(
-                rawUrl,
-                TestData.TestData.DefaultHost);
-
-            Assert.AreEqual(
-                "http://www.test.local/another/path",
-                url.Parsed.AbsoluteUri);
-        }
-
-        [Test]
-        public void ParseUrlRemovesFragment()
-        {
-            var rawUrl = "/another/path/#anchor";
-            var url = _urlParser.ParseUrl(
-                rawUrl,
-                TestData.TestData.DefaultHost,
-                true);
-
-            Assert.AreEqual(
-                "http://www.test.local/another/path",
-                url.Parsed.AbsoluteUri);
+                url.Path);
         }
 
         [Test]
         public void ParseUrlWithOnlyPathDoesntHaveHost()
         {
             var rawUrl = "/another/path/";
-            var url = _urlParser.ParseUrl(
-                rawUrl,
+            var url = _urlParser.Parse(rawUrl,
                 TestData.TestData.DefaultHost);
 
             Assert.AreEqual(
                 false,
-                url.HasHost);
+                url.OriginalUrlHasHost);
         }
 
         [Test]
         public void ParseUrlWithAbsoluteUriHasHost()
         {
             var rawUrl = "http://example.local/another/path/";
-            var url = _urlParser.ParseUrl(
-                rawUrl);
+            var url = _urlParser.Parse(rawUrl);
 
             Assert.AreEqual(
                 true,
-                url.HasHost);
+                url.OriginalUrlHasHost);
         }
 
         [Test]
@@ -143,6 +103,12 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
             Assert.AreEqual(
                 "parameter=value",
                 url.Query);
+            Assert.AreEqual(
+                rawUrl,
+                url.OriginalUrl);
+            Assert.AreEqual(
+                true,
+                url.OriginalUrlHasHost);
         }
 
         [Test]
@@ -150,7 +116,8 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
         {
             var rawUrl = "/path?parameter=value";
             var url = _urlParser.Parse(
-                rawUrl);
+                rawUrl,
+                TestData.TestData.DefaultHost);
 
             Assert.IsNotNull(url);
             Assert.AreEqual(
@@ -162,6 +129,12 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
             Assert.AreEqual(
                 "parameter=value",
                 url.Query);
+            Assert.AreEqual(
+                rawUrl,
+                url.OriginalUrl);
+            Assert.AreEqual(
+                false,
+                url.OriginalUrlHasHost);
         }
 
         [Test]
@@ -170,6 +143,7 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
             var rawUrl = "/path#fragment";
             var url = _urlParser.Parse(
                 rawUrl,
+                TestData.TestData.DefaultHost,
                 stripFragment: true);
 
             Assert.IsNotNull(url);
@@ -182,6 +156,12 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
             Assert.AreEqual(
                 string.Empty,
                 url.Query);
+            Assert.AreEqual(
+                rawUrl,
+                url.OriginalUrl);
+            Assert.AreEqual(
+                false,
+                url.OriginalUrlHasHost);
         }
 
         [Test]
@@ -192,17 +172,25 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
         }
 
         [Test]
-        public void ParseInvalidPortThrowsException()
+        public void ParseInvalidPort()
         {
-            Assert.Throws<UriFormatException>(
-                () => _urlParser.Parse("http://www.test.local:invalid"));
+            var parsedUrl = _urlParser.Parse("http://www.test.local:invalid");
+
+            Assert.IsNotNull(parsedUrl);
+            Assert.AreEqual(
+                false,
+                parsedUrl.IsValid);
         }
 
         [Test]
-        public void ParseInvalidUrlThrowsException()
+        public void ParseInvalidUrl()
         {
-            Assert.Throws<UriFormatException>(
-                () => _urlParser.Parse("www.test.local/invalid"));
+            var parsedUrl = _urlParser.Parse("www.test.local/invalid");
+
+            Assert.IsNotNull(parsedUrl);
+            Assert.AreEqual(
+                false,
+                parsedUrl.IsValid);
         }
     }
 }

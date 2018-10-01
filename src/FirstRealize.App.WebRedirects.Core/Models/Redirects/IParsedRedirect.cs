@@ -1,6 +1,8 @@
-﻿namespace FirstRealize.App.WebRedirects.Core.Models.Redirects
+﻿using System;
+
+namespace FirstRealize.App.WebRedirects.Core.Models.Redirects
 {
-    public interface IParsedRedirect
+    public interface IParsedRedirect : IComparable
     {
         IUrl OldUrl { get; }
         IUrl NewUrl { get; }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FirstRealize.App.WebRedirects.Core.Models.Urls;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -8,7 +9,7 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
     {
         public IEnumerable<string> RedirectCsvFiles { get; set; }
         [JsonConverter(typeof(UriJsonConverter))]
-        public Uri DefaultUrl { get; set; }
+        public IParsedUrl DefaultUrl { get; set; }
         public IEnumerable<string> Processors { get; set; }
         public IEnumerable<string> OldUrlExcludePatterns { get; set; }
         public IEnumerable<string> NewUrlExcludePatterns { get; set; }
