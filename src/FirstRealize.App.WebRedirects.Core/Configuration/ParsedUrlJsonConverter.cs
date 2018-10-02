@@ -6,12 +6,12 @@ using System;
 
 namespace FirstRealize.App.WebRedirects.Core.Configuration
 {
-    public class UriJsonConverter : JsonConverter
+    public class ParsedUrlJsonConverter : JsonConverter
     {
         private readonly IUrlParser _urlParser;
         private readonly IUrlFormatter _urlFormatter;
 
-        public UriJsonConverter()
+        public ParsedUrlJsonConverter()
         {
             _urlParser = new UrlParser();
             _urlFormatter = new UrlFormatter();
@@ -20,8 +20,8 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
         public override bool CanConvert(
             Type objectType)
         {
-
-            return (objectType != null && typeof(IParsedUrl).IsAssignableFrom(objectType));
+            return (objectType != null &&
+                typeof(IParsedUrl).IsAssignableFrom(objectType));
         }
 
         public override object ReadJson(

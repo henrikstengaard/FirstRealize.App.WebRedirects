@@ -112,7 +112,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Readers\ConfigurationJsonReader.cs" />
     <Compile Include="Readers\RedirectCsvReader.cs" />
-    <Compile Include="Configuration\UriJsonConverter.cs" />
+    <Compile Include="Configuration\ParsedUrlJsonConverter.cs" />
     <Compile Include="Reports\OutputRedirectReport.cs" />
     <Compile Include="Reports\IReport.cs" />
     <Compile Include="Reports\NewUrlDomainReport.cs" />
