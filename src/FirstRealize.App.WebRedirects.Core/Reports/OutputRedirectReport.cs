@@ -14,7 +14,6 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
         private readonly bool _includeNotMatchingNewUrl;
         private readonly IList<OutputRedirectRecord> _records;
 
-
         public OutputRedirectReport(
             IProcessedRedirectValidator processedRedirectValidator,
             bool includeNotMatchingNewUrl)
@@ -56,21 +55,21 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                 {
                     if (processedRedirect.ParsedRedirect.OldUrl != null)
                     {
-                        record.OldUrlOriginal =
+                        record.OriginalOldUrl =
                             FormatRawUrl(processedRedirect.ParsedRedirect.OldUrl);
-                        record.OldUrlHasHost =
+                        record.OriginalOldUrlHasHost =
                             processedRedirect.ParsedRedirect.OldUrl.Parsed.OriginalUrlHasHost;
-                        record.OldUrlParsed =
+                        record.ParsedOldUrl =
                             FormatParsedUrl(processedRedirect.ParsedRedirect.OldUrl);
                     }
 
                     if (processedRedirect.ParsedRedirect.NewUrl != null)
                     {
-                        record.NewUrlOriginal =
+                        record.OriginalNewUrl =
                             FormatRawUrl(processedRedirect.ParsedRedirect.NewUrl);
-                        record.NewUrlHasHost =
+                        record.OriginalNewUrlHasHost =
                             processedRedirect.ParsedRedirect.NewUrl.Parsed.OriginalUrlHasHost;
-                        record.NewUrlParsed =
+                        record.ParsedNewUrl =
                             FormatParsedUrl(processedRedirect.ParsedRedirect.NewUrl);
                     }
                 }
