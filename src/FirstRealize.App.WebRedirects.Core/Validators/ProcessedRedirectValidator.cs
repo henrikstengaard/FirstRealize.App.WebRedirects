@@ -64,7 +64,11 @@ namespace FirstRealize.App.WebRedirects.Core.Validators
                 .Results
                 .OfType<UrlResponseResult>()
                 .FirstOrDefault(r => r.Type.Equals(ResultTypes.UrlResponse));
-                if (urlResponseResult == null)
+
+                // return false, if url response result is null or result status code is 200 and old url and result url are identical
+                if (urlResponseResult == null ||
+                    (urlResponseResult.StatusCode == 200 &&
+                    _urlHelper.AreIdentical(processedRedirect.ParsedRedirect.OldUrl.Formatted, urlResponseResult.Url)))
                 {
                     return false;
                 }
