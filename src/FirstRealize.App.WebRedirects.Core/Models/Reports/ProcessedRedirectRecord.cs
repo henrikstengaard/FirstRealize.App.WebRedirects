@@ -2,12 +2,12 @@
 {
     public class ProcessedRedirectRecord
     {
-        public string OldUrlRaw { get; set; }
-        public bool OldUrlHasHost { get; set; }
-        public string NewUrlRaw { get; set; }
-        public bool NewUrlHasHost { get; set; }
-        public string OldUrlParsed { get; set; }
-        public string NewUrlParsed { get; set; }
+        public string OriginalOldUrl { get; set; }
+        public bool OriginalOldUrlHasHost { get; set; }
+        public string OriginalNewUrl { get; set; }
+        public bool OriginalNewUrlHasHost { get; set; }
+        public string ParsedOldUrl { get; set; }
+        public string ParsedNewUrl { get; set; }
 
         public int ResultCount { get; set; }
         public string ResultTypes { get; set; }

@@ -71,16 +71,16 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
             Assert.AreEqual(1, records.Count);
             Assert.AreEqual(
                 oldUrlRaw,
-                records[0].OldUrlRaw);
+                records[0].OriginalOldUrl);
             Assert.AreEqual(
                 newUrlRaw,
-                records[0].NewUrlRaw);
+                records[0].OriginalNewUrl);
             Assert.AreEqual(
                 oldUrlRaw,
-                records[0].OldUrlParsed);
+                records[0].ParsedOldUrl);
             Assert.AreEqual(
                 newUrlRaw,
-                records[0].NewUrlParsed);
+                records[0].ParsedNewUrl);
 
             Assert.AreEqual(
                 3,

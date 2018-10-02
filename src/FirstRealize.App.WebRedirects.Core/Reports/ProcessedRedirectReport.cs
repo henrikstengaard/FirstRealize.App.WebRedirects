@@ -47,21 +47,21 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                 {
                     if (processedRedirect.ParsedRedirect.OldUrl != null)
                     {
-                        processedRedirectRecord.OldUrlRaw =
+                        processedRedirectRecord.OriginalOldUrl =
                             FormatRawUrl(processedRedirect.ParsedRedirect.OldUrl);
-                        processedRedirectRecord.OldUrlHasHost =
+                        processedRedirectRecord.OriginalOldUrlHasHost =
                             processedRedirect.ParsedRedirect.OldUrl.Parsed.OriginalUrlHasHost;
-                        processedRedirectRecord.OldUrlParsed =
+                        processedRedirectRecord.ParsedOldUrl =
                             FormatParsedUrl(processedRedirect.ParsedRedirect.OldUrl);
                     }
 
                     if (processedRedirect.ParsedRedirect.NewUrl != null)
                     {
-                        processedRedirectRecord.NewUrlRaw =
+                        processedRedirectRecord.OriginalNewUrl =
                             FormatRawUrl(processedRedirect.ParsedRedirect.NewUrl);
-                        processedRedirectRecord.NewUrlHasHost =
+                        processedRedirectRecord.OriginalNewUrlHasHost =
                             processedRedirect.ParsedRedirect.NewUrl.Parsed.OriginalUrlHasHost;
-                        processedRedirectRecord.NewUrlParsed =
+                        processedRedirectRecord.ParsedNewUrl =
                             FormatParsedUrl(processedRedirect.ParsedRedirect.NewUrl);
                     }
                 }
