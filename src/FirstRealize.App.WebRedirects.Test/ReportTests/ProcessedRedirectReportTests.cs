@@ -1,7 +1,12 @@
-﻿using FirstRealize.App.WebRedirects.Core.Engines;
+﻿using FirstRealize.App.WebRedirects.Core.Builders;
+using FirstRealize.App.WebRedirects.Core.Engines;
+using FirstRealize.App.WebRedirects.Core.Formatters;
+using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
+using FirstRealize.App.WebRedirects.Core.Parsers;
 using FirstRealize.App.WebRedirects.Core.Reports;
+using FirstRealize.App.WebRedirects.Core.Validators;
 using NUnit.Framework;
 using System;
 using System.Linq;
@@ -17,7 +22,9 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
             var oldUrlRaw = "http://www.test.local/old";
             var newUrlRaw = "http://www.test.local/new";
 
+            var configuration = TestData.TestData.DefaultConfiguration;
             var parsedRedirect = TestData.TestData.GetParsedRedirects(
+                configuration,
                 new[]
                 {
                     new Redirect
@@ -61,7 +68,18 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
             };
 
             // create and build processed redirect report
-            var processedRedirectReport = new ProcessedRedirectReport();
+            var urlHelper = new UrlHelper(
+                configuration,
+                new UrlParser(),
+                new UrlFormatter());
+            var processedRedirectValidator =
+                new ProcessedRedirectValidator(
+                    configuration,
+                    urlHelper);
+            var outputRedirectBuilder = new OutputRedirectBuilder
+                (processedRedirectValidator);
+            var processedRedirectReport = new ProcessedRedirectReport(
+                outputRedirectBuilder);
             processedRedirectReport.Build(redirectProcessingResult);
 
             // verify processed redirect records are build

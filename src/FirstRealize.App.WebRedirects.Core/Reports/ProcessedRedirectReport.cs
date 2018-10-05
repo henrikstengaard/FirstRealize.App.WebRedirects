@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using FirstRealize.App.WebRedirects.Core.Builders;
 using FirstRealize.App.WebRedirects.Core.Engines;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Reports;
@@ -9,10 +10,13 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
 {
     public class ProcessedRedirectReport : ReportBase<ProcessedRedirectRecord>
     {
+        private readonly IOutputRedirectBuilder _outputRedirectBuilder;
         private readonly IList<ProcessedRedirectRecord> _processedRedirectRecords;
 
-        public ProcessedRedirectReport()
+        public ProcessedRedirectReport(
+            IOutputRedirectBuilder outputRedirectBuilder)
         {
+            _outputRedirectBuilder = outputRedirectBuilder;
             _processedRedirectRecords =
                 new List<ProcessedRedirectRecord>();
         }
@@ -130,6 +134,23 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                 _processedRedirectRecords.Add(
                     processedRedirectRecord);
             }
+        }
+
+        private void AddOutputRedirectUrls(
+            IProcessedRedirect processedRedirect,
+            ProcessedRedirectRecord processedRedirectRecord)
+        {
+            var outputRedirect = _outputRedirectBuilder.Build(
+                processedRedirect);
+
+            processedRedirectRecord.OutputRedirectOldUrl = 
+                outputRedirect.OldUrl;
+            processedRedirectRecord.OutputRedirectNewUrl = 
+                outputRedirect.NewUrl;
+            processedRedirectRecord.OutputRedirectValidMatchingOriginalNewUrl = 
+                outputRedirect.ValidMatchingOriginalNewUrl;
+            processedRedirectRecord.OutputRedirectValidNotMatchingOriginalNewUrl =
+                outputRedirect.ValidNotMatchingOriginalNewUrl;
         }
 
         private void AddInvalidRedirect(

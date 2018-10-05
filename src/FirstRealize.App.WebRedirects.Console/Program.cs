@@ -1,4 +1,5 @@
-﻿using FirstRealize.App.WebRedirects.Core.Clients;
+﻿using FirstRealize.App.WebRedirects.Core.Builders;
+using FirstRealize.App.WebRedirects.Core.Clients;
 using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Engines;
 using FirstRealize.App.WebRedirects.Core.Exporters;
@@ -308,8 +309,11 @@ namespace FirstRealize.App.WebRedirects.Console
                     "Building and writing processed redirects report file '{0}'",
                     processedRedirectReportCsvFile));
 
+            var outputRedirectBuilder = new OutputRedirectBuilder(
+                processedRedirectValidator);
             var processedRedirectReport =
-                new ProcessedRedirectReport();
+                new ProcessedRedirectReport(
+                    outputRedirectBuilder);
             processedRedirectReport.Build(
                 redirectProcessingResult);
             processedRedirectReport.WriteReportCsvFile(
@@ -333,7 +337,7 @@ namespace FirstRealize.App.WebRedirects.Console
 
             var outputRedirectReport =
                 new OutputRedirectReport(
-                    processedRedirectValidator,
+                    outputRedirectBuilder,
                     false);
             outputRedirectReport.Build(
                 redirectProcessingResult);
@@ -358,7 +362,7 @@ namespace FirstRealize.App.WebRedirects.Console
 
             var outputRedirectIncludingNotMatchingNewUrlReport =
                 new OutputRedirectReport(
-                    processedRedirectValidator,
+                    outputRedirectBuilder,
                     true);
             outputRedirectIncludingNotMatchingNewUrlReport.Build(
                 redirectProcessingResult);

@@ -54,6 +54,7 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Builders\OutputRedirectBuilderTests.cs" />
     <Compile Include="ClientTests\HttpClientTests.cs" />
     <Compile Include="EngineTests\CauseErrorProcessor.cs" />
     <Compile Include="EngineTests\RedirectEngineTests.cs" />

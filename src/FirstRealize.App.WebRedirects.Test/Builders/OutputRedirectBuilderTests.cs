@@ -5,19 +5,18 @@ using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
 using FirstRealize.App.WebRedirects.Core.Parsers;
-using FirstRealize.App.WebRedirects.Core.Reports;
 using FirstRealize.App.WebRedirects.Core.Validators;
 using NUnit.Framework;
 using System.Linq;
 
-namespace FirstRealize.App.WebRedirects.Test.ReportTests
+namespace FirstRealize.App.WebRedirects.Test.Builders
 {
     [TestFixture]
-    public class OutputRedirectReportTests
+    public class OutputRedirectBuilderTests
     {
         private readonly IRedirectProcessingResult _redirectProcessingResult;
 
-        public OutputRedirectReportTests()
+        public OutputRedirectBuilderTests()
         {
             var redirectParser = new RedirectParser(
                 TestData.TestData.DefaultConfiguration,
@@ -127,7 +126,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
         }
 
         [Test]
-        public void BuildFilteredRedirectReport()
+        public void BuildOutputRedirects()
         {
             // create and build filtered redirect report
             var configuration =
@@ -143,28 +142,26 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
                     urlHelper);
             var outputRedirectBuilder = new OutputRedirectBuilder
                 (processedRedirectValidator);
-            var outputRedirectReport = new OutputRedirectReport(
-                outputRedirectBuilder,
-                true);
-            outputRedirectReport.Build(_redirectProcessingResult);
 
-            // verify filtered redirect records are build
-            var records = outputRedirectReport
-                .GetRecords()
+            var validOutputRedirects = _redirectProcessingResult.ProcessedRedirects
+                .Select(x => outputRedirectBuilder.Build(x))
+                .Where(x => x.ValidMatchingOriginalNewUrl || x.ValidNotMatchingOriginalNewUrl)
                 .ToList();
-            Assert.AreEqual(2, records.Count);
+
+            // verify valid output redirects
+            Assert.AreEqual(2, validOutputRedirects.Count);
             Assert.AreEqual(
                 "http://www.test2.local/url3",
-                records[0].OldUrl);
+                validOutputRedirects[0].OldUrl);
             Assert.AreEqual(
                 "http://www.test2.local/url9",
-                records[0].NewUrl);
+                validOutputRedirects[0].NewUrl);
             Assert.AreEqual(
                 "http://www.test2.local/url4",
-                records[1].OldUrl);
+                validOutputRedirects[1].OldUrl);
             Assert.AreEqual(
                 "http://www.test2.local/url10",
-                records[1].NewUrl);
+                validOutputRedirects[1].NewUrl);
         }
     }
 }

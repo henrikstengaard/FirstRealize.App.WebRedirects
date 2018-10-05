@@ -49,6 +49,8 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Builders\IOutputRedirectBuilder.cs" />
+    <Compile Include="Builders\OutputRedirectBuilder.cs" />
     <Compile Include="Clients\HttpClient.cs" />
     <Compile Include="Clients\HttpException.cs" />
     <Compile Include="Clients\HttpResponse.cs" />
@@ -70,6 +72,7 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Formatters\IUrlFormatter.cs" />
     <Compile Include="Formatters\UrlFormatter.cs" />
+    <Compile Include="Models\Redirects\OutputRedirect.cs" />
     <Compile Include="Models\Urls\IParsedUrl.cs" />
     <Compile Include="Models\Urls\ParsedUrl.cs" />
     <Compile Include="Validators\IProcessedRedirectValidator.cs" />

@@ -1,24 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using FirstRealize.App.WebRedirects.Core.Builders;
 using FirstRealize.App.WebRedirects.Core.Engines;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Reports;
-using FirstRealize.App.WebRedirects.Core.Models.Results;
-using FirstRealize.App.WebRedirects.Core.Validators;
 
 namespace FirstRealize.App.WebRedirects.Core.Reports
 {
     public class OutputRedirectReport : ReportBase<OutputRedirectRecord>
     {
-        private readonly IProcessedRedirectValidator _processedRedirectValidator;
+        private readonly IOutputRedirectBuilder _outputRedirectBuilder;
         private readonly bool _includeNotMatchingNewUrl;
         private readonly IList<OutputRedirectRecord> _records;
 
         public OutputRedirectReport(
-            IProcessedRedirectValidator processedRedirectValidator,
+            IOutputRedirectBuilder outputRedirectBuilder,
             bool includeNotMatchingNewUrl)
         {
-            _processedRedirectValidator = processedRedirectValidator;
+            _outputRedirectBuilder = outputRedirectBuilder;
             _includeNotMatchingNewUrl = includeNotMatchingNewUrl;
             _records =
                 new List<OutputRedirectRecord>();
@@ -29,26 +28,21 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
         {
             foreach (var processedRedirect in redirectProcessingResult.ProcessedRedirects.ToList())
             {
-                if (!_processedRedirectValidator.IsValid(
-                    processedRedirect,
-                    _includeNotMatchingNewUrl))
+                var outputRedirect = _outputRedirectBuilder
+                    .Build(processedRedirect);
+
+                if ((!outputRedirect.ValidMatchingOriginalNewUrl &&
+                    !outputRedirect.ValidNotMatchingOriginalNewUrl) ||
+                    (outputRedirect.ValidNotMatchingOriginalNewUrl && 
+                    !_includeNotMatchingNewUrl))
                 {
                     continue;
                 }
 
-                var urlResponseResult = processedRedirect
-                .Results
-                .OfType<UrlResponseResult>()
-                .FirstOrDefault(r => r.Type.Equals(ResultTypes.UrlResponse));
-
-                var newUrl = urlResponseResult != null && !string.IsNullOrWhiteSpace(urlResponseResult.Url)
-                    ? urlResponseResult.Url
-                    : processedRedirect.ParsedRedirect.NewUrl.Formatted;
-
                 var record = new OutputRedirectRecord
                 {
-                    OldUrl = processedRedirect.ParsedRedirect.OldUrl.Formatted,
-                    NewUrl = newUrl
+                    OldUrl = outputRedirect.OldUrl,
+                    NewUrl = outputRedirect.NewUrl
                 };
 
                 if (processedRedirect.ParsedRedirect != null)

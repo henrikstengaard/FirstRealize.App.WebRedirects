@@ -9,6 +9,11 @@
         public string ParsedOldUrl { get; set; }
         public string ParsedNewUrl { get; set; }
 
+        public string OutputRedirectOldUrl { get; set; }
+        public string OutputRedirectNewUrl { get; set; }
+        public bool OutputRedirectValidMatchingOriginalNewUrl { get; set; }
+        public bool OutputRedirectValidNotMatchingOriginalNewUrl { get; set; }
+
         public int ResultCount { get; set; }
         public string ResultTypes { get; set; }
 
