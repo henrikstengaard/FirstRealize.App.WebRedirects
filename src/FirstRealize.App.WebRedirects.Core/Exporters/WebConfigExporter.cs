@@ -16,6 +16,8 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
         private readonly IConfiguration _configuration;
         private readonly IUrlParser _urlParser;
         private readonly IUrlFormatter _urlFormatter;
+        private readonly Regex _headingSlashRegex;
+        private readonly Regex _tailingSlashRegex;
 
         private readonly string _webConfigTemplate = @"<configuration>
     <system.web>
@@ -55,6 +57,12 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
             _configuration = configuration;
             _urlParser = urlParser;
             _urlFormatter = urlFormatter;
+            _headingSlashRegex = new Regex(
+                "^[/]+",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            _tailingSlashRegex = new Regex(
+                "[/]+$",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled);
         }
 
         public string Name => "WebConfig";
@@ -95,9 +103,9 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
             foreach (var topRewrite in topRewritesSorted)
             {
                 // match url
-                var matchUrl = topRewrite.RelatedRewrites.Count <= 1 
+                var matchUrl = topRewrite.RelatedRewrites.Count <= 1
                     ? string.Format("^{0}/?$", FormatOldPath(topRewrite.OldUrl.Path))
-                    : topRewrite.OldUrlHasRootPath 
+                    : topRewrite.OldUrlHasRootPath
                     ? "^/?$"
                     : "^(.+?)/?$";
 
@@ -202,7 +210,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
             string newUrlHost)
         {
             return string.Format(
-                "Rewrite rule for {0}{1}{2}",
+                "Rewrite rule for {0}{1}{2}{3}",
                 oldUrlHasRootRedirect ? "root url " : "urls ",
                 oldUrlHasHost
                 ? string.Format("from host '{0}'", oldUrlHost)
@@ -223,7 +231,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
             string newUrlHost)
         {
             return string.Format(
-                "OldUrlHasHost={0}{1}|NewUrlHasHost={2}{3}",
+                "OldUrlHasHost={0}{1}{2}|NewUrlHasHost={3}{4}",
                 oldUrlHasHost,
                 oldUrlHasRootRedirect ? ",/" : string.Empty,
                 !string.IsNullOrWhiteSpace(oldUrlQueryString)
@@ -302,11 +310,11 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
         private string FormatOldPath(
             string path)
         {
-            return Regex.Replace(
-                path,
-                "^/",
-                string.Empty,
-                RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            return _tailingSlashRegex.Replace(
+                _headingSlashRegex.Replace(
+                    path,
+                    string.Empty),
+                string.Empty);
         }
 
         private string XmlEncode(
