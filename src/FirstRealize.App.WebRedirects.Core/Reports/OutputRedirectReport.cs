@@ -57,16 +57,19 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                     {
                         record.OriginalOldUrl =
                             FormatRawUrl(processedRedirect.ParsedRedirect.OldUrl);
+                        record.OldUrlHasHost =
                         record.OriginalOldUrlHasHost =
                             processedRedirect.ParsedRedirect.OldUrl.Parsed.OriginalUrlHasHost;
                         record.ParsedOldUrl =
                             FormatParsedUrl(processedRedirect.ParsedRedirect.OldUrl);
+
                     }
 
                     if (processedRedirect.ParsedRedirect.NewUrl != null)
                     {
                         record.OriginalNewUrl =
                             FormatRawUrl(processedRedirect.ParsedRedirect.NewUrl);
+                        record.NewUrlHasHost =
                         record.OriginalNewUrlHasHost =
                             processedRedirect.ParsedRedirect.NewUrl.Parsed.OriginalUrlHasHost;
                         record.ParsedNewUrl =

@@ -29,10 +29,10 @@ namespace FirstRealize.App.WebRedirects.Test.ExportTests
                     NewUrl = "http://www.domain2.local/url2",
                     OldUrlHasHost = true,
                     NewUrlHasHost = true,
-                    OldUrlParsed = "http://www.domain1.local/url1",
-                    NewUrlParsed = "http://www.domain2.local/url2",
-                    OldUrlOriginal = "http://www.domain1.local/url1",
-                    NewUrlOriginal = "http://www.domain2.local/url2",
+                    ParsedOldUrl = "http://www.domain1.local/url1",
+                    ParsedNewUrl = "http://www.domain2.local/url2",
+                    OriginalOldUrl = "http://www.domain1.local/url1",
+                    OriginalNewUrl = "http://www.domain2.local/url2",
                 },
                 new Redirect
                 {
@@ -40,10 +40,10 @@ namespace FirstRealize.App.WebRedirects.Test.ExportTests
                     NewUrl = "http://www.test.local/url2",
                     OldUrlHasHost = false,
                     NewUrlHasHost = false,
-                    OldUrlParsed = "http://www.test.local/url1",
-                    NewUrlParsed = "http://www.test.local/url2",
-                    OldUrlOriginal = "/url1",
-                    NewUrlOriginal = "/url2",
+                    ParsedOldUrl = "http://www.test.local/url1",
+                    ParsedNewUrl = "http://www.test.local/url2",
+                    OriginalOldUrl = "/url1",
+                    OriginalNewUrl = "/url2",
                 },
                 new Redirect
                 {
@@ -51,10 +51,10 @@ namespace FirstRealize.App.WebRedirects.Test.ExportTests
                     NewUrl = "http://www.test.local/url3",
                     OldUrlHasHost = false,
                     NewUrlHasHost = false,
-                    OldUrlParsed = "http://www.test.local/url2",
-                    NewUrlParsed = "http://www.test.local/url3",
-                    OldUrlOriginal = "/url2",
-                    NewUrlOriginal = "/url3",
+                    ParsedOldUrl = "http://www.test.local/url2",
+                    ParsedNewUrl = "http://www.test.local/url3",
+                    OriginalOldUrl = "/url2",
+                    OriginalNewUrl = "/url3",
                 }
             };
 

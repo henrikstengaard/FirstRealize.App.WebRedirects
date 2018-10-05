@@ -59,10 +59,12 @@ namespace FirstRealize.App.WebRedirects.Core.Readers
                     NewUrl = _csvReader.GetField<string>("newurl"),
                     OldUrlHasHost = _csvReader.GetField<bool>("oldurlhashost"),
                     NewUrlHasHost = _csvReader.GetField<bool>("newurlhashost"),
-                    OldUrlParsed = _csvReader.GetField<string>("oldurlparsed"),
-                    NewUrlParsed = _csvReader.GetField<string>("newurlparsed"),
-                    OldUrlOriginal = _csvReader.GetField<string>("oldurloriginal"),
-                    NewUrlOriginal = _csvReader.GetField<string>("newurloriginal"),
+                    ParsedOldUrl = _csvReader.GetField<string>("parsedoldurl"),
+                    ParsedNewUrl = _csvReader.GetField<string>("parsednewurl"),
+                    OriginalOldUrl = _csvReader.GetField<string>("originaloldurl"),
+                    OriginalNewUrl = _csvReader.GetField<string>("originalnewurl"),
+                    OriginalOldUrlHasHost = _csvReader.GetField<bool>("oldurlhashost"),
+                    OriginalNewUrlHasHost = _csvReader.GetField<bool>("newurlhashost"),
                 };
             }
         }

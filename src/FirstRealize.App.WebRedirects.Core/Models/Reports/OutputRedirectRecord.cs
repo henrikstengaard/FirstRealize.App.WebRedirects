@@ -3,7 +3,9 @@
     public class OutputRedirectRecord
     {
         public string OldUrl { get; set; }
+        public bool OldUrlHasHost { get; set; }
         public string NewUrl { get; set; }
+        public bool NewUrlHasHost { get; set; }
         public string ParsedOldUrl { get; set; }
         public string ParsedNewUrl { get; set; }
         public string OriginalOldUrl { get; set; }
