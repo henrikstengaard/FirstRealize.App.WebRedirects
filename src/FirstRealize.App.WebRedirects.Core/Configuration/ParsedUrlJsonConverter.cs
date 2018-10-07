@@ -35,7 +35,9 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
                 return null;
             }
 
-            return _urlParser.Parse(reader.Value.ToString());
+            return _urlParser.Parse(
+                reader.Value.ToString(),
+                null);
         }
 
         public override void WriteJson(

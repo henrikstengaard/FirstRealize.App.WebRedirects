@@ -6,7 +6,7 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
     {
 		IParsedUrl Parse(
 			string url,
-			IParsedUrl defaultUrl = null,
+			IParsedUrl defaultUrl,
 			bool stripFragment = false);
     }
 }

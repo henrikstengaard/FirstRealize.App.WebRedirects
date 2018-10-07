@@ -94,6 +94,7 @@ namespace FirstRealize.App.WebRedirects.Console
             //	SecurityProtocolType.Tls12;
 
             // create http client depending use test http client
+            var urlParser = new UrlParser();
             IHttpClient httpClient;
             if (configuration.UseTestHttpClient)
             {
@@ -101,11 +102,11 @@ namespace FirstRealize.App.WebRedirects.Console
             }
             else
             {
-                httpClient = new HttpClient();
+                httpClient = new HttpClient(
+                    urlParser);
             }
 
             // create redirect engine
-            var urlParser = new UrlParser();
 			var urlFormatter = new UrlFormatter();
             var urlHelper = new UrlHelper(
                 configuration,

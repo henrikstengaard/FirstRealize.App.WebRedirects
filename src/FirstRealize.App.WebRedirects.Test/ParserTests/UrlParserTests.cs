@@ -19,7 +19,9 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
         public void ParseUrlWithAbsoluteUri()
         {
             var rawUrl = "http://www.example.local";
-            var url = _urlParser.Parse(rawUrl);
+            var url = _urlParser.Parse(
+                rawUrl,
+                null);
 
             Assert.IsNotNull(url);
             Assert.AreEqual(
@@ -70,7 +72,9 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
         public void ParseUrlWithAbsoluteUriHasHost()
         {
             var rawUrl = "http://example.local/another/path/";
-            var url = _urlParser.Parse(rawUrl);
+            var url = _urlParser.Parse(
+                rawUrl,
+                null);
 
             Assert.AreEqual(
                 true,
@@ -82,7 +86,8 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
         {
             var rawUrl = "https://domain.local:8000/path?parameter=value";
             var url = _urlParser.Parse(
-                rawUrl);
+                rawUrl,
+                null);
 
             Assert.IsNotNull(url);
             Assert.AreEqual(
@@ -168,13 +173,17 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
         public void ParseNullThrowsException()
         {
             Assert.Throws<ArgumentNullException>(
-                () => _urlParser.Parse(null));
+                () => _urlParser.Parse(
+                    null,
+                    null));
         }
 
         [Test]
         public void ParseInvalidPort()
         {
-            var parsedUrl = _urlParser.Parse("http://www.test.local:invalid");
+            var parsedUrl = _urlParser.Parse(
+                "http://www.test.local:invalid",
+                null);
 
             Assert.IsNotNull(parsedUrl);
             Assert.AreEqual(
@@ -185,7 +194,9 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
         [Test]
         public void ParseInvalidUrl()
         {
-            var parsedUrl = _urlParser.Parse("www.test.local/invalid");
+            var parsedUrl = _urlParser.Parse(
+                "www.test.local/invalid",
+                null);
 
             Assert.IsNotNull(parsedUrl);
             Assert.AreEqual(

@@ -38,6 +38,7 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
         private IRedirectEngine CreateRedirectEngine(
             IConfiguration configuration)
         {
+            var urlParser = new UrlParser();
             IHttpClient httpClient;
             if (configuration.UseTestHttpClient)
             {
@@ -45,12 +46,12 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
             }
             else
             {
-                httpClient = new HttpClient();
+                httpClient = new HttpClient(
+                    urlParser);
             }
 
             // create redirect engine
 			var urlFormatter = new UrlFormatter();
-            var urlParser = new UrlParser();
             return new RedirectEngine(
                 configuration,
                 new UrlHelper(

@@ -96,6 +96,15 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
             // return parsed url with default url, if it starts with '/'
             if (urlFormatted.StartsWith("/"))
             {
+                if (defaultUrl == null ||
+                    !defaultUrl.IsValid)
+                {
+                    return new ParsedUrl
+                    {
+                        OriginalUrl = url
+                    };
+                }
+
                 var pathAndQuery = FormatPathAndQuery(
                         urlFormatted,
                         stripFragment);

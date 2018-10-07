@@ -81,6 +81,11 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                 processedRedirectRecord.ResultTypes =
                     string.Join(",", resultTypes);
 
+                // output redirect
+                AddOutputRedirectUrls(
+                    processedRedirect,
+                    processedRedirectRecord);
+
                 // invalid redirect result
                 AddInvalidRedirect(
                     processedRedirect,

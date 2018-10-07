@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FirstRealize.App.WebRedirects.Core.Parsers;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -14,14 +15,17 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
 {
     public class HttpClient : IHttpClient
     {
+        private readonly IUrlParser _urlParser;
         public readonly IDictionary<string, string> Headers;
         private readonly IdnMapping _idn;
 
         public string Protocol { get; set; }
         public TimeSpan Timeout { get; set; }
 
-        public HttpClient()
+        public HttpClient(
+            IUrlParser urlParser)
         {
+            _urlParser = urlParser;
             Headers = new Dictionary<string, string>(
                 StringComparer.OrdinalIgnoreCase)
             {
@@ -39,12 +43,11 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
 
         public HttpResponse Get(string url)
         {
-            var urlMatch = Regex.Match(
+            var parsedUrl = _urlParser.Parse(
                 url,
-                "^([a-z]+)://([^/]+):?([^/]*)(.*)",
-                RegexOptions.IgnoreCase | RegexOptions.Compiled);
+                null);
 
-            if (!urlMatch.Success)
+            if (!parsedUrl.IsValid)
             {
                 throw new HttpException(
                     string.Format(
@@ -52,40 +55,17 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
                         url));
             }
 
-            var scheme = urlMatch.Groups[1].Value;
             var host =
-                _idn.GetAscii(urlMatch.Groups[2].Value);
-            var pathAndQuery = urlMatch.Groups[4].Value;
-
-            if (!pathAndQuery.StartsWith("/"))
-            {
-                pathAndQuery = string.Concat("/", pathAndQuery);
-            }
-
-            int port;
-            if (!string.IsNullOrWhiteSpace(urlMatch.Groups[3].Value) &&
-                !int.TryParse(urlMatch.Groups[3].Value, out port))
-            {
-                throw new HttpException(
-                    string.Format(
-                        "Invalid port '{0}'",
-                        urlMatch.Groups[3].Value));
-            }
-            else
-            {
-                port = scheme.Equals("https")
-                    ? 443
-                    : 80;
-            }
+                _idn.GetAscii(parsedUrl.Host);
 
             var response = SendRequest(
                 host,
-                port,
-                scheme.ToLower().StartsWith("https"),
+                parsedUrl.Port,
+                parsedUrl.Scheme.ToLower().StartsWith("https"),
                 BuildRequest(
                     "GET",
                     host,
-                    pathAndQuery));
+                    parsedUrl.PathAndQuery));
             return ParseData(
                 response);
         }
