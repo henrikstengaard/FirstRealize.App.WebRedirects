@@ -1,6 +1,5 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Models.Urls;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 
 namespace FirstRealize.App.WebRedirects.Core.Configuration
@@ -21,6 +20,7 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
         public int MaxRedirectCount { get; set; }
         public int SampleCount { get; set; }
         public bool Export { get; set; }
+        public int HttpClientTimeout { get; set; }
 
         public Configuration()
         {
@@ -31,6 +31,7 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
             ForceHttpHostPatterns = new List<string>();
             MaxRedirectCount = 20;
             SampleCount = 0;
+            HttpClientTimeout = 60;
         }
     }
 }

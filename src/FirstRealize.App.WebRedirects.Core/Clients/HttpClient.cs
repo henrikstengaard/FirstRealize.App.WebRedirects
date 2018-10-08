@@ -1,4 +1,5 @@
-﻿using FirstRealize.App.WebRedirects.Core.Parsers;
+﻿using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Parsers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,6 +16,7 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
 {
     public class HttpClient : IHttpClient
     {
+        private readonly IConfiguration _configuration;
         private readonly IUrlParser _urlParser;
         public readonly IDictionary<string, string> Headers;
         private readonly IdnMapping _idn;
@@ -23,8 +25,10 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
         public TimeSpan Timeout { get; set; }
 
         public HttpClient(
+            IConfiguration configuration,
             IUrlParser urlParser)
         {
+            _configuration = configuration;
             _urlParser = urlParser;
             Headers = new Dictionary<string, string>(
                 StringComparer.OrdinalIgnoreCase)
@@ -79,8 +83,19 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
             var requestBytes = 
                 Encoding.ASCII.GetBytes(request);
 
-            using (var client = new TcpClient(host, port))
+            using (var client = new TcpClient())
             {
+                var result = client.BeginConnect(host, port, null, null);
+
+                var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(
+                    _configuration.HttpClientTimeout));
+
+                if (!success)
+                {
+                    throw new HttpException(
+                        "Failed to connect");
+                }
+
                 if (ssl)
                 {
                     using (var sslStream = new SslStream(

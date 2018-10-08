@@ -47,6 +47,7 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
             else
             {
                 httpClient = new HttpClient(
+                    configuration,
                     urlParser);
             }
 

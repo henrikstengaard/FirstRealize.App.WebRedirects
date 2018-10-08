@@ -19,5 +19,6 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
         int MaxRedirectCount { get; }
         int SampleCount { get; }
         bool Export { get; }
+        int HttpClientTimeout { get; }
     }
 }

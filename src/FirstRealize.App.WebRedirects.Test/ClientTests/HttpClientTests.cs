@@ -11,6 +11,7 @@ namespace FirstRealize.App.WebRedirects.Test.ClientTests
         public void GetGoogleUrlHttps()
         {
             var httpClient = new HttpClient(
+                TestData.TestData.DefaultConfiguration,
                 new UrlParser());
 
             var response = httpClient.Get("https://www.google.com");
@@ -26,6 +27,7 @@ namespace FirstRealize.App.WebRedirects.Test.ClientTests
         public void GetGoogleUrlHttp()
         {
             var httpClient = new HttpClient(
+                TestData.TestData.DefaultConfiguration,
                 new UrlParser());
 
             var response = httpClient.Get("http://www.google.com");
@@ -41,10 +43,25 @@ namespace FirstRealize.App.WebRedirects.Test.ClientTests
         public void GetInvalidUrlThrowsException()
         {
             var httpClient = new HttpClient(
+                TestData.TestData.DefaultConfiguration,
                 new UrlParser());
 
             Assert.Throws<HttpException>(
                 () => httpClient.Get("/invalid-url"));
+        }
+
+        [Test]
+        public void ZeroTimeoutThrowsException()
+        {
+            var configuration =
+                TestData.TestData.DefaultConfiguration;
+            configuration.HttpClientTimeout = 0;
+            var httpClient = new HttpClient(
+                configuration,
+                new UrlParser());
+
+            Assert.Throws<HttpException>(
+                () => httpClient.Get("/url"));
         }
     }
 }

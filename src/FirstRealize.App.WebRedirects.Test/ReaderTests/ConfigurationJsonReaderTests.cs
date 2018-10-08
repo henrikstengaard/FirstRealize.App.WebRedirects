@@ -34,7 +34,8 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
     ],
     maxRedirectCount: ""50"",
     sampleCount: ""100"",
-    export: ""True""
+    export: ""True"",
+    httpClientTimeout: 600
 }";
             // write configuration file
             var configurationFile =
@@ -110,6 +111,9 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
             Assert.AreEqual(
                 true,
                 configuration.Export);
+            Assert.AreEqual(
+                600,
+                configuration.HttpClientTimeout);
         }
     }
 }

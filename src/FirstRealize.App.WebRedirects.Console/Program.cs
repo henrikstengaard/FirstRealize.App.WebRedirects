@@ -103,6 +103,7 @@ namespace FirstRealize.App.WebRedirects.Console
             else
             {
                 httpClient = new HttpClient(
+                    configuration,
                     urlParser);
             }
 
