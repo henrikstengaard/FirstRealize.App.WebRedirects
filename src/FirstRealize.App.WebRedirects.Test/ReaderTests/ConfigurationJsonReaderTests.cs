@@ -13,10 +13,25 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
         [Test]
         public void ReadConfigurationFile()
         {
-            var configurationJson = @"{
+            // write empty redirects csv files
+            var redirects1CsvFile = Path.Combine(
+                    TestData.TestData.CurrentDirectory,
+                    "redirects1.csv");
+            File.WriteAllText(
+                redirects1CsvFile,
+                string.Empty);
+            var redirects2CsvFile = Path.Combine(
+                    TestData.TestData.CurrentDirectory,
+                    "redirects2.csv");
+            File.WriteAllText(
+                redirects2CsvFile,
+                string.Empty);
+
+            // configuration json
+            var configurationJson = @"{{
     redirectCsvFiles: [
-        ""redirects1.csv"",
-        ""redirects2.csv""
+        ""{0}"",
+        ""{1}""
     ],
     defaultUrl: ""http://www.oldurl.local"",
     oldUrlExcludePatterns: [
@@ -36,7 +51,8 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
     sampleCount: ""100"",
     export: ""True"",
     httpClientTimeout: 600
-}";
+}}";
+
             // write configuration file
             var configurationFile =
                 Path.Combine(
@@ -44,19 +60,10 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
                     "test_configuration.json");
             File.WriteAllText(
                 configurationFile,
-                configurationJson);
-
-            // write empty redirects csv files
-            File.WriteAllText(
-                Path.Combine(
-                    TestData.TestData.CurrentDirectory,
-                    "redirects1.csv"),
-                string.Empty);
-            File.WriteAllText(
-                Path.Combine(
-                    TestData.TestData.CurrentDirectory,
-                    "redirects2.csv"),
-                string.Empty);
+                string.Format(
+                    configurationJson,
+                    redirects1CsvFile.Replace("\\", "\\\\"),
+                    redirects2CsvFile.Replace("\\", "\\\\")));
 
             IConfiguration configuration;
             using (var configurationJsonReader = new ConfigurationJsonReader())
@@ -71,12 +78,10 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
             var redirectCsvFiles = configuration.RedirectCsvFiles.ToList();
             Assert.AreEqual(2, redirectCsvFiles.Count);
             Assert.AreEqual(
-                Path.Combine(
-                    TestData.TestData.CurrentDirectory, "redirects1.csv"),
+                redirects1CsvFile,
                 redirectCsvFiles[0]);
             Assert.AreEqual(
-                Path.Combine(
-                    TestData.TestData.CurrentDirectory, "redirects2.csv"),
+                redirects2CsvFile,
                 redirectCsvFiles[1]);
             Assert.AreEqual(
                 "http://www.oldurl.local/",
@@ -114,6 +119,71 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
             Assert.AreEqual(
                 600,
                 configuration.HttpClientTimeout);
+        }
+
+        [Test]
+        public void CurrentDirUsedForRedirectCsvFiles()
+        {
+            // write empty redirects csv files
+            var redirectsCsvFile = Path.Combine(
+                    TestData.TestData.CurrentDirectory,
+                    "redirects.csv");
+            File.WriteAllText(
+                redirectsCsvFile,
+                string.Empty);
+
+            // configuration json
+            var configurationJson = @"{
+    redirectCsvFiles: [
+        ""redirects.csv""
+    ],
+}";
+            // write configuration file
+            var configurationFile =
+                Path.Combine(
+                    TestData.TestData.CurrentDirectory,
+                    "test_configuration.json");
+            File.WriteAllText(
+                configurationFile,
+                configurationJson);
+
+            IConfiguration configuration;
+            using (var configurationJsonReader = new ConfigurationJsonReader())
+            {
+                configuration = configurationJsonReader
+                    .ReadConfiguationFile(configurationFile);
+            }
+
+            Assert.IsNotNull(configuration);
+            var redirectCsvFiles = configuration.RedirectCsvFiles.ToList();
+            Assert.AreEqual(1, redirectCsvFiles.Count);
+            Assert.AreEqual(
+                redirectsCsvFile,
+                redirectCsvFiles[0]);
+        }
+
+        [Test]
+        public void NonExistingRedirectCsvFilesThrowsException()
+        {
+            var configurationJson = @"{
+    redirectCsvFiles: [
+        ""non-existing-redirects.csv""
+    ],
+}";
+            // write configuration file
+            var configurationFile =
+                Path.Combine(
+                    TestData.TestData.CurrentDirectory,
+                    "test_configuration.json");
+            File.WriteAllText(
+                configurationFile,
+                configurationJson);
+
+            using (var configurationJsonReader = new ConfigurationJsonReader())
+            {
+                Assert.Throws<FileNotFoundException>(() => configurationJsonReader
+                    .ReadConfiguationFile(configurationFile));
+            }
         }
     }
 }
