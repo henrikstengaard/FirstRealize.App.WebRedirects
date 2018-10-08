@@ -136,13 +136,9 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
         private int ParsePort(
             string value)
         {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return 0;
-            }
-
             int port;
-            if (!int.TryParse(value, out port))
+            if (string.IsNullOrWhiteSpace(value) ||
+                !int.TryParse(value, out port))
             {
                 return 0;
             }
