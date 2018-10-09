@@ -360,7 +360,7 @@ namespace FirstRealize.App.WebRedirects.Console
             System.Console.WriteLine(
                 string.Format(
                     "Building and writing output redirects including not matching new url report file '{0}'",
-                    outputRedirectReportCsvFile));
+                    outputRedirectIncludingNotMatchingNewUrlReportCsvFile));
 
             var outputRedirectIncludingNotMatchingNewUrlReport =
                 new OutputRedirectReport(
