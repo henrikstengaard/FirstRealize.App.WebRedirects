@@ -127,7 +127,42 @@ namespace FirstRealize.App.WebRedirects.Test.ReportTests
         }
 
         [Test]
-        public void BuildFilteredRedirectReport()
+        public void BuildRedirectReportMatchingNewUrl()
+        {
+            // create and build filtered redirect report
+            var configuration =
+                TestData.TestData.DefaultConfiguration;
+            var urlFormatter = new UrlFormatter();
+            var urlParser = new UrlParser();
+            var urlHelper = new UrlHelper(
+                configuration,
+                urlParser,
+                urlFormatter);
+            var processedRedirectValidator = new ProcessedRedirectValidator(
+                    configuration,
+                    urlHelper);
+            var outputRedirectBuilder = new OutputRedirectBuilder
+                (processedRedirectValidator);
+            var outputRedirectReport = new OutputRedirectReport(
+                outputRedirectBuilder,
+                false);
+            outputRedirectReport.Build(_redirectProcessingResult);
+
+            // verify filtered redirect records are build
+            var records = outputRedirectReport
+                .GetRecords()
+                .ToList();
+            Assert.AreEqual(1, records.Count);
+            Assert.AreEqual(
+                "http://www.test2.local/url3",
+                records[0].OldUrl);
+            Assert.AreEqual(
+                "http://www.test2.local/url9",
+                records[0].NewUrl);
+        }
+
+        [Test]
+        public void BuildRedirectReportNotMatchingNewUrl()
         {
             // create and build filtered redirect report
             var configuration =

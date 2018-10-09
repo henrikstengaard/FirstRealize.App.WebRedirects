@@ -31,10 +31,15 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                 var outputRedirect = _outputRedirectBuilder
                     .Build(processedRedirect);
 
-                if ((!outputRedirect.ValidMatchingOriginalNewUrl &&
-                    !outputRedirect.ValidNotMatchingOriginalNewUrl) ||
-                    (outputRedirect.ValidNotMatchingOriginalNewUrl && 
-                    !_includeNotMatchingNewUrl))
+                if (!outputRedirect.ValidMatchingOriginalNewUrl &&
+                    !outputRedirect.ValidNotMatchingOriginalNewUrl)
+                {
+                    continue;
+                }
+
+                if (!outputRedirect.ValidMatchingOriginalNewUrl &&
+                    outputRedirect.ValidNotMatchingOriginalNewUrl && 
+                    !_includeNotMatchingNewUrl)
                 {
                     continue;
                 }
