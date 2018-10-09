@@ -147,7 +147,7 @@ namespace FirstRealize.App.WebRedirects.Test.ValidatorTests
         }
 
         [Test]
-        public void ValidateProcessedRedirects()
+        public void ValidateProcessedRedirectsIncludingNotMatchingNewUrl()
         {
             var configuration =
                 TestData.TestData.DefaultConfiguration;
@@ -195,7 +195,7 @@ namespace FirstRealize.App.WebRedirects.Test.ValidatorTests
         }
 
         [Test]
-        public void ValidateProcessedRedirectsExcludingNotMatchingNewUrls()
+        public void ValidateProcessedRedirectsOnlyMatchingNewUrls()
         {
             var configuration =
                 TestData.TestData.DefaultConfiguration;
