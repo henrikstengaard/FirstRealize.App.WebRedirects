@@ -6,6 +6,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
     public class Rewrite
     {
         public string Id { get; set; }
+        public string Key { get; set; }
         public string Name { get; set; }
         public bool OldUrlHasRootPath { get; set; }
         public bool OldUrlHasHost { get; set; }

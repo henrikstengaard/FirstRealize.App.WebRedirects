@@ -138,12 +138,37 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
                     continue;
                 }
 
+                // build rewrite map index to ensure old url redirects are unique 
+                var rewriteMapIndex = new Dictionary<string, Rewrite>();
+                foreach (var relatedRewrite in topRewrite.RelatedRewrites)
+                {
+                    var oldUrlPath = FormatOldPath(relatedRewrite.OldUrl.Path);
+                    var newUrlPath = FormatOldPath(relatedRewrite.NewUrl.Path);
+
+                    if (oldUrlPath.ToLower().Equals(newUrlPath.ToLower()))
+                    {
+                        continue;
+                    }
+
+                    if (rewriteMapIndex.ContainsKey(
+                        oldUrlPath))
+                    {
+                        continue;
+                    }
+
+                    rewriteMapIndex.Add(
+                        oldUrlPath,
+                        relatedRewrite);
+                }
+
                 // build rewrite map
                 rewriteMaps.Add(
                     string.Format(
                         _rewriteMapTemplate,
                         topRewrite.Id,
-                        string.Join(Environment.NewLine, topRewrite.RelatedRewrites.OrderByDescending(x => x.OldUrl.PathAndQuery).Select(x => string.Format(
+                        string.Join(
+                            Environment.NewLine,
+                            rewriteMapIndex.Values.OrderByDescending(x => x.OldUrl.PathAndQuery).Select(x => string.Format(
                                 "<add key=\"{0}\" value=\"{1}\" />",
                                 XmlEncode(FormatOldPath(x.OldUrl.Path)),
                                 XmlEncode(FormatNewPathAndQuery(x.NewUrl.Path, x.NewUrl.Query))
@@ -161,14 +186,14 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
         {
             foreach (var redirect in redirects.ToList())
             {
-                var oldUrlRefined = _urlParser.Parse(
+                var oldUrlParsed = _urlParser.Parse(
                     redirect.OldUrl,
                     _configuration.DefaultUrl);
-                var newUrlRefined = _urlParser.Parse(
+                var newUrlParsed = _urlParser.Parse(
                     redirect.NewUrl,
                     _configuration.DefaultUrl);
 
-                var oldUrlHasRootPath = oldUrlRefined.Path.Equals("/");
+                var oldUrlHasRootPath = oldUrlParsed.Path.Equals("/");
 
                 if (_configuration.ExcludeOldUrlRootRedirects && oldUrlHasRootPath)
                 {
@@ -177,28 +202,30 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
 
                 var rewriteKey = BuildRewriteKey(
                     redirect.OldUrlHasHost,
-                    oldUrlRefined.Query,
+                    oldUrlParsed.Host,
+                    oldUrlParsed.Query,
                     oldUrlHasRootPath,
                     redirect.NewUrlHasHost,
-                    newUrlRefined.Host);
+                    newUrlParsed.Host);
 
                 var rewriteName = BuildRewriteName(
                     redirect.OldUrlHasHost,
-                    oldUrlRefined.Host,
-                    oldUrlRefined.Query,
+                    oldUrlParsed.Host,
+                    oldUrlParsed.Query,
                     oldUrlHasRootPath,
                     redirect.NewUrlHasHost,
-                    newUrlRefined.Host);
+                    newUrlParsed.Host);
 
                 yield return new Rewrite
                 {
                     Id = rewriteKey.ToMd5().ToLower(),
+                    Key = rewriteKey,
                     Name = rewriteName,
                     OldUrlHasRootPath = oldUrlHasRootPath,
                     OldUrlHasHost = redirect.OldUrlHasHost,
                     NewUrlHasHost = redirect.NewUrlHasHost,
-                    OldUrl = oldUrlRefined,
-                    NewUrl = newUrlRefined
+                    OldUrl = oldUrlParsed,
+                    NewUrl = newUrlParsed
                 };
             }
         }
@@ -227,14 +254,18 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
 
         private string BuildRewriteKey(
             bool oldUrlHasHost,
+            string oldUrlHost,
             string oldUrlQueryString,
             bool oldUrlHasRootRedirect,
             bool newUrlHasHost,
             string newUrlHost)
         {
             return string.Format(
-                "OldUrlHasHost={0}{1}{2}|NewUrlHasHost={3}{4}",
+                "OldUrlHasHost={0}{1}{2}{3}|NewUrlHasHost={4}{5}",
                 oldUrlHasHost,
+                oldUrlHasHost
+                ? string.Format(",{0}", oldUrlHost.ToLower())
+                : string.Empty,
                 oldUrlHasRootRedirect ? ",/" : string.Empty,
                 !string.IsNullOrWhiteSpace(oldUrlQueryString)
                 ? string.Format(",{0}", oldUrlQueryString)
