@@ -67,7 +67,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             foreach (var parsedRedirect in parsedRedirects
                 .Where(r => r.IsValid && !_urlHelper.AreIdentical(
                     r.OldUrl.Formatted,
-					r.NewUrl.Formatted))
+                    r.NewUrl.Formatted))
                 .ToList())
             {
                 // add response for new url with configured status code,
@@ -122,7 +122,8 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 
             string url = null;
             string newUrl =
-				processedRedirect.ParsedRedirect.OldUrl.Formatted;
+                processedRedirect.ParsedRedirect.OldUrl.Formatted;
+            string lastVisitedUrl;
             UrlResponseResult urlResponseResult = null;
 
             do
@@ -150,6 +151,8 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     // add response to cache
                     _responseCache.Add(urlFormatted, response);
                 }
+
+                lastVisitedUrl = url;
 
                 // set has redirect and url to response location, 
                 // if url returns 301 and has location
@@ -255,7 +258,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     string.Format(
                         "Cyclic redirect for urls '{0}'",
                         string.Join(",", urlsVisited)),
-                    Url = url,
+                    Url = lastVisitedUrl,
                     RedirectCount = redirectCount
                 };
                 processedRedirect.Results.Add(
@@ -271,9 +274,9 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     Type = ResultTypes.TooManyRedirects,
                     Message = string.Format(
                         "Too many redirect at url '{0}' exceeding max redirect count of {1}",
-                        url,
+                        lastVisitedUrl,
                         _configuration.MaxRedirectCount),
-                    Url = url,
+                    Url = lastVisitedUrl,
                     RedirectCount = redirectCount
                 };
                 processedRedirect.Results.Add(
@@ -289,9 +292,9 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 {
                     Type = ResultTypes.OptimizedRedirect,
                     Message = string.Format(
-                        "Optimized redirect to urls '{0}'",
+                        "Optimized redirect for urls '{0}'",
                         string.Join(",", urlsVisited)),
-                    Url = url,
+                    Url = lastVisitedUrl,
                     RedirectCount = redirectCount
                 };
                 processedRedirect.Results.Add(
