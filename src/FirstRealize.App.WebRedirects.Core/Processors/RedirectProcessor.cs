@@ -33,7 +33,8 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             _httpClient = httpClient;
             _urlParser = urlParser;
 
-            _oldUrlRedirectIndex = new Dictionary<string, IParsedRedirect>();
+            _oldUrlRedirectIndex = new Dictionary<string, IParsedRedirect>(
+                StringComparer.OrdinalIgnoreCase);
             _responseCache = new Dictionary<string, HttpResponse>();
             _results = new List<IResult>();
             _skipResultTypes = new List<string>
@@ -98,7 +99,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     }
                 }
 
-                _oldUrlRedirectIndex.Add(oldUrlFormatted, parsedRedirect);
+                _oldUrlRedirectIndex[oldUrlFormatted] = parsedRedirect;
             }
         }
 

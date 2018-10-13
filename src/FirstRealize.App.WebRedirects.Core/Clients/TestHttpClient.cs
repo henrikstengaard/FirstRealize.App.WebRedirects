@@ -8,8 +8,7 @@ namespace FirstRealize.App.WebRedirects.Core.Clients
     {
         public TestHttpClient()
         {
-            Responses = new Dictionary<string,HttpResponse>(
-                StringComparer.OrdinalIgnoreCase);
+            Responses = new Dictionary<string,HttpResponse>();
         }
 
         public IDictionary<string, HttpResponse> Responses { get; }

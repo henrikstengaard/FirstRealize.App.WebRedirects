@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
 {
-	[TestFixture]
+    [TestFixture]
     public class RedirectProcessorTests
     {
         [Test]
@@ -28,20 +28,20 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 }
             };
 
-			// create url and redirect parser
-			var urlFormatter = new UrlFormatter();
-			var urlParser = new UrlParser();
-			var urlHelper = new UrlHelper(
+            // create url and redirect parser
+            var urlFormatter = new UrlFormatter();
+            var urlParser = new UrlParser();
+            var urlHelper = new UrlHelper(
                 configuration,
-				urlParser,
-				urlFormatter);
+                urlParser,
+                urlFormatter);
             var redirectParser = new RedirectParser(
                 configuration,
                 urlParser,
                 urlFormatter);
 
             // create redirect processor
-            var testHttpClient = 
+            var testHttpClient =
                 new TestHttpClient();
             var redirectProcessor = new RedirectProcessor(
                 configuration,
@@ -70,7 +70,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
 
             // parse redirects
             var parsedRedirects = new List<IParsedRedirect>();
-            foreach(var redirect in redirects)
+            foreach (var redirect in redirects)
             {
                 parsedRedirects.Add(
                     redirectParser.ParseRedirect(
@@ -103,16 +103,16 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
         public void CyclicRedirectsNotDetectedWithoutPreload()
         {
             // create redirect processor
-            var configuration = 
+            var configuration =
                 TestData.TestData.DefaultConfiguration;
-			var urlParser = new UrlParser();
-			var urlFormatter = new UrlFormatter();
-			var redirectProcessor = new RedirectProcessor(
+            var urlParser = new UrlParser();
+            var urlFormatter = new UrlFormatter();
+            var redirectProcessor = new RedirectProcessor(
                 configuration,
                 new UrlHelper(
                     configuration,
-					urlParser,
-					urlFormatter),
+                    urlParser,
+                    urlFormatter),
                 new TestHttpClient(),
                 urlParser
             );
@@ -143,14 +143,14 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                     "www\\.test\\.local"
                 }
             };
-			var urlParser = new UrlParser();
-			var urlFormatter = new UrlFormatter();
-			var redirectProcessor = new RedirectProcessor(
+            var urlParser = new UrlParser();
+            var urlFormatter = new UrlFormatter();
+            var redirectProcessor = new RedirectProcessor(
                 configuration,
                 new UrlHelper(
                     configuration,
-					urlParser,
-					urlFormatter),
+                    urlParser,
+                    urlFormatter),
                 new TestHttpClient(),
                 urlParser);
 
@@ -189,14 +189,14 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                     "www\\.test\\.local"
                 }
             };
-			var urlParser = new UrlParser();
-			var urlFormatter = new UrlFormatter();
-			var redirectProcessor = new RedirectProcessor(
+            var urlParser = new UrlParser();
+            var urlFormatter = new UrlFormatter();
+            var redirectProcessor = new RedirectProcessor(
                 configuration,
                 new UrlHelper(
                     configuration,
-					urlParser,
-					urlFormatter),
+                    urlParser,
+                    urlFormatter),
                 new TestHttpClient(),
                 urlParser);
 
@@ -261,14 +261,14 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                     "www\\.test\\.local"
                 }
             };
-			var urlParser = new UrlParser();
-			var urlFormatter = new UrlFormatter();
-			var redirectProcessor = new RedirectProcessor(
+            var urlParser = new UrlParser();
+            var urlFormatter = new UrlFormatter();
+            var redirectProcessor = new RedirectProcessor(
                 configuration,
                 new UrlHelper(
                     configuration,
-					urlParser,
-					urlFormatter),
+                    urlParser,
+                    urlFormatter),
                 testHttpClient,
                 urlParser);
 
@@ -307,8 +307,8 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 configuration,
                 new UrlHelper(
                     configuration,
-					urlParser,
-					urlFormatter),
+                    urlParser,
+                    urlFormatter),
                 new TestHttpClient(),
                 urlParser);
 
@@ -367,13 +367,13 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 urlParser,
                 urlFormatter);
 
-			// create redirect processor
-			var redirectProcessor = new RedirectProcessor(
+            // create redirect processor
+            var redirectProcessor = new RedirectProcessor(
                 configuration,
                 new UrlHelper(
                     configuration,
-					urlParser,
-					urlFormatter),
+                    urlParser,
+                    urlFormatter),
                 new TestHttpClient(),
                 urlParser);
 
@@ -431,15 +431,15 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 urlParser,
                 urlFormatter);
 
-			// create redirect processor
-			var testHttpClient =
+            // create redirect processor
+            var testHttpClient =
                 new TestHttpClient();
             var redirectProcessor = new RedirectProcessor(
                 configuration,
                 new UrlHelper(
                     configuration,
-					urlParser,
-					urlFormatter),
+                    urlParser,
+                    urlFormatter),
                 testHttpClient,
                 urlParser);
 
@@ -458,7 +458,7 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 }
             };
             var parsedRedirects = new List<IParsedRedirect>();
-            foreach(var redirect in redirects)
+            foreach (var redirect in redirects)
             {
                 parsedRedirects.Add(
                     redirectParser.ParseRedirect(
@@ -519,6 +519,77 @@ namespace FirstRealize.App.WebRedirects.Test.ProcessorTests
                 404,
                 urlResponseResult.StatusCode
                 );
+        }
+
+        [Test]
+        public void RedirectProcessorHandlesLowercasedRedirects()
+        {
+            var configuration =
+                TestData.TestData.DefaultConfiguration;
+            var urlParser = new UrlParser();
+            var urlFormatter = new UrlFormatter();
+            var redirectParser = new RedirectParser(
+                configuration,
+                urlParser,
+                urlFormatter);
+
+            // create redirect processor
+            var testHttpClient =
+                new TestHttpClient();
+            var redirectProcessor = new RedirectProcessor(
+                configuration,
+                new UrlHelper(
+                    configuration,
+                    urlParser,
+                    urlFormatter),
+                testHttpClient,
+                urlParser);
+
+            // parse redirects with uppercased old url
+            var parsedRedirects = TestData.TestData.GetParsedRedirects(
+                configuration,
+                new[]
+                {
+                    new Redirect
+                    {
+                        OldUrl = "/Url1",
+                        NewUrl = "/url2"
+                    }
+                })
+                .ToList();
+
+            // simulate uppercased url redirects to lowercased url
+            testHttpClient.Responses[
+                parsedRedirects[0].OldUrl.Formatted] =
+                new HttpResponse
+                {
+                    StatusCode = 301,
+                    Headers = new Dictionary<string, string>
+                    {
+                        { "Location", "/url1" }
+                    }
+                };
+
+            // preload parsed redirects
+            redirectProcessor.PreloadParsedRedirects(
+                parsedRedirects);
+
+            // process redirects
+            var processedRedirect = new ProcessedRedirect
+            {
+                ParsedRedirect = parsedRedirects[0]
+            };
+            redirectProcessor.Process(
+                processedRedirect);
+
+            // verify
+            var urlResponseResult = processedRedirect
+                .Results
+                .FirstOrDefault(x => x.Type == ResultTypes.UrlResponse);
+            Assert.IsNotNull(urlResponseResult);
+            Assert.AreEqual(
+                "http://www.test.local/url2",
+                urlResponseResult.Url);
         }
     }
 }
