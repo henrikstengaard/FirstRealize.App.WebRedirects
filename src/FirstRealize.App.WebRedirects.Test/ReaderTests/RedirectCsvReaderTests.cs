@@ -69,6 +69,36 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
                 redirects[3]);
         }
 
+        [Test]
+        public void ReadRedirectsWithWhitespaces()
+        {
+            var redirectReader = new RedirectCsvReader(
+                Path.Combine(TestData.TestData.CurrentDirectory, @"TestData\redirects_whitespace.csv"));
+            var redirects = redirectReader
+                .ReadAllRedirects()
+                .ToList();
+
+            Assert.AreNotEqual(0, redirects.Count);
+            Assert.AreEqual(
+                "/url1",
+                redirects[0].OldUrl);
+            Assert.AreEqual(
+                "/url2",
+                redirects[0].NewUrl);
+            Assert.AreEqual(
+                "/url1",
+                redirects[0].ParsedOldUrl);
+            Assert.AreEqual(
+                "/url2",
+                redirects[0].ParsedNewUrl);
+            Assert.AreEqual(
+                "/url1",
+                redirects[0].OriginalOldUrl);
+            Assert.AreEqual(
+                "/url2",
+                redirects[0].OriginalNewUrl);
+        }
+
         private void VerifyRedirect(
             string oldUrl,
             string newUrl,

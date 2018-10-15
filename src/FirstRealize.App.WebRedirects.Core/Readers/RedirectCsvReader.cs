@@ -55,14 +55,14 @@ namespace FirstRealize.App.WebRedirects.Core.Readers
             {
                 yield return new Redirect
                 {
-                    OldUrl = _csvReader.GetField<string>("oldurl"),
-                    NewUrl = _csvReader.GetField<string>("newurl"),
+                    OldUrl = _csvReader.GetField<string>("oldurl").Trim(),
+                    NewUrl = _csvReader.GetField<string>("newurl").Trim(),
                     OldUrlHasHost = _csvReader.GetField<bool>("oldurlhashost"),
                     NewUrlHasHost = _csvReader.GetField<bool>("newurlhashost"),
-                    ParsedOldUrl = _csvReader.GetField<string>("parsedoldurl"),
-                    ParsedNewUrl = _csvReader.GetField<string>("parsednewurl"),
-                    OriginalOldUrl = _csvReader.GetField<string>("originaloldurl"),
-                    OriginalNewUrl = _csvReader.GetField<string>("originalnewurl"),
+                    ParsedOldUrl = _csvReader.GetField<string>("parsedoldurl").Trim(),
+                    ParsedNewUrl = _csvReader.GetField<string>("parsednewurl").Trim(),
+                    OriginalOldUrl = _csvReader.GetField<string>("originaloldurl").Trim(),
+                    OriginalNewUrl = _csvReader.GetField<string>("originalnewurl").Trim(),
                     OriginalOldUrlHasHost = _csvReader.GetField<bool>("oldurlhashost"),
                     OriginalNewUrlHasHost = _csvReader.GetField<bool>("newurlhashost"),
                 };
