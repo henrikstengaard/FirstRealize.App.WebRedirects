@@ -99,6 +99,24 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
                 redirects[0].OriginalNewUrl);
         }
 
+        [Test]
+        public void ReadRedirectsWithNull()
+        {
+            var redirectReader = new RedirectCsvReader(
+                Path.Combine(TestData.TestData.CurrentDirectory, @"TestData\redirects_null.csv"));
+            var redirects = redirectReader
+                .ReadAllRedirects()
+                .ToList();
+
+            Assert.AreNotEqual(0, redirects.Count);
+            Assert.AreEqual(
+                "/url1",
+                redirects[0].OldUrl);
+            Assert.AreEqual(
+                "/url2",
+                redirects[0].NewUrl);
+        }
+
         private void VerifyRedirect(
             string oldUrl,
             string newUrl,

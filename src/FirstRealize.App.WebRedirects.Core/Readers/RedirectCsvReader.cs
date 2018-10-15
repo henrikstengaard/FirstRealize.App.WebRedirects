@@ -55,18 +55,38 @@ namespace FirstRealize.App.WebRedirects.Core.Readers
             {
                 yield return new Redirect
                 {
-                    OldUrl = _csvReader.GetField<string>("oldurl").Trim(),
-                    NewUrl = _csvReader.GetField<string>("newurl").Trim(),
-                    OldUrlHasHost = _csvReader.GetField<bool>("oldurlhashost"),
-                    NewUrlHasHost = _csvReader.GetField<bool>("newurlhashost"),
-                    ParsedOldUrl = _csvReader.GetField<string>("parsedoldurl").Trim(),
-                    ParsedNewUrl = _csvReader.GetField<string>("parsednewurl").Trim(),
-                    OriginalOldUrl = _csvReader.GetField<string>("originaloldurl").Trim(),
-                    OriginalNewUrl = _csvReader.GetField<string>("originalnewurl").Trim(),
-                    OriginalOldUrlHasHost = _csvReader.GetField<bool>("oldurlhashost"),
-                    OriginalNewUrlHasHost = _csvReader.GetField<bool>("newurlhashost"),
+                    OldUrl = TrimWhitespace(
+                        _csvReader.GetField<string>("oldurl")),
+                    NewUrl = TrimWhitespace(
+                        _csvReader.GetField<string>("newurl")),
+                    OldUrlHasHost = 
+                        _csvReader.GetField<bool>("oldurlhashost"),
+                    NewUrlHasHost = 
+                        _csvReader.GetField<bool>("newurlhashost"),
+                    ParsedOldUrl = TrimWhitespace(
+                        _csvReader.GetField<string>("parsedoldurl")),
+                    ParsedNewUrl = TrimWhitespace(
+                        _csvReader.GetField<string>("parsednewurl")),
+                    OriginalOldUrl = TrimWhitespace(
+                        _csvReader.GetField<string>("originaloldurl")),
+                    OriginalNewUrl = TrimWhitespace(
+                        _csvReader.GetField<string>("originalnewurl")),
+                    OriginalOldUrlHasHost = 
+                        _csvReader.GetField<bool>("oldurlhashost"),
+                    OriginalNewUrlHasHost = 
+                        _csvReader.GetField<bool>("newurlhashost"),
                 };
             }
+        }
+
+        private string TrimWhitespace(string value)
+        {
+            if (value == null)
+            {
+                return value;
+            }
+
+            return value.Trim();
         }
     }
 }
