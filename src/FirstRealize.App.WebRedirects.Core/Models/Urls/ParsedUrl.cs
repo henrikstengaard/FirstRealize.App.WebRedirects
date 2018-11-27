@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace FirstRealize.App.WebRedirects.Core.Models.Urls
 {
@@ -15,14 +16,30 @@ namespace FirstRealize.App.WebRedirects.Core.Models.Urls
 
 
         public bool IsValid
-		{
-			get
-			{
-				return !string.IsNullOrWhiteSpace(Scheme) &&
-					!string.IsNullOrWhiteSpace(Host) &&
-					Port > 0;
-			}
-		}
+        {
+            get
+            {
+                return !string.IsNullOrWhiteSpace(Scheme) &&
+                    !string.IsNullOrWhiteSpace(Host) &&
+                    Port > 0 &&
+                    IsQueryStringValid(Query);
+            }
+        }
+
+        private bool IsQueryStringValid(string queryString)
+        {
+            if (string.IsNullOrEmpty(queryString))
+            {
+                return true;
+            }
+
+            var queryParameters = queryString
+                .Split('&')
+                .ToList();
+
+            return queryParameters.All(
+                x => x.IndexOf("=", StringComparison.InvariantCultureIgnoreCase) >= 1);
+        }
 
         public int CompareTo(object obj)
         {

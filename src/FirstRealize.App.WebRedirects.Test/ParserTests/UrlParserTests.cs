@@ -203,5 +203,31 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
                 false,
                 parsedUrl.IsValid);
         }
+
+        [Test]
+        public void ParseUrlWithEmptyQueryParameterIsInvalid()
+        {
+            var parsedUrl = _urlParser.Parse(
+                "https://www.test.local/invalid?parameter=&",
+                null);
+
+            Assert.IsNotNull(parsedUrl);
+            Assert.AreEqual(
+                false,
+                parsedUrl.IsValid);
+        }
+
+        [Test]
+        public void ParseUrlWithoutQueryParameterValueIsValid()
+        {
+            var parsedUrl = _urlParser.Parse(
+                "https://www.test.local/invalid?parameter=",
+                null);
+
+            Assert.IsNotNull(parsedUrl);
+            Assert.AreEqual(
+                true,
+                parsedUrl.IsValid);
+        }
     }
 }
