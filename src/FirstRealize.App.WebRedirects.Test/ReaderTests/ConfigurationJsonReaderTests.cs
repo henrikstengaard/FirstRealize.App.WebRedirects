@@ -1,5 +1,6 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Configuration;
 using FirstRealize.App.WebRedirects.Core.Formatters;
+using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Readers;
 using NUnit.Framework;
 using System.IO;
@@ -50,7 +51,8 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
     maxRedirectCount: ""50"",
     sampleCount: ""100"",
     export: ""True"",
-    httpClientTimeout: 600
+    httpClientTimeout: 600,
+    defaultRedirectType: ""Replace""
 }}";
 
             // write configuration file
@@ -119,6 +121,9 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
             Assert.AreEqual(
                 600,
                 configuration.HttpClientTimeout);
+            Assert.AreEqual(
+                RedirectType.Replace,
+                configuration.DefaultRedirectType);
         }
 
         [Test]

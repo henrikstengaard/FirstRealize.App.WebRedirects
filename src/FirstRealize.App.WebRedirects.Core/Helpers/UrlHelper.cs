@@ -127,5 +127,43 @@ namespace FirstRealize.App.WebRedirects.Core.Helpers
             return url1Formatted.Equals(
                 url2Formatted);
         }
+
+		public string GetParentPath(string pathAndQuery)
+		{
+			if (string.IsNullOrWhiteSpace(pathAndQuery))
+			{
+				return null;
+			}
+
+			string path;
+			string query;
+			if (pathAndQuery.IndexOf("?", StringComparison.InvariantCultureIgnoreCase) >= 0)
+			{
+				var components = pathAndQuery.Split('?');
+				path = components[0];
+				query = components.Length >= 2 
+					? components[1]
+					: null;
+			}
+			else
+			{
+				path = pathAndQuery;
+				query = null;
+			}
+
+			var lastSlashPosition = 
+				path.LastIndexOf("/", StringComparison.InvariantCultureIgnoreCase);
+
+			if (lastSlashPosition < 0)
+			{
+				return null;
+			}
+
+			return string.Concat(
+				path.Substring(0, lastSlashPosition),
+				!string.IsNullOrWhiteSpace(query)
+				? string.Format("?{0}", query)
+				: string.Empty);
+		}
     }
 }

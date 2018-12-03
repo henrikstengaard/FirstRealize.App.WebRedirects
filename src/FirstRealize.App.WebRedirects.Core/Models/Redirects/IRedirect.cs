@@ -12,5 +12,6 @@
         bool OriginalOldUrlHasHost { get; set; }
         string OriginalNewUrl { get; set; }
         bool OriginalNewUrlHasHost { get; set; }
-    }
+		RedirectType RedirectType { get; set; }
+	}
 }

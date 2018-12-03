@@ -6,6 +6,7 @@ namespace FirstRealize.App.WebRedirects.Core.Models.Redirects
     {
         IUrl OldUrl { get; }
         IUrl NewUrl { get; }
-        bool IsValid { get; }
+		RedirectType RedirectType { get; }
+		bool IsValid { get; }
     }
 }

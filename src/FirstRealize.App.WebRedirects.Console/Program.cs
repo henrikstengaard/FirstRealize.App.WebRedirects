@@ -121,7 +121,8 @@ namespace FirstRealize.App.WebRedirects.Console
                 configuration,
                 urlHelper,
                 urlParser,
-                redirectParser,
+				urlFormatter,
+				redirectParser,
                 httpClient);
 
             // create processed redirect validator

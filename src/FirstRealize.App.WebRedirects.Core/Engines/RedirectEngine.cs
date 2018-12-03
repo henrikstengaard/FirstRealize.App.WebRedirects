@@ -1,5 +1,6 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Clients;
 using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Formatters;
 using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
@@ -29,6 +30,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             IConfiguration configuration,
             IUrlHelper urlHelper,
             IUrlParser urlParser,
+			IUrlFormatter urlFormatter,
             IRedirectParser redirectParser,
             IHttpClient httpClient)
         {
@@ -51,7 +53,13 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
                     _configuration,
                     _urlHelper,
                     _httpClient,
-                    _urlParser)
+                    _urlParser,
+					urlFormatter,
+					new RedirectHelper(
+						_configuration,
+						_urlParser,
+						urlFormatter)
+					)
             };
             _redirects = new List<IRedirect>();
             _parsedRedirects = new List<IParsedRedirect>();
@@ -114,7 +122,9 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             foreach (var redirectsCsvFile in _configuration.RedirectCsvFiles)
             {
                 using (var redirectCsvReader = 
-                    new RedirectCsvReader(redirectsCsvFile))
+                    new RedirectCsvReader(
+                        _configuration,
+                        redirectsCsvFile))
                 {
                     _redirects.AddRange(
                         redirectCsvReader.ReadAllRedirects());

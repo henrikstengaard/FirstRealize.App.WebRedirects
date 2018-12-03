@@ -72,7 +72,11 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Formatters\IUrlFormatter.cs" />
     <Compile Include="Formatters\UrlFormatter.cs" />
+    <Compile Include="Helpers\IRedirectHelper.cs" />
+    <Compile Include="Helpers\RedirectHelper.cs" />
+    <Compile Include="Models\Redirects\MatchingRedirectResult.cs" />
     <Compile Include="Models\Redirects\OutputRedirect.cs" />
+    <Compile Include="Models\Redirects\RedirectType.cs" />
     <Compile Include="Models\Urls\IParsedUrl.cs" />
     <Compile Include="Models\Urls\ParsedUrl.cs" />
     <Compile Include="Validators\IProcessedRedirectValidator.cs" />

@@ -154,5 +154,38 @@ namespace FirstRealize.App.WebRedirects.Test.HelperTests
 				"http://www.test.local/path/to/combine",
 				urlCombined);
 		}
-	}
+
+		[Test]
+		public void GetParentPath()
+		{
+			var parentPath = _urlHelper.GetParentPath("/path1/path2?query=test");
+
+			Assert.IsNotNull(parentPath);
+			Assert.AreEqual(
+				"/path1?query=test",
+				parentPath);
+		}
+
+		[Test]
+		public void GetParentPathWithNoParentReturnsNull()
+		{
+			var parentPath = _urlHelper.GetParentPath("/path1?query=test");
+
+			Assert.IsNotNull(parentPath);
+			Assert.AreEqual(
+				"?query=test",
+				parentPath);
+		}
+
+		[Test]
+		public void GetParentPathWithNoParentAndQueryStringReturnsNull()
+		{
+			var parentPath = _urlHelper.GetParentPath("/path1");
+
+            Assert.IsNotNull(parentPath);
+            Assert.AreEqual(
+                string.Empty,
+                parentPath);
+        }
+    }
 }

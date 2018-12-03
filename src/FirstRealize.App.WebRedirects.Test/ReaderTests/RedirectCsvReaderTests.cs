@@ -13,6 +13,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
         public void ReadRedirects()
         {
             var redirectReader = new RedirectCsvReader(
+                TestData.TestData.DefaultConfiguration,
                 Path.Combine(TestData.TestData.CurrentDirectory, @"TestData\redirects.csv"));
             var redirects = redirectReader
                 .ReadAllRedirects()
@@ -30,6 +31,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
                 "http://www.test.local/new-url",
                 false,
                 false,
+                RedirectType.Exact,
                 redirects[0]);
             VerifyRedirect(
                 "/new-url",
@@ -42,6 +44,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
                 "http://www.test.local/another/path",
                 false,
                 false,
+                RedirectType.Exact,
                 redirects[1]);
             VerifyRedirect(
                 "/new-url",
@@ -54,6 +57,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
                 "http://www.test.local/redirect/somwhere/else",
                 false,
                 false,
+                RedirectType.Exact,
                 redirects[2]);
             VerifyRedirect(
                 "/another/path",
@@ -66,6 +70,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
                 "http://www.test.local/example/path",
                 false,
                 false,
+                RedirectType.Exact,
                 redirects[3]);
         }
 
@@ -73,6 +78,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
         public void ReadRedirectsWithWhitespaces()
         {
             var redirectReader = new RedirectCsvReader(
+                TestData.TestData.DefaultConfiguration,
                 Path.Combine(TestData.TestData.CurrentDirectory, @"TestData\redirects_whitespace.csv"));
             var redirects = redirectReader
                 .ReadAllRedirects()
@@ -103,6 +109,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
         public void ReadRedirectsWithNull()
         {
             var redirectReader = new RedirectCsvReader(
+                TestData.TestData.DefaultConfiguration,
                 Path.Combine(TestData.TestData.CurrentDirectory, @"TestData\redirects_null.csv"));
             var redirects = redirectReader
                 .ReadAllRedirects()
@@ -117,6 +124,30 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
                 redirects[0].NewUrl);
         }
 
+        [Test]
+        public void ReadRedirectsWithChangedDefaultRedirectType()
+        {
+            var configuration = TestData.TestData.DefaultConfiguration;
+            configuration.DefaultRedirectType = RedirectType.Replace;
+            var redirectReader = new RedirectCsvReader(
+                configuration,
+                Path.Combine(TestData.TestData.CurrentDirectory, @"TestData\redirects_null.csv"));
+            var redirects = redirectReader
+                .ReadAllRedirects()
+                .ToList();
+
+            Assert.AreNotEqual(0, redirects.Count);
+            Assert.AreEqual(
+                "/url1",
+                redirects[0].OldUrl);
+            Assert.AreEqual(
+                "/url2",
+                redirects[0].NewUrl);
+            Assert.AreEqual(
+                RedirectType.Replace,
+                redirects[0].RedirectType);
+        }
+
         private void VerifyRedirect(
             string oldUrl,
             string newUrl,
@@ -128,6 +159,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
             string originalNewUrl,
             bool originalOldUrlHasHost,
             bool originalNewUrlHasHost,
+            RedirectType redirectType,
             IRedirect redirect)
         {
             Assert.AreEqual(
@@ -160,6 +192,9 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
             Assert.AreEqual(
                 originalNewUrlHasHost,
                 redirect.OriginalNewUrlHasHost);
+            Assert.AreEqual(
+                redirectType,
+                redirect.RedirectType);
         }
     }
 }

@@ -13,5 +13,7 @@
 		bool AreIdentical(
             string url1,
             string url2);
+		string GetParentPath(
+			string pathAndQuery);
 	}
 }

@@ -60,6 +60,7 @@
     <Compile Include="EngineTests\RedirectEngineTests.cs" />
     <Compile Include="ExportTests\WebConfigExporterTests.cs" />
     <Compile Include="FormatterTests\UrlFormatterTests.cs" />
+    <Compile Include="HelperTests\RedirectHelperTests.cs" />
     <Compile Include="HelperTests\UrlHelperTests.cs" />
     <Compile Include="ModelTests\RedirectTests.cs" />
     <Compile Include="ParserTests\ArgumentParserTests.cs" />

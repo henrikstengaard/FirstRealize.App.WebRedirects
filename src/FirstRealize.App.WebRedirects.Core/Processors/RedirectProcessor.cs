@@ -1,5 +1,6 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Clients;
 using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Formatters;
 using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
 using FirstRealize.App.WebRedirects.Core.Models.Results;
@@ -11,12 +12,14 @@ using System.Text.RegularExpressions;
 
 namespace FirstRealize.App.WebRedirects.Core.Processors
 {
-    public class RedirectProcessor : IProcessor, IProcessorPreload
+	public class RedirectProcessor : IProcessor, IProcessorPreload
     {
         private readonly IConfiguration _configuration;
         private readonly IUrlHelper _urlHelper;
         private readonly IHttpClient _httpClient;
         private readonly IUrlParser _urlParser;
+		private readonly IUrlFormatter _urlFormatter;
+		private readonly IRedirectHelper _redirectHelper;
         private readonly IDictionary<string, IParsedRedirect> _oldUrlRedirectIndex;
         private readonly IDictionary<string, HttpResponse> _responseCache;
         private readonly IList<IResult> _results;
@@ -26,12 +29,16 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             IConfiguration configuration,
             IUrlHelper urlHelper,
             IHttpClient httpClient,
-            IUrlParser urlParser)
+            IUrlParser urlParser,
+			IUrlFormatter urlFormatter,
+			IRedirectHelper redirectHelper)
         {
             _configuration = configuration;
             _urlHelper = urlHelper;
             _httpClient = httpClient;
             _urlParser = urlParser;
+			_urlFormatter = urlFormatter;
+			_redirectHelper = redirectHelper;
 
             _oldUrlRedirectIndex = new Dictionary<string, IParsedRedirect>(
                 StringComparer.OrdinalIgnoreCase);
@@ -212,13 +219,23 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     urlResponseResult = null;
                 }
 
-                // check redirect for url
-                if (checkRedirect &&
-                    _oldUrlRedirectIndex.ContainsKey(urlFormatted))
+				// check redirect for url
+				var matchingRedirectResult = GetMatchingRedirect(urlFormatted);
+				if (checkRedirect &&
+					matchingRedirectResult.HasMatch)
                 {
-                    // update redirect with new url from existing redirect
-                    newUrl = _oldUrlRedirectIndex[urlFormatted].NewUrl.Formatted;
-                }
+					if (matchingRedirectResult.ResultRedirectType == RedirectType.Replace)
+					{
+						// update redirect with new url from replaced redirect
+						newUrl = _redirectHelper.Replace(urlFormatted,
+							matchingRedirectResult.ParsedRedirect);
+					}
+					else
+					{
+						// update redirect with new url from existing redirect
+						newUrl = matchingRedirectResult.ParsedRedirect.NewUrl.Formatted;
+					}
+				}
 
                 // cyclic redirect, if url and new url is not https redirect and url exists in url index
                 if (newUrl != null && !_urlHelper.IsHttpsRedirect(
@@ -304,5 +321,64 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     optimizedRedirectResult);
             }
         }
-    }
+
+		private MatchingRedirectResult GetMatchingRedirect(string url)
+		{
+			if (_oldUrlRedirectIndex.ContainsKey(url))
+			{
+				return new MatchingRedirectResult
+				{
+					HasMatch = true,
+					ResultRedirectType = RedirectType.Exact,
+					ParsedRedirect = _oldUrlRedirectIndex[url]
+				};
+			}
+
+			var currentUrl = url;
+
+			while(
+				!string.IsNullOrWhiteSpace(currentUrl) && 
+				!_oldUrlRedirectIndex.ContainsKey(currentUrl))
+			{
+				var parsedCurrentUrl = _urlParser.Parse(
+					currentUrl,
+					_configuration.DefaultUrl);
+
+				var parentPathAndQuery =
+					_urlHelper.GetParentPath(parsedCurrentUrl.PathAndQuery);
+
+				if (string.IsNullOrWhiteSpace(parentPathAndQuery))
+				{
+					return new MatchingRedirectResult
+					{
+						HasMatch = false
+					};
+				}
+
+				parsedCurrentUrl.PathAndQuery = parentPathAndQuery;
+				currentUrl = _urlFormatter.Format(parsedCurrentUrl);
+			}
+
+			var parsedRedirect = !string.IsNullOrWhiteSpace(currentUrl) 
+				&& _oldUrlRedirectIndex.ContainsKey(currentUrl)
+				? _oldUrlRedirectIndex[currentUrl]
+				: null;
+
+			if (parsedRedirect != null && 
+				parsedRedirect.RedirectType == RedirectType.Exact)
+			{
+				return new MatchingRedirectResult
+				{
+					HasMatch = false
+				};
+			}
+
+			return new MatchingRedirectResult
+			{
+				HasMatch = parsedRedirect != null,
+				ResultRedirectType = RedirectType.Replace,
+				ParsedRedirect = parsedRedirect
+			};
+		}
+	}
 }

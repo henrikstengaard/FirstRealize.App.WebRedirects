@@ -1,4 +1,5 @@
-﻿using FirstRealize.App.WebRedirects.Core.Models.Urls;
+﻿using FirstRealize.App.WebRedirects.Core.Models.Redirects;
+using FirstRealize.App.WebRedirects.Core.Models.Urls;
 using System;
 using System.Collections.Generic;
 
@@ -20,5 +21,6 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
         int SampleCount { get; }
         bool Export { get; }
         int HttpClientTimeout { get; }
+        RedirectType DefaultRedirectType { get; }
     }
 }

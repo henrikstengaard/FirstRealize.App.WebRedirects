@@ -47,7 +47,8 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
                     Parsed = newUrlParsed,
                     Formatted = _urlFormatter.Format(
                         newUrlParsed)
-                }
+                },
+				RedirectType = redirect.RedirectType
             };
         }
     }

@@ -60,6 +60,7 @@ namespace FirstRealize.App.WebRedirects.Test.EngineTests
 					urlParser,
 					urlFormatter),
                 urlParser,
+				urlFormatter,
                 new RedirectParser(
                     configuration,
                     urlParser,
