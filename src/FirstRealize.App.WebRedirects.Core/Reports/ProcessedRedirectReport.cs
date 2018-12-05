@@ -297,6 +297,18 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                 optimizedRedirectResult.Url;
             processedRedirectRecord.OptimizedRedirectCount =
                 optimizedRedirectResult.RedirectCount;
+			processedRedirectRecord.OptimizedRedirectVisitedUrls =
+				string.Join(
+					",",
+					optimizedRedirectResult.UrlsVisited);
+			processedRedirectRecord.OptimizedRedirectVisitedRedirects = 
+				string.Join(
+					",",
+					optimizedRedirectResult.RedirectsVisited.Select(
+						x => string.Format(
+							"{0} -> {1}",
+							x.OldUrl.Formatted,
+							x.NewUrl.Formatted)));
         }
 
         private void AddCyclicRedirectResult(
@@ -318,9 +330,21 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                 cyclicRedirectResult.Url;
             processedRedirectRecord.CyclicRedirectCount =
                 cyclicRedirectResult.RedirectCount;
-        }
+			processedRedirectRecord.CyclicRedirectVisitedUrls =
+				string.Join(
+					",",
+					cyclicRedirectResult.UrlsVisited);
+			processedRedirectRecord.CyclicRedirectVisitedRedirects =
+				string.Join(
+					",",
+					cyclicRedirectResult.RedirectsVisited.Select(
+						x => string.Format(
+							"{0} -> {1}",
+							x.OldUrl.Formatted,
+							x.NewUrl.Formatted)));
+		}
 
-        private void AddTooManyRedirectsResult(
+		private void AddTooManyRedirectsResult(
             IProcessedRedirect processedRedirect,
             ProcessedRedirectRecord processedRedirectRecord)
         {
@@ -339,9 +363,21 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                 tooManyRedirectsResult.Url;
             processedRedirectRecord.TooManyRedirectsCount =
                 tooManyRedirectsResult.RedirectCount;
-        }
+			processedRedirectRecord.TooManyRedirectsVisitedUrls = 
+				string.Join(
+					",",
+					tooManyRedirectsResult.UrlsVisited);
+			processedRedirectRecord.TooManyRedirectsVisitedRedirects =
+				string.Join(
+					",",
+					tooManyRedirectsResult.RedirectsVisited.Select(
+						x => string.Format(
+							"{0} -> {1}",
+							x.OldUrl.Formatted,
+							x.NewUrl.Formatted)));
+		}
 
-        public override IEnumerable<ProcessedRedirectRecord> GetRecords()
+		public override IEnumerable<ProcessedRedirectRecord> GetRecords()
         {
             return _processedRedirectRecords;
         }

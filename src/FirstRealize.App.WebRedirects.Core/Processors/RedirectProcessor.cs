@@ -125,17 +125,19 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
             var checkRedirect = false;
             var isCyclicRedirect = false;
             var redirectCount = -1;
-            var urlsVisited = new List<string>();
             var urlsIndex = new HashSet<string>();
+			var redirectsVisited = new List<IParsedRedirect>();
 
-            string url = null;
+			string url = null;
             string newUrl =
                 processedRedirect.ParsedRedirect.OldUrl.Formatted;
             string lastVisitedUrl;
             UrlResponseResult urlResponseResult = null;
 
-            do
-            {
+			var urlsVisited = new List<string>(new []{ newUrl });
+
+			do
+			{
                 url = newUrl;
                 newUrl = null;
 
@@ -224,6 +226,9 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 				if (checkRedirect &&
 					matchingRedirectResult.HasMatch)
                 {
+					redirectsVisited.Add(
+						matchingRedirectResult.ParsedRedirect);
+
 					if (matchingRedirectResult.ResultRedirectType == RedirectType.Replace)
 					{
 						// update redirect with new url from replaced redirect
@@ -237,13 +242,19 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 					}
 				}
 
+				// add new url to urls visited, if not null
+				if (!string.IsNullOrWhiteSpace(newUrl))
+				{
+					urlsVisited.Add(newUrl);
+				}
+
                 // cyclic redirect, if url and new url is not https redirect and url exists in url index
                 if (newUrl != null && !_urlHelper.IsHttpsRedirect(
                     url,
                     newUrl) &&
                     urlsIndex.Contains(_urlHelper.FormatUrl(newUrl)))
                 {
-                    isCyclicRedirect = true;
+					isCyclicRedirect = true;
                     break;
                 }
 
@@ -252,9 +263,6 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 {
                     urlsIndex.Add(urlFormatted);
                 }
-
-                // add formatted url to urls visited
-                urlsVisited.Add(urlFormatted);
             } while (!string.IsNullOrWhiteSpace(newUrl) &&
                 redirectCount < 20);
 
@@ -266,7 +274,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 _results.Add(urlResponseResult);
             }
 
-            if (isCyclicRedirect)
+			if (isCyclicRedirect)
             {
                 // add cyclic redirect result
                 var cyclicResult = new RedirectResult
@@ -274,10 +282,12 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                     Type = ResultTypes.CyclicRedirect,
                     Message =
                     string.Format(
-                        "Cyclic redirect for urls '{0}'",
-                        string.Join(",", urlsVisited)),
+                        "Cyclic redirect at url '{0}'",
+						lastVisitedUrl),
                     Url = lastVisitedUrl,
-                    RedirectCount = redirectCount
+                    RedirectCount = redirectCount,
+					UrlsVisited = urlsVisited,
+					RedirectsVisited = redirectsVisited
                 };
                 processedRedirect.Results.Add(
                     cyclicResult);
@@ -295,8 +305,10 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                         lastVisitedUrl,
                         _configuration.MaxRedirectCount),
                     Url = lastVisitedUrl,
-                    RedirectCount = redirectCount
-                };
+                    RedirectCount = redirectCount,
+					UrlsVisited = urlsVisited,
+					RedirectsVisited = redirectsVisited
+				};
                 processedRedirect.Results.Add(
                     tooManyRedirectsResult);
                 _results.Add(
@@ -310,11 +322,13 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
                 {
                     Type = ResultTypes.OptimizedRedirect,
                     Message = string.Format(
-                        "Optimized redirect for urls '{0}'",
-                        string.Join(",", urlsVisited)),
+                        "Optimized redirect to url '{0}'",
+						lastVisitedUrl),
                     Url = lastVisitedUrl,
-                    RedirectCount = redirectCount
-                };
+                    RedirectCount = redirectCount,
+					UrlsVisited = urlsVisited,
+					RedirectsVisited = redirectsVisited
+				};
                 processedRedirect.Results.Add(
                     optimizedRedirectResult);
                 _results.Add(

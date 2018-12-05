@@ -45,18 +45,24 @@
         public string OptimizedRedirectMessage { get; set; }
         public string OptimizedRedirectUrl { get; set; }
         public int OptimizedRedirectCount { get; set; }
+		public string OptimizedRedirectVisitedUrls { get; set; }
+		public string OptimizedRedirectVisitedRedirects { get; set; }
 
-        public bool CyclicRedirect { get; set; }
+		public bool CyclicRedirect { get; set; }
         public string CyclicRedirectMessage { get; set; }
         public string CyclicRedirectUrl { get; set; }
         public int CyclicRedirectCount { get; set; }
+		public string CyclicRedirectVisitedUrls { get; set; }
+		public string CyclicRedirectVisitedRedirects { get; set; }
 
-        public bool TooManyRedirects { get; set; }
+		public bool TooManyRedirects { get; set; }
         public string TooManyRedirectsMessage { get; set; }
         public string TooManyRedirectsUrl { get; set; }
         public int TooManyRedirectsCount { get; set; }
+		public string TooManyRedirectsVisitedUrls { get; set; }
+		public string TooManyRedirectsVisitedRedirects { get; set; }
 
-        public bool UnknownError { get; set; }
+		public bool UnknownError { get; set; }
         public string UnknownErrorMessage { get; set; }
     }
 }
