@@ -4,6 +4,7 @@ using FirstRealize.App.WebRedirects.Core.Models.Urls;
 using FirstRealize.App.WebRedirects.Core.Parsers;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -15,9 +16,9 @@ namespace FirstRealize.App.WebRedirects.Core.Helpers
         private readonly IUrlParser _urlParser;
         private readonly IUrlFormatter _urlFormatter;
 
+		private readonly IdnMapping _idnMapping;
         private readonly Regex _schemeRegex;
         private readonly IList<Regex> _forceHttpHostRegexs;
-
 
         public UrlHelper(
             IConfiguration configuration,
@@ -28,6 +29,7 @@ namespace FirstRealize.App.WebRedirects.Core.Helpers
             _urlParser = urlParser;
             _urlFormatter = urlFormatter;
 
+			_idnMapping = new IdnMapping();
             _schemeRegex = new Regex(
                     "^https?://",
                     RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -71,7 +73,8 @@ namespace FirstRealize.App.WebRedirects.Core.Helpers
                     Scheme = url1Parsed.Scheme,
                     Host = url1Parsed.Host,
                     Port = url1Parsed.Port,
-                    PathAndQuery = url2Parsed.PathAndQuery
+					Path = url2Parsed.Path,
+					Query = url2Parsed.Query
                 });
         }
 
@@ -100,15 +103,25 @@ namespace FirstRealize.App.WebRedirects.Core.Helpers
                 return url;
             }
 
-            var uri = new Uri(url);
+			var parsedUrl = 
+				_urlParser.Parse(
+					url,
+					_configuration.DefaultUrl);
+
+			var dnsSafeHost = 
+				new IdnMapping().GetAscii(parsedUrl.Host);
 
             var forceHttpUrlPatternMatch =
-                _forceHttpHostRegexs.Any(x => x.IsMatch(uri.DnsSafeHost)) ||
-                _forceHttpHostRegexs.Any(x => x.IsMatch(uri.Host));
+                _forceHttpHostRegexs.Any(x => x.IsMatch(dnsSafeHost)) ||
+                _forceHttpHostRegexs.Any(x => x.IsMatch(parsedUrl.Host));
 
-            return forceHttpUrlPatternMatch
-                ? _schemeRegex.Replace(url, "http://")
-                : url;
+            if (forceHttpUrlPatternMatch)
+			{
+				parsedUrl.Scheme = "http";
+				parsedUrl.Port = 80;
+			}
+
+			return _urlFormatter.Format(parsedUrl);
         }
 
         public bool AreIdentical(
@@ -128,27 +141,17 @@ namespace FirstRealize.App.WebRedirects.Core.Helpers
                 url2Formatted);
         }
 
-		public string GetParentPath(string pathAndQuery)
+		public string GetParentPath(string path)
 		{
-			if (string.IsNullOrWhiteSpace(pathAndQuery))
+			if (string.IsNullOrWhiteSpace(path))
 			{
 				return null;
 			}
 
-			string path;
-			string query;
-			if (pathAndQuery.IndexOf("?", StringComparison.InvariantCultureIgnoreCase) >= 0)
+			if (path.LastIndexOf("/", 
+				StringComparison.InvariantCultureIgnoreCase) == path.Length - 1)
 			{
-				var components = pathAndQuery.Split('?');
-				path = components[0];
-				query = components.Length >= 2 
-					? components[1]
-					: null;
-			}
-			else
-			{
-				path = pathAndQuery;
-				query = null;
+				path = path.Substring(0, path.Length - 1);
 			}
 
 			var lastSlashPosition = 
@@ -159,11 +162,7 @@ namespace FirstRealize.App.WebRedirects.Core.Helpers
 				return null;
 			}
 
-			return string.Concat(
-				path.Substring(0, lastSlashPosition),
-				!string.IsNullOrWhiteSpace(query)
-				? string.Format("?{0}", query)
-				: string.Empty);
+			return path.Substring(0, lastSlashPosition);
 		}
     }
 }

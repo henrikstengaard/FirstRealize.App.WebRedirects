@@ -30,10 +30,10 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
 
             Assert.IsNotNull(redirect);
             Assert.AreEqual(
-                "http://www.test.local/old-url/",
+                "http://www.test.local/old-url",
                 parsedRedirect.OldUrl.Formatted);
             Assert.AreEqual(
-                "http://www.test.local/new-url/#anchor",
+                "http://www.test.local/new-url#anchor",
                 parsedRedirect.NewUrl.Formatted);
         }
     }

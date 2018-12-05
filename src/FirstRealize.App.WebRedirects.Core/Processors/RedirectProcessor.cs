@@ -344,10 +344,10 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 					currentUrl,
 					_configuration.DefaultUrl);
 
-				var parentPathAndQuery =
-					_urlHelper.GetParentPath(parsedCurrentUrl.PathAndQuery);
+				var parentPath =
+					_urlHelper.GetParentPath(parsedCurrentUrl.Path);
 
-				if (string.IsNullOrWhiteSpace(parentPathAndQuery))
+				if (string.IsNullOrWhiteSpace(parentPath))
 				{
 					return new MatchingRedirectResult
 					{
@@ -355,7 +355,7 @@ namespace FirstRealize.App.WebRedirects.Core.Processors
 					};
 				}
 
-				parsedCurrentUrl.PathAndQuery = parentPathAndQuery;
+				parsedCurrentUrl.Path = parentPath;
 				currentUrl = _urlFormatter.Format(parsedCurrentUrl);
 			}
 

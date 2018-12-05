@@ -41,11 +41,6 @@ namespace FirstRealize.App.WebRedirects.Core.Helpers
 				replacedUrlSegments);
 
 			parsedUrl.Path = replacedPath;
-			parsedUrl.PathAndQuery = string.Concat(
-				replacedPath,
-				!string.IsNullOrWhiteSpace(parsedUrl.Query)
-				? string.Concat("?", parsedUrl.Query)
-				: string.Empty);
 
 			return _urlFormatter.Format(parsedUrl);
 		}

@@ -22,7 +22,7 @@ namespace FirstRealize.App.WebRedirects.Test.FormatterTests
 				Scheme = "https",
 				Host = "www.test.local",
 				Port = 443,
-				PathAndQuery = "/"
+				Path = "/"
 			};
 
 			var urlFormatted = _urlFormatter.Format(
@@ -42,7 +42,7 @@ namespace FirstRealize.App.WebRedirects.Test.FormatterTests
 				Scheme = "https",
 				Host = "www.test.local",
 				Port = 444,
-				PathAndQuery = "/some/path"
+				Path = "/some/path"
 			};
 
 			var urlFormatted = _urlFormatter.Format(
@@ -62,7 +62,7 @@ namespace FirstRealize.App.WebRedirects.Test.FormatterTests
 				Scheme = "http",
 				Host = "www.test.local",
 				Port = 80,
-				PathAndQuery = "/"
+				Path = "/"
 			};
 
 			var urlFormatted = _urlFormatter.Format(
@@ -82,7 +82,7 @@ namespace FirstRealize.App.WebRedirects.Test.FormatterTests
 				Scheme = "http",
 				Host = "www.test.local",
 				Port = 8080,
-				PathAndQuery = "/some/path"
+				Path = "/some/path"
 			};
 
 			var urlFormatted = _urlFormatter.Format(

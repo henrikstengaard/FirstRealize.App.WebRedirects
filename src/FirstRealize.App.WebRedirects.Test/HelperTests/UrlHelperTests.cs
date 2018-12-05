@@ -158,34 +158,34 @@ namespace FirstRealize.App.WebRedirects.Test.HelperTests
 		[Test]
 		public void GetParentPath()
 		{
-			var parentPath = _urlHelper.GetParentPath("/path1/path2?query=test");
+			var parentPath = _urlHelper.GetParentPath("/path1/path2");
 
 			Assert.IsNotNull(parentPath);
 			Assert.AreEqual(
-				"/path1?query=test",
+				"/path1",
 				parentPath);
 		}
 
 		[Test]
 		public void GetParentPathWithNoParentReturnsNull()
 		{
-			var parentPath = _urlHelper.GetParentPath("/path1?query=test");
+			var parentPath = _urlHelper.GetParentPath("/path1");
 
 			Assert.IsNotNull(parentPath);
 			Assert.AreEqual(
-				"?query=test",
+				string.Empty,
 				parentPath);
 		}
 
 		[Test]
-		public void GetParentPathWithNoParentAndQueryStringReturnsNull()
+		public void GetParentPathWithTailingSlash()
 		{
-			var parentPath = _urlHelper.GetParentPath("/path1");
+			var parentPath = _urlHelper.GetParentPath("/path1/path2/");
 
-            Assert.IsNotNull(parentPath);
-            Assert.AreEqual(
-                string.Empty,
-                parentPath);
-        }
-    }
+			Assert.IsNotNull(parentPath);
+			Assert.AreEqual(
+				"/path1",
+				parentPath);
+		}
+	}
 }

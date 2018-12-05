@@ -10,6 +10,7 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
         private readonly Regex _urlRegex;
         private readonly Regex _portRegex;
         private readonly Regex _fragmentRegex;
+        private readonly Regex _tailingSlashRegex;
 
         public UrlParser()
         {
@@ -24,6 +25,9 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
             _fragmentRegex = new Regex(
                 "#[^#\\?]*",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            _tailingSlashRegex = new Regex(
+                "/(#[^#/]*)?$",
                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
         }
 
@@ -81,10 +85,10 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
                     Scheme = scheme,
                     Host = urlSchemeMatch.Groups[2].Value,
                     Port = port,
-                    PathAndQuery = pathAndQuery,
-                    Path = pathAndQueryParts.Length > 0
+                    Path = FormatPath(
+						pathAndQueryParts.Length > 0
                         ? pathAndQueryParts[0]
-                        : pathAndQuery,
+                        : pathAndQuery),
                     Query = pathAndQueryParts.Length > 1
                         ? pathAndQueryParts[1]
                         : string.Empty,
@@ -116,10 +120,10 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
                     Scheme = defaultUrl.Scheme,
                     Port = defaultUrl.Port,
                     Host = defaultUrl.Host,
-                    PathAndQuery = pathAndQuery,
-                    Path = pathAndQueryParts.Length > 0
+                    Path = FormatPath(
+						pathAndQueryParts.Length > 0
                         ? pathAndQueryParts[0]
-                        : pathAndQuery,
+                        : pathAndQuery),
                     Query = pathAndQueryParts.Length > 1
                         ? pathAndQueryParts[1]
                         : string.Empty,
@@ -133,7 +137,21 @@ namespace FirstRealize.App.WebRedirects.Core.Parsers
             };
         }
 
-        private int ParsePort(
+		private string FormatPath(string path)
+		{
+            path = _tailingSlashRegex.Replace(
+                path,
+                "$1");
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                path = "/";
+            }
+
+            return path;
+		}
+
+		private int ParsePort(
             string value)
         {
             int port;

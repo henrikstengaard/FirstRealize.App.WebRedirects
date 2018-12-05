@@ -7,7 +7,7 @@ namespace FirstRealize.App.WebRedirects.Core.Models.Urls
 		string Scheme { get; set; }
 		string Host { get; set; }
 		int Port { get; set; }
-		string PathAndQuery { get; set; }
+		string PathAndQuery { get; }
         string Path { get; set; }
         string Query { get; set; }
         string OriginalUrl { get; set; }

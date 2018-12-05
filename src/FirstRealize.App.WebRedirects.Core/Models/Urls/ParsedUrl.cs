@@ -8,7 +8,6 @@ namespace FirstRealize.App.WebRedirects.Core.Models.Urls
 		public string Scheme { get; set; }
 		public string Host { get; set; }
 		public int Port { get; set; }
-		public string PathAndQuery { get; set; }
         public string Path { get; set; }
         public string Query { get; set; }
         public string OriginalUrl { get; set; }
@@ -25,6 +24,18 @@ namespace FirstRealize.App.WebRedirects.Core.Models.Urls
                     IsQueryStringValid(Query);
             }
         }
+
+		public string PathAndQuery
+		{
+			get
+			{
+				return string.Concat(
+					Path,
+					!string.IsNullOrWhiteSpace(Query)
+					? string.Concat("?", Query)
+					: string.Empty);
+			}
+		}
 
         private bool IsQueryStringValid(string queryString)
         {

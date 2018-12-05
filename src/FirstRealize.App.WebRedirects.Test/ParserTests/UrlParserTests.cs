@@ -30,6 +30,12 @@ namespace FirstRealize.App.WebRedirects.Test.ParserTests
             Assert.AreEqual(
                 "www.example.local",
                 url.Host);
+            Assert.AreEqual(
+                80,
+                url.Port);
+            Assert.AreEqual(
+                "/",
+                url.Path);
         }
 
         [Test]
