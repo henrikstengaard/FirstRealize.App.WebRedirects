@@ -263,7 +263,7 @@ namespace FirstRealize.App.WebRedirects.Core.Reports
                 {
                     RedirectSummaryCount =
                     validProcessedRedirectsIncludngNotMatchingCount.ToString(),
-                    RedirectSummaryType = "redirects not matching new url"
+                    RedirectSummaryType = "redirects both matching and not matching new url"
                 });
 
             // start, end and elapsed time
