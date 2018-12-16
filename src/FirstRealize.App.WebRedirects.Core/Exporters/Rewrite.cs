@@ -1,4 +1,5 @@
-﻿using FirstRealize.App.WebRedirects.Core.Models.Urls;
+﻿using FirstRealize.App.WebRedirects.Core.Models.Redirects;
+using FirstRealize.App.WebRedirects.Core.Models.Urls;
 using System.Collections.Generic;
 
 namespace FirstRealize.App.WebRedirects.Core.Exporters
@@ -8,6 +9,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
         public string Id { get; set; }
         public string Key { get; set; }
         public string Name { get; set; }
+        public RedirectType RedirectType { get; set; }
         public bool OldUrlHasRootPath { get; set; }
         public bool OldUrlHasHost { get; set; }
         public bool NewUrlHasHost { get; set; }
