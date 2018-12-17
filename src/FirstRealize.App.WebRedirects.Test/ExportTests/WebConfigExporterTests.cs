@@ -102,6 +102,246 @@ namespace FirstRealize.App.WebRedirects.Test.ExportTests
         }
 
         [Test]
+        public void BuildWebConfigExactRedirectTypeWithoutHost()
+        {
+            var configuration = TestData.TestData.DefaultConfiguration;
+            var urlParser = new UrlParser();
+            var webConfigExporter = new WebConfigExporter(
+                configuration,
+                urlParser,
+                new UrlFormatter());
+
+            var redirects = new[]
+            {
+                new Redirect
+                {
+                    OldUrl = "http://www.test.local/url1",
+                    NewUrl = "http://www.test.local/url2",
+                    OldUrlHasHost = false,
+                    NewUrlHasHost = false,
+                    ParsedOldUrl = "http://www.test.local/url1",
+                    ParsedNewUrl = "http://www.test.local/url2",
+                    OriginalOldUrl = "http://www.test.local/url1",
+                    OriginalNewUrl = "http://www.test.local/url2",
+                    RedirectType = RedirectType.Exact
+                }
+            };
+
+            var webConfig = webConfigExporter.Build(
+                redirects);
+
+            // verify web config rewrite rules
+            Assert.IsNotNull(webConfig);
+            var webConfigLines = webConfig
+                .Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .ToList();
+            Assert.AreNotEqual(
+                0,
+                webConfigLines.Count);
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<rule name=")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<match url=\"^url1/?$\" />")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<action type=\"Redirect\" url=\"/url2\" redirectType=\"Permanent\" appendQueryString=\"False\" />")));
+            Assert.AreEqual(
+                0,
+                webConfigLines.Count(x => x.Contains("<conditions>")));
+            Assert.AreEqual(
+                0,
+                webConfigLines.Count(x => x.Contains("<add input=\"{HTTP_HOST}\" pattern=\"^www.test.local$\" />")));
+
+            // verify web config doesn't have rewrite maps
+            Assert.AreEqual(
+                0,
+                webConfigLines.Count(x => x.Contains("<rewriteMap name=")));
+        }
+
+        [Test]
+        public void BuildWebConfigExactRedirectTypeWithHost()
+        {
+            var configuration = TestData.TestData.DefaultConfiguration;
+            var urlParser = new UrlParser();
+            var webConfigExporter = new WebConfigExporter(
+                configuration,
+                urlParser,
+                new UrlFormatter());
+
+            var redirects = new[]
+            {
+                new Redirect
+                {
+                    OldUrl = "http://www.test.local/url1",
+                    NewUrl = "http://www.test.local/url2",
+                    OldUrlHasHost = true,
+                    NewUrlHasHost = true,
+                    ParsedOldUrl = "http://www.test.local/url1",
+                    ParsedNewUrl = "http://www.test.local/url2",
+                    OriginalOldUrl = "http://www.test.local/url1",
+                    OriginalNewUrl = "http://www.test.local/url2",
+                    RedirectType = RedirectType.Exact
+                }
+            };
+
+            var webConfig = webConfigExporter.Build(
+                redirects);
+
+            // verify web config rewrite rules
+            Assert.IsNotNull(webConfig);
+            var webConfigLines = webConfig
+                .Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .ToList();
+            Assert.AreNotEqual(
+                0,
+                webConfigLines.Count);
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<rule name=")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<match url=\"^url1/?$\" />")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<action type=\"Redirect\" url=\"http://www.test.local/url2\" redirectType=\"Permanent\" appendQueryString=\"False\" />")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<conditions>")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<add input=\"{HTTP_HOST}\" pattern=\"^www.test.local$\" />")));
+
+            // verify web config doesn't have rewrite maps
+            Assert.AreEqual(
+                0,
+                webConfigLines.Count(x => x.Contains("<rewriteMap name=")));
+        }
+
+        [Test]
+        public void BuildWebConfigReplaceRedirectTypeWithoutHost()
+        {
+            var configuration = TestData.TestData.DefaultConfiguration;
+            var urlParser = new UrlParser();
+            var webConfigExporter = new WebConfigExporter(
+                configuration,
+                urlParser,
+                new UrlFormatter());
+
+            var redirects = new[]
+            {
+                new Redirect
+                {
+                    OldUrl = "http://www.test.local/url1",
+                    NewUrl = "http://www.test.local/url2",
+                    OldUrlHasHost = false,
+                    NewUrlHasHost = false,
+                    ParsedOldUrl = "http://www.test.local/url1",
+                    ParsedNewUrl = "http://www.test.local/url2",
+                    OriginalOldUrl = "http://www.test.local/url1",
+                    OriginalNewUrl = "http://www.test.local/url2",
+                    RedirectType = RedirectType.Replace
+                }
+            };
+
+            var webConfig = webConfigExporter.Build(
+                redirects);
+
+            // verify web config rewrite rules
+            Assert.IsNotNull(webConfig);
+            var webConfigLines = webConfig
+                .Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .ToList();
+            Assert.AreNotEqual(
+                0,
+                webConfigLines.Count);
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<rule name=")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<match url=\"^url1(.+)?/?$\" />")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<action type=\"Redirect\" url=\"/url2{R:1}\" redirectType=\"Permanent\" appendQueryString=\"False\" />")));
+            Assert.AreEqual(
+                0,
+                webConfigLines.Count(x => x.Contains("<conditions>")));
+            Assert.AreEqual(
+                0,
+                webConfigLines.Count(x => x.Contains("<add input=\"{HTTP_HOST}\" pattern=\"^www.test.local$\" />")));
+
+            // verify web config doesn't have rewrite maps
+            Assert.AreEqual(
+                0,
+                webConfigLines.Count(x => x.Contains("<rewriteMap name=")));
+        }
+
+        [Test]
+        public void BuildWebConfigReplaceRedirectTypeWithHost()
+        {
+            var configuration = TestData.TestData.DefaultConfiguration;
+            var urlParser = new UrlParser();
+            var webConfigExporter = new WebConfigExporter(
+                configuration,
+                urlParser,
+                new UrlFormatter());
+
+            var redirects = new[]
+            {
+                new Redirect
+                {
+                    OldUrl = "http://www.test.local/url1",
+                    NewUrl = "http://www.test.local/url2",
+                    OldUrlHasHost = true,
+                    NewUrlHasHost = true,
+                    ParsedOldUrl = "http://www.test.local/url1",
+                    ParsedNewUrl = "http://www.test.local/url2",
+                    OriginalOldUrl = "http://www.test.local/url1",
+                    OriginalNewUrl = "http://www.test.local/url2",
+                    RedirectType = RedirectType.Replace
+                }
+            };
+
+            var webConfig = webConfigExporter.Build(
+                redirects);
+
+            // verify web config rewrite rules
+            Assert.IsNotNull(webConfig);
+            var webConfigLines = webConfig
+                .Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .ToList();
+            Assert.AreNotEqual(
+                0,
+                webConfigLines.Count);
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<rule name=")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<match url=\"^url1(.+)?/?$\" />")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<action type=\"Redirect\" url=\"http://www.test.local/url2{R:1}\" redirectType=\"Permanent\" appendQueryString=\"False\" />")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<conditions>")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<add input=\"{HTTP_HOST}\" pattern=\"^www.test.local$\" />")));
+
+            // verify web config doesn't have rewrite maps
+            Assert.AreEqual(
+                0,
+                webConfigLines.Count(x => x.Contains("<rewriteMap name=")));
+        }
+
+        [Test]
         public void BuildWebConfigReplaceRedirectTypeWith1Segment()
         {
             var configuration = TestData.TestData.DefaultConfiguration;
