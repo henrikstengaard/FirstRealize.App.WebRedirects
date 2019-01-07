@@ -102,6 +102,13 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
             var rewriteMaps = new List<string>();
             foreach (var topRewrite in topRewritesSorted)
             {
+                // force exact redirect type, if top rewrite has query and has more than one related rewrite
+                if (!string.IsNullOrWhiteSpace(topRewrite.OldUrl.Query) &&
+                    topRewrite.RelatedRewrites.Count > 1)
+                {
+                    topRewrite.RedirectType = RedirectType.Exact;
+                }
+
                 var useRewriteMap =
                     topRewrite.RelatedRewrites.Count > 1;
 
@@ -119,7 +126,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
 
                 // redirect url
                 var redirectUrl =
-                    XmlEncode(BuildRedirectUrl(topRewrite));
+                    BuildRedirectUrl(topRewrite);
 
                 // build rewrite rule
                 rewriteRules.Add(string.Format(
@@ -139,22 +146,24 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
                 var rewriteMapIndex = new Dictionary<string, Rewrite>();
                 foreach (var relatedRewrite in topRewrite.RelatedRewrites)
                 {
-                    var oldUrlPath = FormatOldPath(relatedRewrite.OldUrl.Path);
-                    var newUrlPath = FormatOldPath(relatedRewrite.NewUrl.Path);
+                    var key = string.IsNullOrWhiteSpace(relatedRewrite.OldUrl.Query)
+                        ? FormatOldPath(relatedRewrite.OldUrl.Path)
+                        : relatedRewrite.OldUrl.Query;
+                    var value = FormatOldPath(relatedRewrite.NewUrl.Path);
 
-                    if (oldUrlPath.ToLower().Equals(newUrlPath.ToLower()))
+                    if (key.ToLower().Equals(value.ToLower()))
                     {
                         continue;
                     }
 
                     if (rewriteMapIndex.ContainsKey(
-                        oldUrlPath))
+                        key))
                     {
                         continue;
                     }
 
                     rewriteMapIndex.Add(
-                        oldUrlPath,
+                        key,
                         relatedRewrite);
                 }
 
@@ -167,9 +176,11 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
                             Environment.NewLine,
                             rewriteMapIndex.Values.OrderByDescending(x => x.OldUrl.PathAndQuery).Select(x => string.Format(
                                 "<add key=\"{0}\" value=\"{1}\" />",
-                                XmlEncode(FormatOldPath(x.OldUrl.Path)),
-                                XmlEncode(FormatNewPathAndQuery(x.NewUrl.Path, x.NewUrl.Query))
-                                )))));
+                                string.IsNullOrWhiteSpace(topRewrite.OldUrl.Query)
+                                ? FormatOldPath(x.OldUrl.Path)
+                                : x.OldUrl.Query,
+                                FormatNewPathAndQuery(x.NewUrl.Path, x.NewUrl.Query))
+                                ))));
             }
 
             return string.Format(
@@ -180,7 +191,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
 
         private string BuildMatchUrl(Rewrite rewrite)
         {
-            switch(rewrite.RedirectType)
+            switch (rewrite.RedirectType)
             {
                 case RedirectType.Exact:
                     return BuildExactMatchUrl(rewrite);
@@ -199,7 +210,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
 
             return rewrite.OldUrlHasRootPath
                 ? "^/?$"
-                : rewrite.RelatedRewrites.Count <= 1
+                : rewrite.RelatedRewrites.Count <= 1 || !string.IsNullOrWhiteSpace(rewrite.OldUrl.Query)
                     ? string.Format("^{0}/?$", FormatOldPath(rewrite.OldUrl.Path))
                     : "^(.+?)/?$";
         }
@@ -207,7 +218,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
         private string BuildReplaceMatchUrl(
             Rewrite rewrite)
         {
-            var useRewriteMap = 
+            var useRewriteMap =
                 rewrite.RelatedRewrites.Count > 1;
             var segments = rewrite.OldUrl.Path.Split('/').Length - 1;
             var path = rewrite.OldUrlHasRootPath
@@ -218,9 +229,9 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
                 "^{0}(.+)?/?$",
                 useRewriteMap
                 ? string.Format(
-                    "({0})", 
+                    "({0})",
                     string.Join(
-                        "/", 
+                        "/",
                         Enumerable.Repeat("[^/]+", segments)))
                 : path);
         }
@@ -277,6 +288,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
                     segments,
                     redirect.OldUrlHasHost,
                     oldUrlParsed.Host,
+                    oldUrlParsed.Path,
                     oldUrlParsed.Query,
                     oldUrlHasRootPath,
                     redirect.NewUrlHasHost,
@@ -287,6 +299,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
                     segments,
                     redirect.OldUrlHasHost,
                     oldUrlParsed.Host,
+                    oldUrlParsed.Path,
                     oldUrlParsed.Query,
                     oldUrlHasRootPath,
                     redirect.NewUrlHasHost,
@@ -312,6 +325,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
             int segments,
             bool oldUrlHasHost,
             string oldUrlHost,
+            string oldUrlPath,
             string oldUrlQueryString,
             bool oldUrlHasRootRedirect,
             bool newUrlHasHost,
@@ -320,7 +334,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
             return string.Format(
                 "{0}{1} rewrite rule for {2}{3}{4}{5}",
                 redirectType,
-                redirectType == RedirectType.Replace && segments > 0 
+                redirectType == RedirectType.Replace && segments > 0
                 ? string.Format(" {0} segment(s)", segments)
                 : string.Empty,
                 oldUrlHasRootRedirect ? "root url " : "urls ",
@@ -328,7 +342,8 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
                 ? string.Format("from host '{0}'", oldUrlHost)
                 : "from any host",
                 !string.IsNullOrWhiteSpace(oldUrlQueryString)
-                ? string.Format(" with query string '{0}'", oldUrlQueryString)
+                ? string.Format(
+                    " with {0}query string", oldUrlHasRootRedirect ? string.Empty : string.Format("path '{0}' and ", oldUrlPath))
                 : string.Empty,
                 newUrlHasHost
                 ? string.Format(" to host '{0}'", newUrlHost)
@@ -340,6 +355,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
             int segments,
             bool oldUrlHasHost,
             string oldUrlHost,
+            string oldUrlPath,
             string oldUrlQueryString,
             bool oldUrlHasRootRedirect,
             bool newUrlHasHost,
@@ -357,7 +373,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
                 : string.Empty,
                 oldUrlHasRootRedirect ? ",/" : string.Empty,
                 !string.IsNullOrWhiteSpace(oldUrlQueryString)
-                ? string.Format(",{0}", oldUrlQueryString)
+                ? string.Format(",{0}QueryString", oldUrlHasRootRedirect ? string.Empty : string.Concat(oldUrlPath, ","))
                 : string.Empty,
                 newUrlHasHost,
                 newUrlHasHost
@@ -389,18 +405,21 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
                     rewrite.OldUrl.Host);
             }
 
-            if (!string.IsNullOrEmpty(rewrite.OldUrl.Query))
+            if (rewrite.RelatedRewrites.Count > 1)
+            {
+                yield return !string.IsNullOrWhiteSpace(rewrite.OldUrl.Query)
+                    ? string.Format(
+                    "<add input=\"{{{0}:{{QUERY_STRING}}}}\" pattern=\"(.+)\" />",
+                    rewrite.Id)
+                    : string.Format(
+                    "<add input=\"{{{0}:{{R:1}}}}\" pattern=\"(.+)\" />",
+                    rewrite.Id);
+            }
+            else if (!string.IsNullOrEmpty(rewrite.OldUrl.Query))
             {
                 yield return string.Format(
                     "<add input=\"{{QUERY_STRING}}\" pattern=\"{0}\" />",
-                    XmlEncode(Regex.Escape(rewrite.OldUrl.Query)));
-            }
-
-            if (rewrite.RelatedRewrites.Count > 1)
-            {
-                yield return string.Format(
-                    "<add input=\"{{{0}:{{R:1}}}}\" pattern=\"(.+)\" />",
-                    rewrite.Id);
+                    rewrite.OldUrl.Query);
             }
         }
 

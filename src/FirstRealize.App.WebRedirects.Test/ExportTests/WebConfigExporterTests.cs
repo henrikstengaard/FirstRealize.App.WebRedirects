@@ -5,6 +5,7 @@ using FirstRealize.App.WebRedirects.Core.Parsers;
 using NUnit.Framework;
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace FirstRealize.App.WebRedirects.Test.ExportTests
 {
@@ -603,6 +604,102 @@ namespace FirstRealize.App.WebRedirects.Test.ExportTests
             Assert.AreEqual(
                 1,
                 webConfigLines.Count(x => x.Contains("<add key=\"one1/one2\" value=\"/two1/two2\" />")));
+        }
+
+        [Test]
+        public void BuildWebConfigReplaceRedirectTypeWithMultipleQueryStringsInRewriteMap()
+        {
+            var configuration = TestData.TestData.DefaultConfiguration;
+            var urlParser = new UrlParser();
+            var webConfigExporter = new WebConfigExporter(
+                configuration,
+                urlParser,
+                new UrlFormatter());
+
+            var redirects = new[]
+            {
+                new Redirect
+                {
+                    OldUrl = "http://www.test.local/old1/old2",
+                    NewUrl = "http://www.test.local/",
+                    OldUrlHasHost = false,
+                    NewUrlHasHost = false,
+                    ParsedOldUrl = "http://www.test.local/old1/old2",
+                    ParsedNewUrl = "http://www.test.local/",
+                    OriginalOldUrl = "/old1/old2",
+                    OriginalNewUrl = "/",
+                    RedirectType = RedirectType.Replace
+                },
+                new Redirect
+                {
+                    OldUrl = "http://www.test.local/old1/old2?query=first",
+                    NewUrl = "http://www.test.local/new1",
+                    OldUrlHasHost = false,
+                    NewUrlHasHost = false,
+                    ParsedOldUrl = "http://www.test.local/old1/old2?query=first",
+                    ParsedNewUrl = "http://www.test.local/new1",
+                    OriginalOldUrl = "/old1/old2?query=first",
+                    OriginalNewUrl = "/new1",
+                    RedirectType = RedirectType.Replace
+                },
+                new Redirect
+                {
+                    OldUrl = "http://www.test.local/old1/old2?query=second",
+                    NewUrl = "http://www.test.local/new2",
+                    OldUrlHasHost = false,
+                    NewUrlHasHost = false,
+                    ParsedOldUrl = "http://www.test.local/old1/old2?query=second",
+                    ParsedNewUrl = "http://www.test.local/new2",
+                    OriginalOldUrl = "/old1/old2?query=second",
+                    OriginalNewUrl = "/new2",
+                    RedirectType = RedirectType.Replace
+                }
+            };
+
+            var webConfig = webConfigExporter.Build(
+                redirects);
+
+            // verify web config rewrite rules
+            Assert.IsNotNull(webConfig);
+            var webConfigLines = webConfig
+                .Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .ToList();
+            Assert.AreNotEqual(
+                0,
+                webConfigLines.Count);
+            Assert.AreEqual(
+                2,
+                webConfigLines.Count(x => x.Contains("<rule name=")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<match url=\"^old1/old2/?$\" />")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<match url=\"^old1/old2(.+)?/?$\" />")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<action type=\"Redirect\" url=\"{C:1}\" redirectType=\"Permanent\" appendQueryString=\"False\" />")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<action type=\"Redirect\" url=\"/{R:1}\" redirectType=\"Permanent\" appendQueryString=\"False\" />")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => Regex.IsMatch(x, "<add input=\"{[^{}:]+:{QUERY_STRING}}\" pattern=\"\\(.+\\)\" />", RegexOptions.IgnoreCase)));
+            Assert.AreEqual(
+                0,
+                webConfigLines.Count(x => x.Contains("<add input=\"{HTTP_HOST}\" pattern=\"^www.test.local$\" />")));
+
+            // verify web config rewrite maps
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<rewriteMap name=")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<add key=\"query=first\" value=\"/new1\" />")));
+            Assert.AreEqual(
+                1,
+                webConfigLines.Count(x => x.Contains("<add key=\"query=second\" value=\"/new2\" />")));
         }
     }
 }
