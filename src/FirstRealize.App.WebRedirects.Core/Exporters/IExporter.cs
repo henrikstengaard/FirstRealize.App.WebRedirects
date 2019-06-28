@@ -5,6 +5,7 @@ namespace FirstRealize.App.WebRedirects.Core.Exporters
 {
     public interface IExporter
     {
+        string Name { get; }
         string Build(
             IEnumerable<IRedirect> redirects);
         void Export(

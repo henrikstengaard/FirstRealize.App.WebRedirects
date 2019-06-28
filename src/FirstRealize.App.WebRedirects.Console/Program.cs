@@ -74,11 +74,11 @@ namespace FirstRealize.App.WebRedirects.Console
             }
 
             // load configuration file
-            IConfiguration configuration;
+            Configuration configuration;
             using (var configurationJsonReader = new ConfigurationJsonReader())
             {
                 configuration = configurationJsonReader
-                    .ReadConfiguationFile(configurationFile);
+                    .ReadConfiguationFile(configurationFile) as Configuration;
             }
 
             // write read configuration file done
@@ -86,8 +86,11 @@ namespace FirstRealize.App.WebRedirects.Console
             System.Console.WriteLine("Done");
             System.Console.WriteLine(string.Empty);
 
-            var outputDir = Path.GetDirectoryName(
-                configurationFile);
+            if (string.IsNullOrWhiteSpace(configuration.OutputDir))
+            {
+                configuration.OutputDir = Path.GetDirectoryName(
+                    configurationFile);
+            }
 
             // TODO: Apply if needed
             //ServicePointManager.SecurityProtocol = 
@@ -203,21 +206,10 @@ namespace FirstRealize.App.WebRedirects.Console
             System.Console.WriteLine("Done");
             System.Console.WriteLine(string.Empty);
 
-            if (configuration.Export)
-            {
-                var webConfigExporter = new WebConfigExporter(
-                    configuration,
-                    urlParser,
-                    urlFormatter);
-
-                webConfigExporter.Export(
-                    redirectProcessingResult.Redirects,
-                    outputDir);
-            }
-            else
+            if (configuration.Mode == Mode.Process)
             {
                 Reports(
-                    outputDir,
+                    configuration.OutputDir,
                     redirectProcessingResult,
                     processedRedirectValidator);
             }

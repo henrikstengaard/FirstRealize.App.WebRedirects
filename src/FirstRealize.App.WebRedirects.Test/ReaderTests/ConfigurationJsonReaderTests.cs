@@ -30,6 +30,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
 
             // configuration json
             var configurationJson = @"{{
+    mode: ""Export"",
     redirectCsvFiles: [
         ""{0}"",
         ""{1}""
@@ -50,7 +51,7 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
     ],
     maxRedirectCount: ""50"",
     sampleCount: ""100"",
-    export: ""True"",
+    exporter: ""WebConfig"",
     httpClientTimeout: 600,
     defaultRedirectType: ""Replace""
 }}";
@@ -77,6 +78,9 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
             var urlFormatter = new UrlFormatter();
 
             Assert.IsNotNull(configuration);
+            Assert.AreEqual(
+                Mode.Export,
+                configuration.Mode);
             var redirectCsvFiles = configuration.RedirectCsvFiles.ToList();
             Assert.AreEqual(2, redirectCsvFiles.Count);
             Assert.AreEqual(
@@ -116,8 +120,8 @@ namespace FirstRealize.App.WebRedirects.Test.ReaderTests
                 100,
                 configuration.SampleCount);
             Assert.AreEqual(
-                true,
-                configuration.Export);
+                "WebConfig",
+                configuration.Exporter);
             Assert.AreEqual(
                 600,
                 configuration.HttpClientTimeout);

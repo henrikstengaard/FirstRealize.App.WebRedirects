@@ -59,11 +59,13 @@
     <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="Configuration\DuplicateUrlStrategy.cs" />
     <Compile Include="Configuration\IConfiguration.cs" />
+    <Compile Include="Configuration\Mode.cs" />
     <Compile Include="Engines\IRedirectEngine.cs" />
     <Compile Include="Engines\IRedirectProcessingResult.cs" />
     <Compile Include="Engines\RedirectEngine.cs" />
     <Compile Include="Engines\RedirectProcessedEventArgs.cs" />
     <Compile Include="Engines\RedirectProcessingResult.cs" />
+    <Compile Include="Exporters\AwsS3StaticWebsiteExporter.cs" />
     <Compile Include="Exporters\IExporter.cs" />
     <Compile Include="Exporters\Rewrite.cs" />
     <Compile Include="Exporters\WebConfigExporter.cs" />

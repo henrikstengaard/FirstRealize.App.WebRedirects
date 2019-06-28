@@ -7,6 +7,8 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
 {
     public interface IConfiguration
     {
+        string OutputDir { get; }
+        Mode Mode { get; }
         IEnumerable<string> RedirectCsvFiles { get; }
         IParsedUrl DefaultUrl { get; }
         IEnumerable<string> Processors { get; }
@@ -19,7 +21,7 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
         IEnumerable<string> ForceHttpHostPatterns { get; }
         int MaxRedirectCount { get; }
         int SampleCount { get; }
-        bool Export { get; }
+        string Exporter { get; }
         int HttpClientTimeout { get; }
         RedirectType DefaultRedirectType { get; }
     }

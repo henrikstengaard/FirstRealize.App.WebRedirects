@@ -7,6 +7,8 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
 {
     public class Configuration : IConfiguration
     {
+        public string OutputDir { get; set; }
+        public Mode Mode { get; set; }
         public IEnumerable<string> RedirectCsvFiles { get; set; }
         [JsonConverter(typeof(ParsedUrlJsonConverter))]
         public IParsedUrl DefaultUrl { get; set; }
@@ -20,7 +22,7 @@ namespace FirstRealize.App.WebRedirects.Core.Configuration
         public IEnumerable<string> ForceHttpHostPatterns { get; set; }
         public int MaxRedirectCount { get; set; }
         public int SampleCount { get; set; }
-        public bool Export { get; set; }
+        public string Exporter { get; set; }
         public int HttpClientTimeout { get; set; }
         public RedirectType DefaultRedirectType { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using FirstRealize.App.WebRedirects.Core.Clients;
 using FirstRealize.App.WebRedirects.Core.Configuration;
+using FirstRealize.App.WebRedirects.Core.Exporters;
 using FirstRealize.App.WebRedirects.Core.Formatters;
 using FirstRealize.App.WebRedirects.Core.Helpers;
 using FirstRealize.App.WebRedirects.Core.Models.Redirects;
@@ -66,6 +67,18 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             _processedRedirects = new List<IProcessedRedirect>();
             _results = new List<IResult>();
             _activeProcessors = new List<IProcessor>();
+
+            Exporters = new List<IExporter>
+            {
+                new WebConfigExporter(
+                    _configuration,
+                    _urlParser,
+                    urlFormatter),
+                new AwsS3StaticWebsiteExporter(
+                    _configuration,
+                    _urlParser,
+                    urlFormatter)
+            };
         }
 
         public event EventHandler<RedirectProcessedEventArgs> RedirectProcessed;
@@ -77,6 +90,7 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
         }
 
         public IList<IProcessor> Processors { get; }
+        public IList<IExporter> Exporters { get; }
 
         public IRedirectProcessingResult Run()
         {
@@ -85,12 +99,17 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
             LoadRedirectsFromCsvFiles();
             ParseRedirects();
 
-            if (!_configuration.Export)
+            switch(_configuration.Mode)
             {
-                ActiveProcessors();
-                PreloadParsedRedirects();
-                ProcessParsedRedirects();
-                CollectResults();
+                case Mode.Process:
+                    ActiveProcessors();
+                    PreloadParsedRedirects();
+                    ProcessParsedRedirects();
+                    CollectResults();
+                    break;
+                case Mode.Export:
+                    Export();
+                    break;
             }
 
             var endTime = DateTime.UtcNow;
@@ -105,6 +124,29 @@ namespace FirstRealize.App.WebRedirects.Core.Engines
                 StartTime = startTime,
                 EndTime = endTime
             };
+        }
+
+        private void Export()
+        {
+            if (string.IsNullOrWhiteSpace(
+                _configuration.Exporter))
+            {
+                throw new Exception($"exporter '{_configuration.Exporter}' not found");
+            }
+
+            var exporter = Exporters.FirstOrDefault(
+                x => x.Name.Equals(
+                    _configuration.Exporter,
+                    StringComparison.InvariantCultureIgnoreCase));
+
+            if (exporter == null)
+            {
+                throw new Exception($"exporter '{_configuration.Exporter}' not found");
+            }
+
+            exporter.Export(
+                _redirects,
+                _configuration.OutputDir);
         }
 
         private void ActiveProcessors()
